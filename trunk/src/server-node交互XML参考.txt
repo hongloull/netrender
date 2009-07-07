@@ -1,0 +1,11 @@
+<Command id="" modelId="12" > 
+<SF EF BF >
+</Command>
+
+<Command modelId="0" LinuxCmd='poweroff' WinCmd='shutdown'>
+</Command>
+
+<Command modelId="0" LinuxCmd='copy /mnt/data/1.mel /mnt/data/conf/maya.mel' WinCmd='cp'>
+</Command>
+
+

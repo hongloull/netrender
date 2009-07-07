@@ -1,0 +1,46 @@
+<Usergroup>
+<Group name="admin" pri="6">
+<Right id="1"/>
+<Right id="2"/>
+<Right id="3"/>
+<Right id="4"/>
+<Right id="5"/>
+<Right id="6"/>
+<Right id="7"/>
+<Right id="8"/>
+<Right id="9"/>
+<Right id="10"/>
+<Right id="11"/>
+<Right id="12"/>
+<Right id="13"/>
+<Right id="14"/>
+<Right id="15"/>
+<Right id="16"/>
+<Right id="17"/>
+<Right id="18"/>
+<Right id="19"/>
+<Right id="20"/>
+</Group>
+<Group name="user" pri="5">
+<Right id="1"/>
+<Right id="2"/>
+<Right id="3"/>
+<Right id="4"/>
+<Right id="5"/>
+<Right id="6"/>
+<Right id="7"/>
+<Right id="8"/>
+<Right id="9"/>
+<Right id="10"/>
+<Right id="11"/>
+<Right id="12"/>
+<Right id="13"/>
+<Right id="14"/>
+<Right id="15"/>
+<Right id="16"/>
+<Right id="17"/>
+<Right id="18"/>
+<Right id="19"/>
+<Right id="20"/>
+</Group>
+</Usergroup>
