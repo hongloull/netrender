@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Commandmodel>
+
+<Commandmodelarg commandModelArgId="2" argName="-s" argInstruction="StartFrame" type="0" statusId="61" />
+
+<Commandmodelarg commandModelArgId="3" argName="-e" argInstruction="EndFrame" type="0" statusId="62" />
+
+<Commandmodelarg commandModelArgId="4" argName="-b" argInstruction="ByFrame" type="0" statusId="63" />
+
+<Commandmodelarg commandModelArgId="5" argName="-r" argInstruction="Type" type="0" statusId="60" />
+
+<Commandmodelarg commandModelArgId="6" argName="-proj" argInstruction="ProjectLocation" type="2" statusId="60" />
+
+<Commandmodelarg commandModelArgId="7" argName="" argInstruction="File" type="1" statusId="64" />
+
+</Commandmodel>
