@@ -9,9 +9,9 @@ import com.webrender.dao.ReguserDAO;
 import com.webrender.dao.Role;
 import com.webrender.dao.RoleDAO;
 
-public class ReguserUtil {
+public class ReguserUtils {
 	
-	private static final Log log = LogFactory.getLog(ReguserUtil.class);
+	private static final Log log = LogFactory.getLog(ReguserUtils.class);
 	
 	public static Reguser xml2Bean(Element element){
 		log.debug("xml2Bean");
@@ -26,12 +26,27 @@ public class ReguserUtil {
 			if (roleName != null){
 				RoleDAO roleDAO = new RoleDAO();
 				Role role = roleDAO.findByRoleName(roleName);
-				if(role!=null) reguser.setRole(role);
+				if(role!=null)
+					reguser.setRole(role);
 			}
 			log.debug("xml2Bean success");
 			return reguser;			
 		}catch(Exception e){
 			log.error("xml2Bean fail", e);
+			return null;
+		}
+	}
+	
+	public static Element bean2Xml(Reguser regUser){
+		log.debug("bean2Xml");
+		try{
+			Element element = new Element("User");
+			element.addAttribute("name", regUser.getRegName());
+			if( regUser.getRole()!=null ) element.addAttribute("groupName",regUser.getRole().getRoleName());
+			log.debug("bean2Xml success");
+			return element;
+		}catch(Exception e){
+			log.error("bean2Xml fail",e);
 			return null;
 		}
 	}
