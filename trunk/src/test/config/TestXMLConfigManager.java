@@ -8,5 +8,7 @@ public class TestXMLConfigManager {
 	@Test
 	public void testLoadConfig(){
 		XMLConfigManager.loadConfig();
+		
+		XMLConfigManager.loadConfig();
 	}
 }

@@ -77,8 +77,8 @@ public class ControlThreadServer extends Thread {
 						try {
 							log.info("ControlThreadServer resume");
 							//关2次，因为遇到有待执行命令查询不到的问题
-							HibernateSessionFactory.closeSession();
 							Thread.sleep(10000);
+							HibernateSessionFactory.closeSession();
 							
 						} catch (InterruptedException e) {
 							log.error("Thread Sleep", e);

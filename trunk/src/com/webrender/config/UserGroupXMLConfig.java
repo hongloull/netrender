@@ -54,6 +54,7 @@ public class UserGroupXMLConfig extends XMLConfig {
 						Element ele_Right = (Element) ite_Rights.next();
 						String id = ele_Right.getAttributeValue("id");
 						right = rightDAO.findById(Integer.parseInt(id));
+						if (right==null) continue;
 						set_RetainRights.add(right);
 						if(!set_Rights.contains(right)){
 							set_Rights.add(right);
@@ -74,7 +75,7 @@ public class UserGroupXMLConfig extends XMLConfig {
 					tx.rollback();
 				}
 			}
-		}// end while roles
+		} // end while roles
 		//deleteExtraData
 		log.debug("deleteExtraRole");
 		try{

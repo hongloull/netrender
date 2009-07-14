@@ -27,7 +27,7 @@ public class XMLConfigFactory {
 			}else if(fileName.equalsIgnoreCase("usergroup.xml")){
 				XMLConfig instance = new UserGroupXMLConfig();				
 				return instance;
-			}else if(fileName.equalsIgnoreCase("user.xml")){
+			}else if(fileName.equalsIgnoreCase("users.xml")){
 				XMLConfig instance = new UserXMLConfig();				
 				return instance;
 			}

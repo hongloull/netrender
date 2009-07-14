@@ -141,6 +141,10 @@ public class CommandDAO extends BaseHibernateDAO {
 		}
 	}
 
+	/**
+	 * 获取没完成的子命令
+	 * @return 待完成的命令列表 但优先级排序
+	 */
 	public List getWaitingCommands() {
 		log.debug("getWaitingCommands ");
 		try

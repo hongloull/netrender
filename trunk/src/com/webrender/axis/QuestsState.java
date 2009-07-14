@@ -15,20 +15,28 @@ import com.webrender.dao.QuestDAO;
 public class QuestsState extends BaseAxis {
 	private static final Log log = LogFactory.getLog(QuestsState.class);
 	
-	private String getQuestStatus(String questId)
+	public String getQuestStatus(String questId)
 	{
-		log.debug("getQuestStatus");
-				
+		log.debug("getQuestStatus: id = "+questId);
+		try{
+			if (!this.canVisit(7) ){
+				return BaseAxis.RightError;
+			}			
+		}catch(Exception e){
+			log.error("RightVisit error",e);
+			return BaseAxis.RightError;
+		}
+		
 		try{
 			QuestDAO questDAO = new QuestDAO();
 			Element root = QuestUtils.bean2xml_State(questDAO.findById(Integer.parseInt(questId)));
 			Document doc = new Document(root);
-			log.debug("getQuestStatus success");
+			log.debug("getQuestStatus success: id = "+questId);
 			return XMLOut.outputToString(doc);
 		}
 		catch(Exception e)
 		{
-			log.error("getChunkDetail success",e);
+			log.error("getQuestStatus failure: id = "+questId,e);
 			return BaseAxis.ActionFailure;
 		}finally
 		{

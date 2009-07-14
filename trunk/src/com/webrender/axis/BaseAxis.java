@@ -14,6 +14,7 @@ public abstract class BaseAxis {
 	protected static final String ActionSuccess = "Success";
 	protected static final String ActionFailure = "Failure";	
 	protected static final String RightError = "NoRight";
+	protected static final String NameExist = "NameExistError";
 	/**
 	 * 查看登录用户ID
 	 * @return ReguserId 0为未登录

@@ -93,7 +93,8 @@ public class RoleDAO extends BaseHibernateDAO {
 
 	public Role findByRoleName(Object roleName) {
 		List lis = findByProperty(ROLE_NAME, roleName);
-		if (lis.size()==1) return (Role)lis.get(0);
+		if (lis.size()==1)
+			return (Role)lis.get(0);
 		return null;
 	}
 

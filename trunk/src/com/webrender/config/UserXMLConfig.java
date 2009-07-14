@@ -10,7 +10,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-import com.webrender.axis.beanxml.ReguserUtil;
+import com.webrender.axis.beanxml.ReguserUtils;
 import com.webrender.dao.Reguser;
 import com.webrender.dao.ReguserDAO;
 
@@ -33,7 +33,7 @@ public class UserXMLConfig extends XMLConfig {
 		while(ite_Users.hasNext()){
 			try{
 				tx = getTransaction();
-				Reguser user = ReguserUtil.xml2Bean(ite_Users.next());
+				Reguser user = ReguserUtils.xml2Bean(ite_Users.next());
 				if(user != null){
 					regUserDAO.save(user);
 				}

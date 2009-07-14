@@ -35,6 +35,9 @@ public class Conversion extends Thread {
 		}
 		
 	}
+	public int getFlag(){
+		return flag;
+	}
 	
 	public void run()
 	{
@@ -44,6 +47,7 @@ public class Conversion extends Thread {
 			// 通知SubServer，暂停工作，运行转交MainServer
 			// MainServer运行 start()
 			log.info("MainServer Run");
+			XMLConfigManager.loadConfig();
 			this.runServer();
 			break;
 		}
@@ -54,17 +58,19 @@ public class Conversion extends Thread {
 			{
 				if ( isRun(mainServer)==false)
 				{
-					i++;
-					if (i>=5)
-					{
-						log.info("SubServer Run");
-						this.runServer();
+					if(this.status==1) {
 						try {
 							sleep(60000);
 						} catch (InterruptedException e) {
 							
 							e.printStackTrace();
 						}
+					}
+					i++;
+					if (i>=5)
+					{
+						log.info("SubServer Run");
+						this.runServer();
 						i = 0;
 					}
 					
@@ -96,7 +102,7 @@ public class Conversion extends Thread {
 		{
 			return;
 		}
-		XMLConfigManager.loadConfig();
+		
 		if (status == 0){
 			log.info("SocketServer Run");
 			try {
