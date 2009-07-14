@@ -1,6 +1,7 @@
 package com.webrender.axis;
 
 
+import java.util.Iterator;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,9 +27,16 @@ public class UserLogin extends BaseAxis {
 			ReguserDAO regUserDAO = new ReguserDAO();
 			 Set<Integer> rightValue = regUserDAO.getRightValue(loginReguser);
 			session.set("RightValue",rightValue);
-			HttpServletRequest request = (HttpServletRequest) mc.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);   
-	        session.set( "RemoteIp",request.getRemoteAddr() );   
-			return BaseAxis.ActionSuccess;
+	  		HttpServletRequest request = (HttpServletRequest) mc.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);   
+	        session.set( "RemoteIp",request.getRemoteAddr() );
+			Iterator<Integer> ite_Rights = rightValue.iterator();
+			StringBuilder result = new StringBuilder("[");
+			while(ite_Rights.hasNext()){
+				result.append( ite_Rights.next() );
+				if (ite_Rights.hasNext()) result.append(",");
+			}
+			result.append("]");
+			return result.toString();
 		}
 		else
 		{
@@ -42,3 +50,4 @@ public class UserLogin extends BaseAxis {
 		return Conversion.getInstance().getStatus();
 	}
 }
+ 
