@@ -18,8 +18,10 @@ public class Reguser implements java.io.Serializable {
 	private String regName;
 	private String passWord;
 	private Set quests = new HashSet(0);
+	private Set nodegroups = new HashSet(0);
 	private Set rights = new HashSet(0);
 	private Set operatelogs = new HashSet(0);
+	private Set models = new HashSet(0);
 
 	// Constructors
 
@@ -35,13 +37,16 @@ public class Reguser implements java.io.Serializable {
 
 	/** full constructor */
 	public Reguser(Status status, String regName, String passWord, Set quests,
-			Set rights, Set operatelogs) {
+			Set nodegroups, Set rights, Set operatelogs,
+			Set models) {
 		this.status = status;
 		this.regName = regName;
 		this.passWord = passWord;
 		this.quests = quests;
+		this.nodegroups = nodegroups;
 		this.rights = rights;
 		this.operatelogs = operatelogs;
+		this.models = models;
 	}
 
 	// Property accessors
@@ -86,6 +91,14 @@ public class Reguser implements java.io.Serializable {
 		this.quests = quests;
 	}
 
+	public Set getNodegroups() {
+		return this.nodegroups;
+	}
+
+	public void setNodegroups(Set nodegroups) {
+		this.nodegroups = nodegroups;
+	}
+
 	public Set getRights() {
 		return this.rights;
 	}
@@ -100,6 +113,14 @@ public class Reguser implements java.io.Serializable {
 
 	public void setOperatelogs(Set operatelogs) {
 		this.operatelogs = operatelogs;
+	}
+
+	public Set getModels() {
+		return this.models;
+	}
+
+	public void setModels(Set models) {
+		this.models = models;
 	}
 
 }

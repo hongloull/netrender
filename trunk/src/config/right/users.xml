@@ -1,5 +1,10 @@
-<Users>
-<User name="jma" groupName="admin"/>
-<User name="admin" groupName="admin"/>
-<User name="ystang" groupName="user"/>
-</Users>
+<User maxInstance="0">
+<Right id="1"/>
+<Right id="2"/>
+<Right id="3"/>
+<Right id="4"/>
+<Right id="5"/>
+<Right id="6"/>
+<Right id="7"/>
+<Right id="8"/>
+</User>

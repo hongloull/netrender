@@ -15,9 +15,10 @@ public class Nodegroup implements java.io.Serializable {
 
 	private Integer nodeGroupId;
 	private Status status;
+	private Timegroup timegroup;
 	private String nodeGroupName;
 	private Set nodes = new HashSet(0);
-	private Set times = new HashSet(0);
+	private Set regusers = new HashSet(0);
 
 	// Constructors
 
@@ -31,12 +32,13 @@ public class Nodegroup implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public Nodegroup(Status status, String nodeGroupName, Set nodes,
-			Set times) {
+	public Nodegroup(Status status, Timegroup timegroup, String nodeGroupName,
+			Set regusers, Set nodes) {
 		this.status = status;
+		this.timegroup = timegroup;
 		this.nodeGroupName = nodeGroupName;
+		this.regusers = regusers;
 		this.nodes = nodes;
-		this.times = times;
 	}
 
 	// Property accessors
@@ -57,6 +59,14 @@ public class Nodegroup implements java.io.Serializable {
 		this.status = status;
 	}
 
+	public Timegroup getTimegroup() {
+		return this.timegroup;
+	}
+
+	public void setTimegroup(Timegroup timegroup) {
+		this.timegroup = timegroup;
+	}
+
 	public String getNodeGroupName() {
 		return this.nodeGroupName;
 	}
@@ -65,20 +75,20 @@ public class Nodegroup implements java.io.Serializable {
 		this.nodeGroupName = nodeGroupName;
 	}
 
+	public Set getRegusers() {
+		return this.regusers;
+	}
+
+	public void setRegusers(Set regusers) {
+		this.regusers = regusers;
+	}
+
 	public Set getNodes() {
 		return this.nodes;
 	}
 
 	public void setNodes(Set nodes) {
 		this.nodes = nodes;
-	}
-
-	public Set getTimes() {
-		return this.times;
-	}
-
-	public void setTimes(Set times) {
-		this.times = times;
 	}
 
 }

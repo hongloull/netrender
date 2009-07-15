@@ -6,8 +6,7 @@ import org.jdom.Element;
 
 import com.webrender.dao.Reguser;
 import com.webrender.dao.ReguserDAO;
-import com.webrender.dao.Role;
-import com.webrender.dao.RoleDAO;
+
 
 public class ReguserUtils {
 	
@@ -22,13 +21,6 @@ public class ReguserUtils {
 			if(reguser == null){
 				reguser = new Reguser(name,"");
 			}
-			String roleName = element.getAttributeValue("groupName");
-			if (roleName != null){
-				RoleDAO roleDAO = new RoleDAO();
-				Role role = roleDAO.findByRoleName(roleName);
-				if(role!=null)
-					reguser.setRole(role);
-			}
 			log.debug("xml2Bean success");
 			return reguser;			
 		}catch(Exception e){
@@ -41,9 +33,7 @@ public class ReguserUtils {
 		log.debug("bean2Xml");
 		try{
 			Element element = new Element("User");
-			element.addAttribute("name", regUser.getRegName());
-			if( regUser.getRole()!=null ) element.addAttribute("groupName",regUser.getRole().getRoleName());
-			log.debug("bean2Xml success");
+			
 			return element;
 		}catch(Exception e){
 			log.error("bean2Xml fail",e);

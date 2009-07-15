@@ -34,6 +34,10 @@ public class QuestsState extends BaseAxis {
 			log.debug("getQuestStatus success: id = "+questId);
 			return XMLOut.outputToString(doc);
 		}
+		catch(NullPointerException e){
+			log.error("getQuestStatus failure: id = "+questId,e);
+			return "QuestNotExistError";
+		}
 		catch(Exception e)
 		{
 			log.error("getQuestStatus failure: id = "+questId,e);

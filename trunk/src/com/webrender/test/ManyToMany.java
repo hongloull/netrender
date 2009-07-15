@@ -8,7 +8,6 @@ import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
 import com.webrender.dao.Nodegroup;
 import com.webrender.dao.Reguser;
-import com.webrender.dao.Role;
 
 public class ManyToMany {
 
