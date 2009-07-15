@@ -25,7 +25,6 @@ public class TimegroupDAO extends BaseHibernateDAO {
 	// property constants
 	public static final String TIME_GROUP_NAME = "timeGroupName";
 	public static final String TIME_VALUE = "timeValue";
-	public static final String STATUS_ID = "statusId";
 
 	public void save(Timegroup transientInstance) {
 		log.debug("saving Timegroup instance");
@@ -97,10 +96,6 @@ public class TimegroupDAO extends BaseHibernateDAO {
 
 	public List findByTimeValue(Object timeValue) {
 		return findByProperty(TIME_VALUE, timeValue);
-	}
-
-	public List findByStatusId(Object statusId) {
-		return findByProperty(STATUS_ID, statusId);
 	}
 
 	public List findAll() {

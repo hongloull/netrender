@@ -13,11 +13,11 @@
         <property name="instruction" type="string">
             <column name="Instruction" not-null="true" />
         </property>
-        <set name="roles" table="roleright" lazy="false" inverse="true">
+        <set name="regusers" table="reguserright" lazy="false" inverse="true">
             <key>
                 <column name="RightID" not-null="true" />
             </key>
-            <many-to-many class="com.webrender.dao.Role" column="RoleID" outer-join="auto" />
+            <many-to-many class="com.webrender.dao.Reguser" column="RegUserID" outer-join="auto" />
         </set>
     </class>
 </hibernate-mapping>
