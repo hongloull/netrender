@@ -25,17 +25,29 @@
             </key>
             <one-to-many class="com.webrender.dao.Quest" />
         </set>
-        <set name="rights" table="reguserright" lazy="false"  inverse="false" cascade="save-update">
+        <set name="nodegroups" table="regusernodegroup" inverse="false" cascade="save-update">
             <key>
                 <column name="RegUserID" not-null="true" />
             </key>
-            <many-to-many class="com.webrender.dao.Right" column="RightID" outer-join="auto" />
+            <many-to-many class="com.webrender.dao.Nodegroup" column="NodeGroupID" outer-join="auto" />
+        </set>
+        <set name="rights" table="reguserrights" inverse="false" cascade="save-update">
+            <key>
+                <column name="RegUserID" not-null="true" />
+            </key>
+            <many-to-many class="com.webrender.dao.Right" column="RightID" outer-join="auto"/>
         </set>
         <set name="operatelogs" inverse="true">
             <key>
                 <column name="RegUserID" not-null="true" />
             </key>
             <one-to-many class="com.webrender.dao.Operatelog" />
+        </set>
+        <set name="models" table="regusermodels" inverse="false" cascade="save-update">
+            <key>
+                <column name="RegUserID" not-null="true" />
+            </key>
+            <many-to-many class="com.webrender.dao.Commandmodel" column="CommandModelID" outer-join="auto"/>
         </set>
     </class>
 </hibernate-mapping>

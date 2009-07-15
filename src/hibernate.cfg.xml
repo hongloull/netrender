@@ -26,14 +26,14 @@
 		<mapping resource="com/webrender/dao/Quest.hbm.xml" />
 		<mapping resource="com/webrender/dao/Status.hbm.xml" />
 		<mapping resource="com/webrender/dao/Reguser.hbm.xml" />
-		<mapping resource="com/webrender/dao/Role.hbm.xml" />
 		<mapping resource="com/webrender/dao/Executelog.hbm.xml" />
-		<mapping resource="com/webrender/dao/Rolenodetime.hbm.xml" />
 		<mapping resource="com/webrender/dao/Command.hbm.xml" />
 		<mapping resource="com/webrender/dao/Node.hbm.xml" />
 		<mapping resource="com/webrender/dao/Commandmodelarg.hbm.xml" />
 		<mapping resource="com/webrender/dao/Commandarg.hbm.xml" />
 		<mapping resource="com/webrender/dao/Right.hbm.xml" />
+		<mapping resource="com/webrender/dao/Reguserright.hbm.xml" />
+		<mapping resource="com/webrender/dao/Nodetime.hbm.xml" />
 	</session-factory>
 
 </hibernate-configuration>

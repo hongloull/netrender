@@ -16,6 +16,7 @@ public class Status implements java.io.Serializable {
 	private Integer statusId;
 	private String type;
 	private String value;
+	private Set nodegroups = new HashSet(0);
 	private Set executelogs = new HashSet(0);
 	private Set quests = new HashSet(0);
 	private Set commandmodelargs = new HashSet(0);
@@ -23,7 +24,6 @@ public class Status implements java.io.Serializable {
 	private Set commands = new HashSet(0);
 	private Set timegroups = new HashSet(0);
 	private Set nodes = new HashSet(0);
-	private Set nodegroups = new HashSet(0);
 	private Set regusers = new HashSet(0);
 
 	// Constructors
@@ -39,11 +39,12 @@ public class Status implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public Status(String type, String value, Set executelogs, Set quests,
-			Set commandmodelargs, Set commandmodels, Set commands,
-			Set timegroups, Set nodes, Set nodegroups, Set regusers) {
+	public Status(String type, String value, Set nodegroups, Set executelogs,
+			Set quests, Set commandmodelargs, Set commandmodels, Set commands,
+			Set timegroups, Set nodes, Set regusers) {
 		this.type = type;
 		this.value = value;
+		this.nodegroups = nodegroups;
 		this.executelogs = executelogs;
 		this.quests = quests;
 		this.commandmodelargs = commandmodelargs;
@@ -51,7 +52,6 @@ public class Status implements java.io.Serializable {
 		this.commands = commands;
 		this.timegroups = timegroups;
 		this.nodes = nodes;
-		this.nodegroups = nodegroups;
 		this.regusers = regusers;
 	}
 
@@ -79,6 +79,14 @@ public class Status implements java.io.Serializable {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	public Set getNodegroups() {
+		return this.nodegroups;
+	}
+
+	public void setNodegroups(Set nodegroups) {
+		this.nodegroups = nodegroups;
 	}
 
 	public Set getExecutelogs() {
@@ -135,14 +143,6 @@ public class Status implements java.io.Serializable {
 
 	public void setNodes(Set nodes) {
 		this.nodes = nodes;
-	}
-
-	public Set getNodegroups() {
-		return this.nodegroups;
-	}
-
-	public void setNodegroups(Set nodegroups) {
-		this.nodegroups = nodegroups;
 	}
 
 	public Set getRegusers() {

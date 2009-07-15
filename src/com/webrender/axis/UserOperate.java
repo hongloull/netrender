@@ -15,8 +15,7 @@ import com.webrender.axis.beanxml.XMLOut;
 import com.webrender.config.GenericConfig;
 import com.webrender.dao.Reguser;
 import com.webrender.dao.ReguserDAO;
-import com.webrender.dao.Role;
-import com.webrender.dao.RoleDAO;
+
 
 public class UserOperate extends BaseAxis {
 	private static final Log log = LogFactory.getLog(UserOperate.class);
@@ -28,7 +27,7 @@ public class UserOperate extends BaseAxis {
 	 * @param groupName
 	 * @return
 	 */
-	public String addUser(String regName,String passWord,String groupName){
+	public String addUser(String regName,String passWord){
 		log.debug("addUser: "+ regName);
 		try{
 			if (!this.canVisit(8)){
@@ -56,10 +55,7 @@ public class UserOperate extends BaseAxis {
 			
 			tx = getTransaction();
 			regUser = new Reguser(regName,passWord+"");
-			RoleDAO roleDAO = new RoleDAO();
-			Role role = roleDAO.findByRoleName(groupName);
-			if (role==null) throw new NullPointerException("UserGroupNotExistError");
-			regUser.setRole(role);
+			
 			regUserDAO.save(regUser);
 			Element element = ReguserUtils.bean2Xml(regUser);
 			if (element==null) throw new NullPointerException("bean2XMLError");
@@ -96,7 +92,7 @@ public class UserOperate extends BaseAxis {
 		return BaseAxis.ActionSuccess;
 	}
 	
-	public String modUser(String regName,String modName,String passWord,String groupName){
+	public String modUser(String regName,String modName,String passWord){
 		log.debug("modUser");
 		
 //		try{
@@ -125,11 +121,7 @@ public class UserOperate extends BaseAxis {
 			if(modName!=null) regUser.setRegName(modName);
 			if(passWord!=null)regUser.setPassWord(passWord);
 			
-			if (groupName!=null && (! groupName.equals(regUser.getRole().getRoleName() )) ) {
-				RoleDAO roleDAO = new RoleDAO();
-				Role role = roleDAO.findByRoleName(groupName);
-				if(role!=null) regUser.setRole(role);			
-			}
+			
 			regUserDAO.save(regUser);
 		
 			Element element = ReguserUtils.bean2Xml(regUser);

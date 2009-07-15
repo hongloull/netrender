@@ -17,8 +17,9 @@ public class Commandmodel implements java.io.Serializable {
 	private Status status;
 	private String commandModelName;
 	private String description;
-	private Set quests = new HashSet(0);
+	private Set regusers = new HashSet(0);
 	private Set commandmodelargs = new HashSet(0);
+	private Set quests = new HashSet(0);
 
 	// Constructors
 
@@ -27,19 +28,20 @@ public class Commandmodel implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public Commandmodel( String commandModelName) {
+	public Commandmodel(String commandModelName) {
 		this.commandModelName = commandModelName;
 	}
 
 	/** full constructor */
-	public Commandmodel(Status status,
-			String commandModelName, String description, Set quests,
-			Set commandmodelargs) {
+	public Commandmodel(Status status, String commandModelName,
+			String description, Set regusers, Set commandmodelargs,
+			Set quests) {
 		this.status = status;
 		this.commandModelName = commandModelName;
 		this.description = description;
-		this.quests = quests;
+		this.regusers = regusers;
 		this.commandmodelargs = commandmodelargs;
+		this.quests = quests;
 	}
 
 	// Property accessors
@@ -60,7 +62,6 @@ public class Commandmodel implements java.io.Serializable {
 		this.status = status;
 	}
 
-
 	public String getCommandModelName() {
 		return this.commandModelName;
 	}
@@ -77,12 +78,12 @@ public class Commandmodel implements java.io.Serializable {
 		this.description = description;
 	}
 
-	public Set getQuests() {
-		return this.quests;
+	public Set getRegusers() {
+		return this.regusers;
 	}
 
-	public void setQuests(Set quests) {
-		this.quests = quests;
+	public void setRegusers(Set regusers) {
+		this.regusers = regusers;
 	}
 
 	public Set getCommandmodelargs() {
@@ -91,6 +92,14 @@ public class Commandmodel implements java.io.Serializable {
 
 	public void setCommandmodelargs(Set commandmodelargs) {
 		this.commandmodelargs = commandmodelargs;
+	}
+
+	public Set getQuests() {
+		return this.quests;
+	}
+
+	public void setQuests(Set quests) {
+		this.quests = quests;
 	}
 
 }
