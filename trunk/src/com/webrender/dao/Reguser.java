@@ -15,10 +15,10 @@ public class Reguser implements java.io.Serializable {
 
 	private Integer regUserId;
 	private Status status;
-	private Role role;
 	private String regName;
 	private String passWord;
 	private Set quests = new HashSet(0);
+	private Set rights = new HashSet(0);
 	private Set operatelogs = new HashSet(0);
 
 	// Constructors
@@ -34,13 +34,13 @@ public class Reguser implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public Reguser(Status status, Role role, String regName, String passWord,
-			Set quests, Set operatelogs) {
+	public Reguser(Status status, String regName, String passWord, Set quests,
+			Set rights, Set operatelogs) {
 		this.status = status;
-		this.role = role;
 		this.regName = regName;
 		this.passWord = passWord;
 		this.quests = quests;
+		this.rights = rights;
 		this.operatelogs = operatelogs;
 	}
 
@@ -60,14 +60,6 @@ public class Reguser implements java.io.Serializable {
 
 	public void setStatus(Status status) {
 		this.status = status;
-	}
-
-	public Role getRole() {
-		return this.role;
-	}
-
-	public void setRole(Role role) {
-		this.role = role;
 	}
 
 	public String getRegName() {
@@ -92,6 +84,14 @@ public class Reguser implements java.io.Serializable {
 
 	public void setQuests(Set quests) {
 		this.quests = quests;
+	}
+
+	public Set getRights() {
+		return this.rights;
+	}
+
+	public void setRights(Set rights) {
+		this.rights = rights;
 	}
 
 	public Set getOperatelogs() {

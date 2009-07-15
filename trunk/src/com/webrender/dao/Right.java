@@ -15,7 +15,7 @@ public class Right implements java.io.Serializable {
 
 	private Integer rightId;
 	private String instruction;
-	private Set roles = new HashSet(0);
+	private Set regusers = new HashSet(0);
 
 	// Constructors
 
@@ -29,9 +29,9 @@ public class Right implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public Right(String instruction, Set roles) {
+	public Right(String instruction, Set reguser) {
 		this.instruction = instruction;
-		this.roles = roles;
+		this.regusers = regusers;
 	}
 
 	// Property accessors
@@ -52,12 +52,12 @@ public class Right implements java.io.Serializable {
 		this.instruction = instruction;
 	}
 
-	public Set getRoles() {
-		return this.roles;
+	public Set getReguses() {
+		return this.regusers;
 	}
 
-	public void setRoles(Set roles) {
-		this.roles = roles;
+	public void setRegusers(Set regusers) {
+		this.regusers = regusers;
 	}
 
 }

@@ -152,7 +152,7 @@ public class ReguserDAO extends BaseHibernateDAO {
 		log.debug("getRightValue");
 		Set<Integer> rightValue = new HashSet<Integer>();
 		try{
-			Iterator ite_Rights = instance.getRole().getRights().iterator();
+			Iterator ite_Rights = instance.getRights().iterator();
 			while( ite_Rights.hasNext() ){
 				Right right = (Right) ite_Rights.next();
 				rightValue.add(right.getRightId());

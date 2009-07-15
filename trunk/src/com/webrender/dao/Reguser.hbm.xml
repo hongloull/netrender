@@ -13,9 +13,6 @@
         <many-to-one name="status" class="com.webrender.dao.Status" fetch="select">
             <column name="StatusID" />
         </many-to-one>
-        <many-to-one name="role" class="com.webrender.dao.Role" fetch="select">
-            <column name="RoleID" />
-        </many-to-one>
         <property name="regName" type="string">
             <column name="RegName" length="50" not-null="true" unique="true" />
         </property>
@@ -27,6 +24,12 @@
                 <column name="RegUserID" not-null="true" />
             </key>
             <one-to-many class="com.webrender.dao.Quest" />
+        </set>
+        <set name="rights" table="reguserright" lazy="false"  inverse="false" cascade="save-update">
+            <key>
+                <column name="RegUserID" not-null="true" />
+            </key>
+            <many-to-many class="com.webrender.dao.Right" column="RightID" outer-join="auto" />
         </set>
         <set name="operatelogs" inverse="true">
             <key>

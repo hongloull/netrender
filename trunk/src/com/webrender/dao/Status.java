@@ -16,15 +16,15 @@ public class Status implements java.io.Serializable {
 	private Integer statusId;
 	private String type;
 	private String value;
-	private Set nodegroups = new HashSet(0);
 	private Set executelogs = new HashSet(0);
-	private Set commands = new HashSet(0);
-	private Set commandmodelargs = new HashSet(0);
-	private Set roles = new HashSet(0);
-	private Set nodes = new HashSet(0);
-	private Set commandmodels = new HashSet(0);
-	private Set regusers = new HashSet(0);
 	private Set quests = new HashSet(0);
+	private Set commandmodelargs = new HashSet(0);
+	private Set commandmodels = new HashSet(0);
+	private Set commands = new HashSet(0);
+	private Set timegroups = new HashSet(0);
+	private Set nodes = new HashSet(0);
+	private Set nodegroups = new HashSet(0);
+	private Set regusers = new HashSet(0);
 
 	// Constructors
 
@@ -39,20 +39,20 @@ public class Status implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public Status(String type, String value, Set nodegroups, Set executelogs,
-			Set commands, Set commandmodelargs, Set roles, Set nodes,
-			Set commandmodels, Set regusers, Set quests) {
+	public Status(String type, String value, Set executelogs, Set quests,
+			Set commandmodelargs, Set commandmodels, Set commands,
+			Set timegroups, Set nodes, Set nodegroups, Set regusers) {
 		this.type = type;
 		this.value = value;
-		this.nodegroups = nodegroups;
 		this.executelogs = executelogs;
-		this.commands = commands;
-		this.commandmodelargs = commandmodelargs;
-		this.roles = roles;
-		this.nodes = nodes;
-		this.commandmodels = commandmodels;
-		this.regusers = regusers;
 		this.quests = quests;
+		this.commandmodelargs = commandmodelargs;
+		this.commandmodels = commandmodels;
+		this.commands = commands;
+		this.timegroups = timegroups;
+		this.nodes = nodes;
+		this.nodegroups = nodegroups;
+		this.regusers = regusers;
 	}
 
 	// Property accessors
@@ -81,14 +81,6 @@ public class Status implements java.io.Serializable {
 		this.value = value;
 	}
 
-	public Set getNodegroups() {
-		return this.nodegroups;
-	}
-
-	public void setNodegroups(Set nodegroups) {
-		this.nodegroups = nodegroups;
-	}
-
 	public Set getExecutelogs() {
 		return this.executelogs;
 	}
@@ -97,12 +89,12 @@ public class Status implements java.io.Serializable {
 		this.executelogs = executelogs;
 	}
 
-	public Set getCommands() {
-		return this.commands;
+	public Set getQuests() {
+		return this.quests;
 	}
 
-	public void setCommands(Set commands) {
-		this.commands = commands;
+	public void setQuests(Set quests) {
+		this.quests = quests;
 	}
 
 	public Set getCommandmodelargs() {
@@ -113,12 +105,28 @@ public class Status implements java.io.Serializable {
 		this.commandmodelargs = commandmodelargs;
 	}
 
-	public Set getRoles() {
-		return this.roles;
+	public Set getCommandmodels() {
+		return this.commandmodels;
 	}
 
-	public void setRoles(Set roles) {
-		this.roles = roles;
+	public void setCommandmodels(Set commandmodels) {
+		this.commandmodels = commandmodels;
+	}
+
+	public Set getCommands() {
+		return this.commands;
+	}
+
+	public void setCommands(Set commands) {
+		this.commands = commands;
+	}
+
+	public Set getTimegroups() {
+		return this.timegroups;
+	}
+
+	public void setTimegroups(Set timegroups) {
+		this.timegroups = timegroups;
 	}
 
 	public Set getNodes() {
@@ -129,12 +137,12 @@ public class Status implements java.io.Serializable {
 		this.nodes = nodes;
 	}
 
-	public Set getCommandmodels() {
-		return this.commandmodels;
+	public Set getNodegroups() {
+		return this.nodegroups;
 	}
 
-	public void setCommandmodels(Set commandmodels) {
-		this.commandmodels = commandmodels;
+	public void setNodegroups(Set nodegroups) {
+		this.nodegroups = nodegroups;
 	}
 
 	public Set getRegusers() {
@@ -143,14 +151,6 @@ public class Status implements java.io.Serializable {
 
 	public void setRegusers(Set regusers) {
 		this.regusers = regusers;
-	}
-
-	public Set getQuests() {
-		return this.quests;
-	}
-
-	public void setQuests(Set quests) {
-		this.quests = quests;
 	}
 
 }

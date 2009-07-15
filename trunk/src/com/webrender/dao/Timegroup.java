@@ -14,10 +14,10 @@ public class Timegroup implements java.io.Serializable {
 	// Fields
 
 	private Integer timeGroupId;
+	private Status status;
 	private String timeGroupName;
 	private String timeValue;
-	private Integer statusId;
-	private Set rolenodetimes = new HashSet(0);
+	private Set nodegroups = new HashSet(0);
 
 	// Constructors
 
@@ -32,12 +32,12 @@ public class Timegroup implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public Timegroup(String timeGroupName, String timeValue, Integer statusId,
-			Set rolenodetimes) {
+	public Timegroup(Status status, String timeGroupName, String timeValue,
+			Set nodegroups) {
+		this.status = status;
 		this.timeGroupName = timeGroupName;
 		this.timeValue = timeValue;
-		this.statusId = statusId;
-		this.rolenodetimes = rolenodetimes;
+		this.nodegroups = nodegroups;
 	}
 
 	// Property accessors
@@ -48,6 +48,14 @@ public class Timegroup implements java.io.Serializable {
 
 	public void setTimeGroupId(Integer timeGroupId) {
 		this.timeGroupId = timeGroupId;
+	}
+
+	public Status getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
 	public String getTimeGroupName() {
@@ -66,20 +74,12 @@ public class Timegroup implements java.io.Serializable {
 		this.timeValue = timeValue;
 	}
 
-	public Integer getStatusId() {
-		return this.statusId;
+	public Set getNodegroups() {
+		return this.nodegroups;
 	}
 
-	public void setStatusId(Integer statusId) {
-		this.statusId = statusId;
-	}
-
-	public Set getRolenodetimes() {
-		return this.rolenodetimes;
-	}
-
-	public void setRolenodetimes(Set rolenodetimes) {
-		this.rolenodetimes = rolenodetimes;
+	public void setNodegroups(Set nodegroups) {
+		this.nodegroups = nodegroups;
 	}
 
 }
