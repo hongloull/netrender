@@ -90,8 +90,10 @@ public class CommandmodelDAO extends BaseHibernateDAO {
 		}
 	}
 
-	public List findByCommandModelName(Object commandModelName) {
-		return findByProperty(COMMAND_MODEL_NAME, commandModelName);
+	public Commandmodel findByCommandModelName(Object commandModelName) {
+		List lis =  findByProperty(COMMAND_MODEL_NAME, commandModelName);
+		if( lis.size()==1 ) return (Commandmodel) lis.get(0);
+		return null;
 	}
 
 	public List findByDescription(Object description) {

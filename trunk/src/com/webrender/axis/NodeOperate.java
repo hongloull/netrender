@@ -56,11 +56,15 @@ public class NodeOperate extends BaseAxis {
 			log.error("RightVisit error",e);
 			return BaseAxis.RightError;
 		}
-		
-		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(nodeIp);
-		nodeMachine.setPause(true);
-		log.debug("pauseNode success");
-		return BaseAxis.ActionSuccess;
+		try{
+			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(nodeIp);
+			nodeMachine.setPause(true);
+			log.debug("pauseNode success");
+			return BaseAxis.ActionSuccess;			
+		}catch(Exception e){
+			log.error("pauseNode", e);
+			return BaseAxis.ActionFailure;
+		}
 	}
 	public String resumeNode(String nodeIp)
 	{
@@ -73,11 +77,15 @@ public class NodeOperate extends BaseAxis {
 			log.error("RightVisit error",e);
 			return BaseAxis.RightError;
 		}
-		
-		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(nodeIp);
-		nodeMachine.setPause(false);
-		log.debug("resumeNode success");
-		return BaseAxis.ActionSuccess;
+		try{
+			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(nodeIp);
+			nodeMachine.setPause(false);
+			log.debug("resumeNode success");
+			return BaseAxis.ActionSuccess;			
+		}catch(Exception e){
+			log.error("resumeNode fail");
+			return BaseAxis.ActionFailure;
+		}
 	}
 	public String setRealLog(String nodeIp,int isOpen){
 		log.debug("setRealLog");
@@ -90,10 +98,16 @@ public class NodeOperate extends BaseAxis {
 			return BaseAxis.RightError;
 		}
 		
+		try{
 		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(nodeIp);
 		nodeMachine.setRealTime(isOpen==1?true:false);
 		log.debug("setRealLog success");
 		return BaseAxis.ActionSuccess;
+		}catch(Exception e)
+		{
+			log.error("setRealLog fail" ,e);
+			return BaseAxis.ActionFailure;
+		}
 	}
 	public String killCommand(String nodeIp)
 	{

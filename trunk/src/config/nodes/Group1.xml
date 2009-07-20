@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<NodeGroup>
+<NodeGroup timeGroup="All">
 <Node nodeIp="172.16.20.93" />
 <Node nodeIp="172.16.20.33" />
 </NodeGroup>

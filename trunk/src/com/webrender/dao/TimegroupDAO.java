@@ -90,8 +90,10 @@ public class TimegroupDAO extends BaseHibernateDAO {
 		}
 	}
 
-	public List findByTimeGroupName(Object timeGroupName) {
-		return findByProperty(TIME_GROUP_NAME, timeGroupName);
+	public Timegroup findByTimeGroupName(Object timeGroupName) {
+		List lis =  findByProperty(TIME_GROUP_NAME, timeGroupName);
+		if(lis.size()==1) return (Timegroup)lis.get(0);
+		return null;
 	}
 
 	public List findByTimeValue(Object timeValue) {

@@ -1,5 +1,6 @@
 package com.webrender.axis;
 
+import java.io.File;
 import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
@@ -22,14 +23,14 @@ public class CommandOperate extends BaseAxis {
 	public String getRealLogs(String commandId){
 		
 		// 权限判断
-		try{
-			if (! this.canVisit(7) ){
-				return BaseAxis.RightError;
-			}
-		}catch(Exception e){
-			log.error("RightVisit error",e);
-			return BaseAxis.RightError;
-		}
+//		try{
+//			if (! this.canVisit(7) ){
+//				return BaseAxis.RightError;
+//			}
+//		}catch(Exception e){
+//			log.error("RightVisit error",e);
+//			return BaseAxis.RightError;
+//		}
 		
 		log.debug("getRealLogs");
 		Transaction tx = null;
@@ -45,6 +46,7 @@ public class CommandOperate extends BaseAxis {
 					root.addContent( ExecutelogUtils.bean2xml(log) );
 			}
 			log.debug("getRealLog success");
+		//	XMLOut.outputToFile(doc,new File("d:/reallog.xml") );
 			return XMLOut.outputToString(doc);
 		}catch(Exception e)
 		{

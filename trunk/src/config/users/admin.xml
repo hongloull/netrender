@@ -7,4 +7,7 @@
 <Right id="6"/>
 <Right id="7"/>
 <Right id="8"/>
+<Model name="Maya"/>
+<Group name="Group1"/>
+<Group name="Group2"/>
 </User>

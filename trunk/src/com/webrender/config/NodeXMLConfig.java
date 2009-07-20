@@ -19,6 +19,8 @@ import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
 import com.webrender.dao.Nodegroup;
 import com.webrender.dao.NodegroupDAO;
+import com.webrender.dao.Timegroup;
+import com.webrender.dao.TimegroupDAO;
 
 public class NodeXMLConfig extends XMLConfig {
 	private static List lis_NGs = (new NodegroupDAO()).findAll();
@@ -33,6 +35,9 @@ public class NodeXMLConfig extends XMLConfig {
 		NodegroupDAO nodeGroupDAO = new NodegroupDAO();
 		Nodegroup nodeGroup = nodeGroupDAO.findByNodeGroupName(nodeGroupName);
 		NodeDAO nodeDAO = new NodeDAO();
+		TimegroupDAO tGroupDAO = new TimegroupDAO();
+		
+		Element root = doc.getRootElement();
 
 		Transaction tx = null;
 		try{
@@ -41,11 +46,16 @@ public class NodeXMLConfig extends XMLConfig {
 			if(nodeGroup==null){
 				nodeGroup = new Nodegroup();
 				nodeGroup.setNodeGroupName(nodeGroupName);
-				nodeGroupDAO.save(nodeGroup);
 			}
+			String timeGroupName = root.getAttributeValue("timeGroup");
+			Timegroup tGroup = tGroupDAO.findByTimeGroupName(timeGroupName);
+			if (tGroup!=null){
+				nodeGroup.setTimegroup(tGroup);
+			}
+			nodeGroupDAO.save(nodeGroup);
+			
 			Set set_Nodes = nodeGroup.getNodes();
 			HashSet<Node> set_RetainNodes = new HashSet<Node>();
-			Element root = doc.getRootElement();
 			Iterator ite_Nodes = root.getChildren().iterator();
 			
 			
@@ -59,7 +69,7 @@ public class NodeXMLConfig extends XMLConfig {
 //					System.out.println("set_Nodes  contains node");
 				}
 				else{
-					System.out.println("set_Nodes containsnot node");
+				//	System.out.println("set_Nodes containsnot node");
 					set_Nodes.add(node);
 					node.getNodegroups().add(nodeGroup);
 				}

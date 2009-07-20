@@ -20,6 +20,10 @@ public class XMLConfigFactory {
 			XMLConfig instance = new NodeXMLConfig();
 			return instance;
 		}
+		if(pojoName.equalsIgnoreCase("users")){
+			XMLConfig instance = new UserXMLConfig();
+			return instance;
+		}
 		if(pojoName.equalsIgnoreCase("right")){
 			if(fileName.equalsIgnoreCase("right.xml")){
 				XMLConfig instance = new RightXMLConfig();				
@@ -29,10 +33,10 @@ public class XMLConfigFactory {
 //				XMLConfig instance = new UserGroupXMLConfig();				
 //				return instance;
 //			}
-			else if(fileName.equalsIgnoreCase("users.xml")){
-				XMLConfig instance = new UserXMLConfig();				
-				return instance;
-			}
+//			else if(fileName.equalsIgnoreCase("users.xml")){
+//				XMLConfig instance = new UserXMLConfig();				
+//				return instance;
+//			}
 		}
 		return null;
 	}

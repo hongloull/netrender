@@ -52,7 +52,7 @@ public class Right implements java.io.Serializable {
 		this.instruction = instruction;
 	}
 
-	public Set getReguses() {
+	public Set getRegusers() {
 		return this.regusers;
 	}
 

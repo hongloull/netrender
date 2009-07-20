@@ -149,7 +149,7 @@ public class CommandDAO extends BaseHibernateDAO {
 		log.debug("getWaitingCommands ");
 		try
 		{
-			return getSession().createQuery("from Command as command where command.status.statusId=70 and command.quest.status.statusId=50 order by command.quest.pri desc").list();
+			return getSession().createQuery("from Command as command where command.status.statusId=70 and command.quest.status.statusId=50 order by command.quest.pri desc , command.commandId asc").list();
 			
 		}catch(RuntimeException re){
 			log.error("getWaitingCommands failed",re);
