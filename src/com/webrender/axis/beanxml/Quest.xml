@@ -1,1 +1,0 @@
-﻿<Quest  questName="mayarender2" pri="3" information="test"><Model commandModelId="1" ></Model><Node nodeId="1"/><Node nodeId="2"></Node><Questarg commandModelArgId="1" value="/project/23.ma" /><Questarg commandModelArgId="2" value="100" ></Questarg></Quest>

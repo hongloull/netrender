@@ -12,7 +12,7 @@ public class TestUserOperate {
 		String passWord  = "111111";
 		String groupName = "user";
 		UserOperate uo = new UserOperate();
-		System.out.println( uo.addUser(regName, passWord) );
+//		System.out.println( uo.addUser(regName, passWord) );
 	}
 //	@Test
 	public void testDelUser()
@@ -21,7 +21,7 @@ public class TestUserOperate {
 		String passWord  = "111111";
 		String groupName = "user";
 		UserOperate uo = new UserOperate();
-		System.out.println( uo.delUser(regName) );
+//		System.out.println( uo.delUser(regName) );
 	}
 	
 	@Test
@@ -32,6 +32,6 @@ public class TestUserOperate {
 		String passWord  = "111111";
 		String groupName = "user";
 		UserOperate uo = new UserOperate();
-		System.out.println( uo.modUser(regName, modName, passWord) );
+		System.out.println( uo.getUserConfig("admin") );
 	}
 }

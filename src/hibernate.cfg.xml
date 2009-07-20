@@ -17,6 +17,9 @@
 		<property name="connection.driver_class">
 			com.mysql.jdbc.Driver
 		</property>
+
+		<property name="cache.use_ query_cache">true</property>
+		
 		<property name="connection.password">111111</property>
 		<mapping resource="com/webrender/dao/Operatelog.hbm.xml" />
 		<mapping resource="com/webrender/dao/Nodegroup.hbm.xml" />
@@ -32,8 +35,6 @@
 		<mapping resource="com/webrender/dao/Commandmodelarg.hbm.xml" />
 		<mapping resource="com/webrender/dao/Commandarg.hbm.xml" />
 		<mapping resource="com/webrender/dao/Right.hbm.xml" />
-		<mapping resource="com/webrender/dao/Reguserright.hbm.xml" />
-		<mapping resource="com/webrender/dao/Nodetime.hbm.xml" />
 	</session-factory>
 
 </hibernate-configuration>

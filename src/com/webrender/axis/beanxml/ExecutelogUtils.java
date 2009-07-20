@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jdom.CDATA;
 import org.jdom.Document;
 import org.jdom.Element;
 
@@ -15,13 +16,13 @@ public class ExecutelogUtils {
 	{
 		Element root = new Element("Executelog");
 		root.addAttribute("executeLogId",exeLog.getExecuteLogId().toString());
-		root.addAttribute("note",exeLog.getNote());
+		CDATA note = new CDATA(exeLog.getNote());
+		root.addContent(note);
 		SimpleDateFormat dateFormat =new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String logTime = dateFormat.format(exeLog.getLogTime());
 		root.addAttribute("logTime", logTime);
 		root.addAttribute("nodeIp", exeLog.getNode().getNodeIp());
 		root.addAttribute("status",exeLog.getStatus().getValue());
-		
 		return root;
 	}
 	public static String bean2xmlString(Executelog exeLog)

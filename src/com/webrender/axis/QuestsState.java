@@ -2,6 +2,10 @@ package com.webrender.axis;
 
 import java.util.Iterator;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.axis.MessageContext;
+import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
@@ -31,6 +35,8 @@ public class QuestsState extends BaseAxis {
 			QuestDAO questDAO = new QuestDAO();
 			Element root = QuestUtils.bean2xml_State(questDAO.findById(Integer.parseInt(questId)));
 			Document doc = new Document(root);
+			log.info("QuestID: "+questId + "  Progress: "+root.getAttributeValue("progress"));
+		
 			log.debug("getQuestStatus success: id = "+questId);
 			return XMLOut.outputToString(doc);
 		}
@@ -61,22 +67,27 @@ public class QuestsState extends BaseAxis {
 			log.error("RightVisit error",e);
 			return BaseAxis.RightError;
 		}
-		
+		MessageContext mc = MessageContext.getCurrentContext();
+		String remoteAdd = ( (HttpServletRequest) mc.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST)).getRemoteAddr();
 		try{
+			getSession().flush();
+			
 			Element root = new Element("Quests");
 			Document doc = new Document(root);
 			
 			QuestDAO questDAO = new QuestDAO();
+			int size = questDAO.findAll().size();
+			
 			Iterator ite_Quests = questDAO.findAll().iterator();
 			while(ite_Quests.hasNext())
 			{
 				Quest quest = (Quest)ite_Quests.next();
-//				log.info("getQuestsStatus QuestID: " +quest.getQuestId() +" ThreadID:"+Thread.currentThread().getId());
 				Element ele_Quest = QuestUtils.bean2xml_State(quest);
 				root.addContent(ele_Quest);
 			}
 			String result = XMLOut.outputToString(doc);
-//			log.debug(result);
+//			log.info(result);
+			log.info(remoteAdd+" ThreadID:"+Thread.currentThread().getId()+" QuestsNum: "+ size);
 			log.debug("getQuestsStatus success");
 			return result;			
 		}catch(Exception e)

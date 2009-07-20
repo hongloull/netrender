@@ -9,6 +9,6 @@ public class TestXMLConfigManager {
 	public void testLoadConfig(){
 		XMLConfigManager.loadConfig();
 		
-		XMLConfigManager.loadConfig();
+//		XMLConfigManager.loadConfig();
 	}
 }

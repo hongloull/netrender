@@ -59,9 +59,8 @@ public class CommandmodelUtils {
 			commandModel = dao.findById(Integer.parseInt(commandModelId));
 		}
 		if (commandModel==null){
-			List<Commandmodel> lis_CM  = dao.findByCommandModelName(commandModelName);
-			if ( lis_CM.isEmpty() )	commandModel = new Commandmodel();
-			else commandModel = lis_CM.get(0);
+			commandModel  = dao.findByCommandModelName(commandModelName);
+			if (commandModel==null )	commandModel = new Commandmodel();
 			
 		}
 		

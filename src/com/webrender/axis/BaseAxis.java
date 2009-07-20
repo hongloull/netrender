@@ -58,6 +58,10 @@ public abstract class BaseAxis {
 	{
 		return HibernateSessionFactory.getSession().beginTransaction();
 	}
+	protected org.hibernate.Session getSession()
+	{
+		return HibernateSessionFactory.getSession();
+	}
 	protected void closeSession()
 	{
 		HibernateSessionFactory.closeSession();

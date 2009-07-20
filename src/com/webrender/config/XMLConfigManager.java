@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import com.webrender.dao.HibernateSessionFactory;
 
 public class XMLConfigManager {
-	private static String[] xmls = {"templates","nodes","right"};
+	private static String[] xmls = {"templates","nodes","right","users"};
 //	private static boolean[] pathExist = {false,false};
 //	private static String basePath = XMLConfigManager.class.getResource("/").getPath();
 	private static final Log log = LogFactory.getLog(XMLConfigManager.class);
@@ -36,7 +36,7 @@ public class XMLConfigManager {
 				}
 			}
 			catch(NullPointerException e){
-				log.error(xmls[i] +" not exist! ");
+				log.error(xmls[i] +" not exist! ",e);
 			}
 			catch(Exception e){
 				log.error("",e);
