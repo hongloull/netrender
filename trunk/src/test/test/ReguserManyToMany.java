@@ -27,6 +27,7 @@ public class ReguserManyToMany {
 		reguser.getModels().addAll(modelDAO.findAll());
 		reguser.getNodegroups().addAll(groupDAO.findAll());
 		regUserDAO.save(reguser);
+		Reguser reguser2 = regUserDAO.findByRegName("test20090715");
 		tx.commit();
 		HibernateSessionFactory.closeSession();
 	}

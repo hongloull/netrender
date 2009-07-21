@@ -77,7 +77,7 @@ public class NodeMachine implements TimeoutOperate {
 	private boolean isBusy = false;
 	private boolean isRealTime = false;
 	private boolean isPause = false;
-	
+	private NodeStatus status = null;
 	private TimeoutThread timeOutThread = null;
 	
 	private static final int commandPort = GenericConfig.getInstance().getCommandPort();
@@ -94,11 +94,12 @@ public class NodeMachine implements TimeoutOperate {
 		connector = new SocketConnector();
 		cfg = new SocketConnectorConfig();
 		cfg.setConnectTimeout( CONNECT_TIMEOUT );
-	    cfg.getFilterChain().addLast( "codec", new ProtocolCodecFilter( new TextLineCodecFactory( Charset.forName( "UTF-8" ))));   
+	    cfg.getFilterChain().addLast( "codec", new ProtocolCodecFilter( new TextLineCodecFactory( Charset.forName( "UTF-8" ))));
 	    cfg.getSessionConfig().setReuseAddress(true);
 	    iNetSAddress = new InetSocketAddress( ip, commandPort );
 	    handle = new MinaNodeSessionHandler(this);
 	    currentCommands = Collections.synchronizedSet(new HashSet<Integer>());;
+	    status = new NodeStatus();
 	}
 	
 	public boolean execute(Command command)
@@ -109,6 +110,12 @@ public class NodeMachine implements TimeoutOperate {
 		if( this.execute(str_Command))
 		{
 			addCommandId(command.getCommandId());
+			status.setJobName(command.getQuest().getQuestName());
+			if (timeOutThread == null){
+				log.debug("timeOutThread == null startNew");
+				timeOutThread = new TimeoutThread(60000,command.getCommandId(),this);
+				timeOutThread.start();
+			}
 			return true ;
 		}
 		else
@@ -208,7 +215,7 @@ public class NodeMachine implements TimeoutOperate {
 		log.debug(ip +": "+ command);
 		if (this.testConnect()==false) return false;
 		session.write(command);
-    	for (int i = 0 ; i<1000 ; i++)
+    	for (int i = 0 ; i<100 ; i++)
     	{
     		if (session.getAttribute("StartFlag")!=null)
     		{
@@ -217,7 +224,7 @@ public class NodeMachine implements TimeoutOperate {
     			return true;	
     		}
     		try {
-				Thread.sleep(20);
+				Thread.sleep(200);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -225,40 +232,28 @@ public class NodeMachine implements TimeoutOperate {
 		log.info("execute error");
 		return false;
 	}
-	
+	public void updateStatus(String message)
+	{
+		log.debug("updateStatus");
+		try {
+			setStatusFromXML(status,message);
+			log.debug("updateStatus success nodeIp: "+this.ip);
+		} catch (Exception e){
+			log.error(ip+": XMLException:"+message,e);
+		}
+	}
 	public NodeStatus getStatus()
 	{
 		log.debug("getStatus nodeIp: "+this.ip);
-		NodeStatus status = new NodeStatus();
 		if( this.isConnect()==false ){
+			log.debug("11");
 			status.setStatus("DISCONNECT");
-			return status;
 		}
-		
-		session.write("***STATUS***");
-		status.setStatus("");
-    	for (int i = 0 ; i<1000 ; i++)
-    	{
-    		if (session.getAttachment()!=null)
-    		{
-    			try {
-					setStatusFromXML(status, (String)session.getAttachment() );
-					session.setAttachment(null);
-					log.debug("getStatus success nodeIp: "+this.ip);
-					break;
-				} catch (Exception e){
-					log.error(ip+": XMLException"+session.getAttachment(),e);
-					continue;
-				} 
-    		}
-    		try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				log.error("Waiting Status",e);
-			}
-			if (i==999) log.error(ip+":GetStatus 超时10秒 Status="+status.getStatus()) ;
-    	}
-    	
+		else{
+			status.setStatus("CONNECT");
+			session.write("***STATUS***");
+		}
+		log.info("status.JobName:"+status.getJobName());
 		return status;
 	}
 
@@ -266,15 +261,15 @@ public class NodeMachine implements TimeoutOperate {
 		DocumentBuilder db=DocumentBuilderFactory.newInstance().newDocumentBuilder();
 //		File file=new File("WebRoot/WEB-INF/classes/status.xml");
 //		Document doc=db.parse(file);
-		
-		StringBufferInputStream   is   =   new   StringBufferInputStream(in); 
+		log.debug("setStatusFromXML");
+		StringBufferInputStream is = new StringBufferInputStream(in); 
 		Document doc=db.parse(is);
-	
 		Element root=doc.getDocumentElement();
 		status.setHostName(root.getAttribute("hostName"));
 		status.setCpuUsage(root.getAttribute("cpuUsage"));
 		status.setRamUsage(root.getAttribute("ramUsage"));
-		status. setStatus (root.getAttribute("cpuUsage"));
+//		status.setStatus (root.getAttribute("cpuUsage"));
+		log.debug("setStatusFromXML success");
 		return status;
 	}
 	
@@ -402,6 +397,7 @@ public class NodeMachine implements TimeoutOperate {
 	public void setBusy(boolean isBusy) {
 		
 		log.debug(ip +":setBusy("+isBusy+")");
+		if (isBusy==false) status.setJobName("");
 		this.isBusy = isBusy;
 		selfCheck();
 	}
@@ -488,6 +484,7 @@ public class NodeMachine implements TimeoutOperate {
 	
 	
 	public synchronized void  addRealLog(int commandId , String message){
+		
 		log.debug("addRealLog");
 		if(message==null || ! this.currentCommands.contains(commandId) ){
 			log.error("addRealLog commandId error");
@@ -495,6 +492,7 @@ public class NodeMachine implements TimeoutOperate {
 		}
 		try{
 			if (timeOutThread == null){
+				log.info("timeOutThread == null startNew");
 				timeOutThread = new TimeoutThread(60000,commandId,this);
 				timeOutThread.start();
 			}
