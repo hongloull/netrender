@@ -23,7 +23,7 @@ public class NodeUtils {
 		root.addAttribute("nodeIp",node.getNodeIp());
 		if (node.getCoreNum()!=null) root.addAttribute("coreNum",node.getCoreNum().toString());
 	//	if (node.getStatus()!=null) root.addAttribute("status",node.getStatus().getValue() );
-		if (node.getOs()!=null)root.addAttribute("plantform",node.getOs());
+	//	if (node.getOs()!=null)root.addAttribute("plantform",node.getOs());
 		
 		return root;
 	}

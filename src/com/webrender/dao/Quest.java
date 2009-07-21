@@ -15,6 +15,7 @@ public class Quest implements java.io.Serializable {
 	private Integer questId;
 	private Status status;
 	private Commandmodel commandmodel;
+	private Nodegroup nodegroup;
 	private Reguser reguser;
 	private String questName;
 	private String information;
@@ -155,6 +156,14 @@ public class Quest implements java.io.Serializable {
 
 	public void setQuestargs(Set questargs) {
 		this.questargs = questargs;
+	}
+
+	public Nodegroup getNodegroup() {
+		return nodegroup;
+	}
+
+	public void setNodegroup(Nodegroup nodegroup) {
+		this.nodegroup = nodegroup;
 	}
 
 }

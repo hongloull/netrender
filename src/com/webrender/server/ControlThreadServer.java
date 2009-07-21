@@ -100,20 +100,19 @@ public class ControlThreadServer extends Thread {
 					
 						int nodes_Size = NodeMachineManager.idleMachines.size();
 					// nodes_Size 空闲节点机的个数。
-						while(nodes_Size == 0)
+						if(nodes_Size == 0)
 						{
 							if (threadStop ==true) break;
 							
 							log.info("NoIdleNode");
 							try {
 								this.sleep(20000);
-								nodes_Size = NodeMachineManager.idleMachines.size();
+								break;
 							} catch (InterruptedException e) {
 								log.error("", e);
+								break;
 							}
 						}
-						
-						
 						
 						Iterator ite_Nodes = NodeMachineManager.idleMachines.iterator();
 						while(ite_Nodes.hasNext())

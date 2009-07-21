@@ -1,6 +1,7 @@
 package com.webrender.config;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,6 +35,9 @@ public class XMLConfigManager {
 					// 删除文件夹内不包含的数据 etc: NodeGroup
 					load.deleteExtraData();
 				}
+			}
+			catch(IOException e){
+				//忽视读取到非XML文件抛的异常
 			}
 			catch(NullPointerException e){
 				log.error(xmls[i] +" not exist! ",e);

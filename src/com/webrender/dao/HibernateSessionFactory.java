@@ -35,7 +35,7 @@ public class HibernateSessionFactory {
     		
 			configuration.configure(configFile);
 			String databaseServer = GenericConfig.getInstance().getDatabaseServer();
-			configuration.setProperty("hibernate.connection.url", "jdbc:mysql://"+databaseServer+":3306/distributedmanagement2?useUnicode=true&characterEncoding=UTF-8");
+			configuration.setProperty("hibernate.connection.url", "jdbc:mysql://"+databaseServer+":3306/distributedmanagement?useUnicode=true&characterEncoding=UTF-8");
 			sessionFactory = configuration.buildSessionFactory();
 //			sessionFactory.getStatistics().setStatisticsEnabled(true);
 		} catch (Exception e) {

@@ -87,7 +87,7 @@ public class QuestsState extends BaseAxis {
 			}
 			String result = XMLOut.outputToString(doc);
 //			log.info(result);
-			log.info(remoteAdd+" ThreadID:"+Thread.currentThread().getId()+" QuestsNum: "+ size);
+			log.debug(remoteAdd+" ThreadID:"+Thread.currentThread().getId()+" QuestsNum: "+ size);
 			log.debug("getQuestsStatus success");
 			return result;			
 		}catch(Exception e)

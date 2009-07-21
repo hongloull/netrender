@@ -36,7 +36,8 @@ public class MinaNodeSessionHandler extends IoHandlerAdapter {
 		}
 		else{
 			log.debug("StatusMessage:"+message);
-			session.setAttachment(message);
+		//	session.setAttachment(message);
+			this.nodeMachine.updateStatus((String)message);
 		}
 	}
 	

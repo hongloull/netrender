@@ -28,6 +28,8 @@ import com.webrender.dao.Commandmodel;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
 import com.webrender.dao.Node;
+import com.webrender.dao.Nodegroup;
+import com.webrender.dao.NodegroupDAO;
 import com.webrender.dao.Quest;
 import com.webrender.dao.QuestDAO;
 import com.webrender.dao.Questarg;
@@ -47,7 +49,7 @@ public class QuestOperate extends BaseAxis {
 	{
 	//	System.out.println(questXML);
 		log.debug("CommitQuest");
-		String regUserId = "1"; //this.IsLogin();
+		int regUserId =  this.getLoginUserId();
 		
 		try{
 			if (!this.canVisit(1)){
@@ -68,15 +70,19 @@ public class QuestOperate extends BaseAxis {
 			Document doc = builder.build(inputStream);
 			Element ele_quest = doc.getRootElement();
 			Quest quest = QuestUtils.xml2bean(ele_quest);
-			
+			String nodeGroupName = ele_quest.getAttributeValue("Nodes");
+			NodegroupDAO nGDAO = new NodegroupDAO();
+			Nodegroup nG =  nGDAO.findByNodeGroupName(nodeGroupName);
+			quest.setNodegroup(nG);
+						
 			Element ele_model = ele_quest.getChild("Commandmodel");
 			Commandmodel model = CommandmodelUtils.xml2bean(ele_model);
 			quest.setCommandmodel(model);
 			
 			ReguserDAO reguserDAO = new ReguserDAO();
-			
+			Reguser logUser = reguserDAO.findById( regUserId );
 			quest.setStatus(statusDAO.findById(50));
-			quest.setReguser(reguserDAO.findById(Integer.parseInt(regUserId)));
+			quest.setReguser(logUser);
 			
 			quest.setCommitTime(new Date());
 

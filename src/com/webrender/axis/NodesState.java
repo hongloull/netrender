@@ -66,11 +66,12 @@ public class NodesState extends BaseAxis{
 				if (ele_Node != null)
 					root.addContent(ele_Node);
 			}
-			log.debug("get all Nodes Status success");
-			return XMLOut.outputToString(doc);
+			String result = XMLOut.outputToString(doc);
+			log.info("get all Nodes Status success "+result);
+			return result;
 		}catch(Exception e)
 		{
-			log.error("get all nodes status fail");
+			log.error("get all nodes status fail",e);
 			return BaseAxis.ActionFailure;
 		}finally
 		{

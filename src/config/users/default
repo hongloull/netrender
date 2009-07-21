@@ -1,0 +1,12 @@
+<User maxInstance="0">
+<Right id="1"/>
+<Right id="2"/>
+<Right id="3"/>
+<Right id="4"/>
+<Right id="5"/>
+<Right id="6"/>
+<Right id="7"/>
+<Model name="Maya"/>
+<Group name="Group1"/>
+<Group name="Group2"/>
+</User>

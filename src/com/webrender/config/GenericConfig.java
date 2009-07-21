@@ -190,14 +190,8 @@ public class GenericConfig {
 	{
 		try {
 			String file = URLDecoder.decode(configPath+path,"utf-8");
-			File filePath = new File(file);
-			if ( filePath.exists() ){
-				return file;
-			}
-			else {
-//				System.err.println(filePath + " NOT EXIST. ");
-				return null;
-			}
+			return file;			
+			
 		} catch (UnsupportedEncodingException e) {
 //			e.printStackTrace();
 			return null;
