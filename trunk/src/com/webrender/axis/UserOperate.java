@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Transaction;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -30,6 +31,7 @@ public class UserOperate extends BaseAxis {
 	{
 		log.debug("getUserConfig");
 		try {
+			this.closeSession();
 			String users = GenericConfig.getInstance().getFile("users");
 			File path = new File(users);
 			if(!path.exists()) return "UserConfigNotExistError";
@@ -53,10 +55,10 @@ public class UserOperate extends BaseAxis {
 		}
 	}
 	
-	public String getUserConfig(String userName){
+	public String getUserConfig(String regName){
 		log.debug("getUserConfig");
 		
-		String userFile = GenericConfig.getInstance().getFile("users/"+userName+".xml");
+		String userFile = GenericConfig.getInstance().getFile("users/"+regName+".xml");
 		
 
 //		if (!file.canWrite()) throw new Exception("UsersXML ReadOnly");
@@ -68,7 +70,7 @@ public class UserOperate extends BaseAxis {
 			document = sb.build(file);
 			return XMLOut.outputToString(document);
 		} catch (Exception e) {
-			log.error("getUserConfig fail userName: "+userName, e);
+			log.error("getUserConfig fail userName: "+regName, e);
 			return BaseAxis.ActionFailure;
 		}finally{
 			this.closeSession();
@@ -95,7 +97,37 @@ public class UserOperate extends BaseAxis {
 		}
 		return BaseAxis.ActionSuccess;
 	}
-	
+	public String delUser(String regName){
+		log.debug("delUser");
+		ReguserDAO regUserDAO = new ReguserDAO();
+		Reguser regUser = regUserDAO.findByRegName(regName);
+		if (regUser==null) return "UserNotExistError";
+		String userFile = GenericConfig.getInstance().getFile("users/"+regName+".xml");
+		File file_User = new File(userFile);
+		boolean result = file_User.delete();
+		if(result == false){
+			this.closeSession();
+			return "Del"+regName+"FileError";
+		}
+		else{
+			Transaction tx = null;
+			try{
+				tx = getTransaction();
+				regUserDAO.delete(regUser);
+				tx.commit();
+				log.debug("delUser success");
+				return BaseAxis.ActionSuccess;
+			}catch(Exception e){
+				if(tx!=null){
+					tx.rollback();
+				}
+				log.error("delUser from database fail",e);
+				return "Del"+regName+"FileError";
+			}finally{
+				this.closeSession();
+			}
+		}
+	}
 	public String addUser(String regName ,String passWord){
 		log.debug("addUser");
 		

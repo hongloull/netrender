@@ -59,6 +59,7 @@ public class Conversion extends Thread {
 				if ( isRun(mainServer)==false)
 				{
 					if(this.status==1) {
+						i=0;
 						try {
 							sleep(60000);
 						} catch (InterruptedException e) {

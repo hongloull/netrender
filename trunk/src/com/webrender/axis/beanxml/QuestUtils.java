@@ -5,6 +5,7 @@ import org.jdom.Element;
 import com.webrender.dao.Quest;
 import com.webrender.dao.QuestDAO;
 import com.webrender.dao.QuestargDAO;
+import com.webrender.logic.CalcFrame;
 
 public class QuestUtils {
 	 public static Element bean2xml(Quest quest){
@@ -17,7 +18,7 @@ public class QuestUtils {
 		 SimpleDateFormat   df=new  SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");   
 		 root.addAttribute("commitTime",df.format(quest.getCommitTime())+"");
 		 if (quest.getPacketSize()!=null) root.addAttribute("packetSize",quest.getPacketSize().toString());
-		 root.addAttribute("Nodes","All");
+		 if(quest.getNodegroup()!=null)root.addAttribute("Nodes",quest.getNodegroup().getNodeGroupName());
 		 return root;
 	 }
 		 
@@ -67,8 +68,18 @@ public class QuestUtils {
 		 root.addAttribute("status",questDAO.getStatus(quest)+"");
 		 root.addAttribute("progress",questDAO.getProgress(quest)+"");
 		 root.addAttribute("commandModelName",quest.getCommandmodel().getCommandModelName());
+		 String startFrame = questargDAO.getStartFrame(quest)+"";
+		 String endFrame   = questargDAO.getEndFrame(quest)+"";
+		 try{
+			 CalcFrame cF = new CalcFrame();
+			 root.addAttribute("totalFrames",cF.getTotalFrames(quest));
+		 }catch(Exception e){
+			 
+		 }
+		 
 		 root.addAttribute("startFrame",questargDAO.getStartFrame(quest)+"");
 		 root.addAttribute("endFrame",questargDAO.getEndFrame(quest)+"");
+		 
 		 root.addAttribute("fileName",questargDAO.getFileName(quest)+"");
 		 return root;
 	 }

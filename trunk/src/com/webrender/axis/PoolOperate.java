@@ -38,5 +38,9 @@ public class PoolOperate extends BaseAxis {
 			this.closeSession();
 		}
 	}
+	public String getPools()
+	{
+		return getAllPools();
+	}
 	
 }

@@ -43,12 +43,13 @@ public class Quest implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public Quest(Status status, Commandmodel commandmodel, Reguser reguser,
+	public Quest(Status status, Commandmodel commandmodel,Nodegroup nodegroup, Reguser reguser,
 			String questName, String information, Short pri,
 			Date commitTime, Integer maxNodes, Short packetSize,
 			Set commands, Set questargs) {
 		this.status = status;
 		this.commandmodel = commandmodel;
+		this.nodegroup = nodegroup;
 		this.reguser = reguser;
 		this.questName = questName;
 		this.information = information;

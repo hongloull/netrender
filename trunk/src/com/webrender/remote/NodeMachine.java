@@ -55,6 +55,7 @@ import com.webrender.dao.QuestDAO;
 import com.webrender.dao.Questarg;
 import com.webrender.dao.QuestargDAO;
 import com.webrender.dao.StatusDAO;
+import com.webrender.server.ControlThreadServer;
 import com.webrender.tool.StrOperate;
 
 /* 
@@ -468,6 +469,7 @@ public class NodeMachine implements TimeoutOperate {
 
 				Command command = commandDAO.findById(commandId);
 				commandDAO.reinitCommand(command);
+				ControlThreadServer.getInstance().resume();
 				log.info("CommandID: "+command.getCommandId()+" reinit");
 
 				tx.commit();
@@ -550,9 +552,10 @@ public class NodeMachine implements TimeoutOperate {
 //				nodeDAO.attachDirty(node);
 				command.setNode(node);
 				command.setStatus(statusDAO.findById(72)); //72->Finish
+				command.setSendTime(new Date());
 				commandDAO.attachDirty(command);							
 				
-				Executelog executelog = new  Executelog(command,statusDAO.findById(91),node,"Finish",new Date()); 
+				Executelog executelog = new  Executelog(command,statusDAO.findById(91),node,commandDAO.getNote(command)+" finish.",new Date()); 
 				ExecutelogDAO exeDAO = new ExecutelogDAO();
 				exeDAO.save(executelog);
 				log.info(ip+" finish command");

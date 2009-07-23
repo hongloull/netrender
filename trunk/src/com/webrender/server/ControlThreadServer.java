@@ -12,6 +12,7 @@ import org.hibernate.Transaction;
 
 import com.webrender.dao.Command;
 import com.webrender.dao.CommandDAO;
+import com.webrender.dao.Commandarg;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
 import com.webrender.dao.HibernateSessionFactory;
@@ -71,19 +72,8 @@ public class ControlThreadServer extends Thread {
 					// 无待执行命令。
 					if (ite_Commands.hasNext()==false) 
 					{
-						log.info("No WaitingCommands Thread Suspend");
-						HibernateSessionFactory.closeSession();
-						this.suspend();
-						try {
-							log.info("ControlThreadServer resume");
-							//关2次，因为遇到有待执行命令查询不到的问题
-							Thread.sleep(10000);
-							HibernateSessionFactory.closeSession();
-							
-						} catch (InterruptedException e) {
-							log.error("Thread Sleep", e);
-						}
-						continue ;
+						this.threadSuspend("No WaitingCommands");
+												
 					}
 					// 按序执行命令
 					while(ite_Commands.hasNext())
@@ -144,7 +134,8 @@ public class ControlThreadServer extends Thread {
 									command.setStatus(statusDAO.findById(71));
 									commandDAO.attachDirty(command);	
 									// add log
-									Executelog executelog = new  Executelog(command,statusDAO.findById(90),node,nodeMachine.getCommand(command),new Date()); 
+									
+									Executelog executelog = new  Executelog(command,statusDAO.findById(90),node,commandDAO.getNote(command).toString(),new Date()); 
 									ExecutelogDAO exeDAO = new ExecutelogDAO();
 									exeDAO.save(executelog);
 									
@@ -182,7 +173,7 @@ public class ControlThreadServer extends Thread {
 									StatusDAO statusDAO = new StatusDAO();
 									//		node.setStatus(statusDAO.findById(44)); //disconnect
 									//		nodeDAO.attachDirty(node);	
-									Executelog executelog = new  Executelog(command,statusDAO.findById(99),node,"SendError: " +nodeMachine.getCommand(command),new Date()); 
+									Executelog executelog = new  Executelog(command,statusDAO.findById(99),node,"SendError: " +commandDAO.getNote(command),new Date()); 
 									ExecutelogDAO exeDAO = new ExecutelogDAO();
 									exeDAO.save(executelog);
 									tx.commit();
@@ -232,9 +223,18 @@ public class ControlThreadServer extends Thread {
 			{
 				// 调用一次threadStop()，只停一次。
 				threadStop = false;
-				log.info("ControlThreadServer Suspend");
+				log.info("ControlThreadServer threadStop Suspend");
 				HibernateSessionFactory.closeSession();
 				this.suspend();
+				try {
+					log.info("ControlThreadServer resume");
+					//关2次，因为遇到有待执行命令查询不到的问题
+					Thread.sleep(10000);
+					HibernateSessionFactory.closeSession();
+					
+				} catch (InterruptedException e) {
+					log.error("ControlThread Sleep", e);
+				}
 			}
 		}
 	}
