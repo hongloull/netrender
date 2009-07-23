@@ -103,4 +103,33 @@ public class CalcFrame {
 		
 	//	return results;
 	}
+	
+	public String getTotalFrames(Quest quest){
+		
+		Iterator questArgs = quest.getQuestargs().iterator();
+		while( questArgs.hasNext() )
+		{
+			Questarg questArg = (Questarg)questArgs.next();
+			int typeValue = questArg.getCommandmodelarg().getStatus().getStatusId();
+			switch (typeValue)
+			{
+			case 61:	startFrame  = new BigDecimal(questArg.getValue());
+						startTag = questArg.getCommandmodelarg();
+						break;
+			case 62:    endFrame   = new BigDecimal(questArg.getValue());
+						endTag  = questArg.getCommandmodelarg();
+						break;
+			case 63:    byFrame   = new BigDecimal(questArg.getValue());
+						byTag  = questArg.getCommandmodelarg();
+						break;
+			}
+		}
+		if (startFrame==null || endFrame==null || byFrame==null )
+		{
+			return "";			
+		}
+		BigDecimal temp = endFrame.subtract(startFrame).divide(byFrame);
+		BigDecimal totalFrames = ( temp.setScale(0, BigDecimal.ROUND_DOWN)).add(new BigDecimal("1"));
+		return totalFrames.toString();
+	}
 }

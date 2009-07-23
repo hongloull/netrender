@@ -234,6 +234,6 @@ public class QuestDAO extends BaseHibernateDAO {
 		if (total == 0 ) return "error";
 		return finish*100/total+"%";
 	}
-	
+
 	
 }

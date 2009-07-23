@@ -11,8 +11,8 @@ public class testCalcFrame {
 	public void test()
 	{
 		QuestDAO questDAO = new QuestDAO();
-		Quest quest = questDAO.findById(53);
+		Quest quest = questDAO.findById(70);
 		CalcFrame c = new CalcFrame();
-		
+		System.out.println( c.getTotalFrames(quest) );
 	}
 }

@@ -208,7 +208,7 @@ public class CommandDAO extends BaseHibernateDAO {
 		log.debug("getFinish");
 		try
 		{
-			Query query = getSession().createQuery("from Command as command where command.status.statusId=72 and command.quest.questId=? ");
+			Query query = getSession().createQuery("from Command as command where command.status.statusId=72 and command.quest.questId=? order by command.sendTime desc");
 			query.setParameter(0,quest.getQuestId());
 			log.debug("getFinish successful");
 			return  query.list();
@@ -218,6 +218,41 @@ public class CommandDAO extends BaseHibernateDAO {
 			log.error("getFinish failed",re);
 			throw re;
 		}	
+	}
+	public boolean isInProgress(Quest quest){
+		log.debug("isProgress");
+		try{
+			if( this.getInProgress(quest).size()>0) return true;
+			else{
+				Iterator ite_Finish=this.getFinish(quest).iterator();
+				if(ite_Finish.hasNext()) 
+				{
+					Command temp = (Command) ite_Finish.next();
+					long endTime = temp.getSendTime().getTime();
+					long nowTime = (new Date()).getTime();
+					double mins = (double)(nowTime-endTime)/1000/60;
+					log.debug("finishCommand happened before "+mins+" mins" );
+					if(mins<30)	return true;
+					else return false;
+				}
+				else{
+					return false;
+				}
+			}
+		}catch(RuntimeException re){
+			log.error("getFinish failed",re);
+			throw re;
+		}
+	}
+	
+	public String getNote(Command command){
+		Iterator<Commandarg> ite_Args = command.getCommandargs().iterator();
+		StringBuffer note = new StringBuffer(command.getQuest().getQuestName()+":");
+		while(ite_Args.hasNext()){
+			Commandarg arg = ite_Args.next();
+			note.append(" ").append(arg.getCommandmodelarg().getArgName()).append(" ").append(arg.getValue()).append(" ");
+		}
+		return note.toString();
 	}
 
 	
