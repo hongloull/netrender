@@ -189,7 +189,7 @@ public class CommandDAO extends BaseHibernateDAO {
 		}	
 	}
 
-	public List getInProgress(Quest quest) {
+	private List getInProgress(Quest quest) {
 		log.debug("getInProgress ");
 		try
 		{
@@ -254,6 +254,24 @@ public class CommandDAO extends BaseHibernateDAO {
 		}
 		return note.toString();
 	}
-
+	private void reinitInProgressCommand(){
+		log.debug("getInProgress ");
+		try
+		{
+			StatusDAO statusDAO = new StatusDAO();
+			Query query = getSession().createQuery("from Command as command where command.status.statusId=71");
+			Status status = statusDAO.findById(70);
+			Iterator<Command> ite_Commands = query.list().iterator();
+			while( ite_Commands.hasNext() ){
+				Command command = ite_Commands.next();
+				command.setStatus(status);
+			}
+			log.debug("getInProgress successful");
+			
+		}catch(RuntimeException re){
+			log.error("getInProgress failed",re);
+			throw re;
+		}	
+	}
 	
 }

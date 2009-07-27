@@ -133,7 +133,7 @@ public class NodeOperate extends BaseAxis {
 			StatusDAO statusDAO = new StatusDAO();
 			if (flag)
 			{
-				nodeMachine.cleanRunCommands();
+				nodeMachine.cleanRunCommands("Service kill "+nodeIp+"'s Commands");
 			}
 			else
 			{

@@ -37,7 +37,7 @@ public class HibernateSessionFactory {
 			String databaseServer = GenericConfig.getInstance().getDatabaseServer();
 			configuration.setProperty("hibernate.connection.url", "jdbc:mysql://"+databaseServer+":3306/distributedmanagement?useUnicode=true&characterEncoding=UTF-8");
 			sessionFactory = configuration.buildSessionFactory();
-//			sessionFactory.getStatistics().setStatisticsEnabled(true);
+			sessionFactory.getStatistics().setStatisticsEnabled(true);
 		} catch (Exception e) {
 			System.err
 					.println("%%%% Error Creating SessionFactory %%%%");
@@ -58,7 +58,7 @@ public class HibernateSessionFactory {
 //    	log.debug("getSession");
         Session session = (Session) threadLocal.get();
      //   System.out.println("OPEN            CLOSE");
-      //  System.out.println( sessionFactory.getStatistics().getSessionCloseCount()+"         "+ sessionFactory.getStatistics().getSessionOpenCount());
+//        System.out.println( );
         
 		if (session == null || !session.isOpen()) {
 			if (sessionFactory == null) {

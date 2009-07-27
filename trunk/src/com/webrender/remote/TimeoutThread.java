@@ -36,8 +36,8 @@ public class TimeoutThread extends Thread {
 				if(isStop) break;
 				isTimeOut = true;
 				Thread.sleep(timeOut);
-				log.debug("isTimeOut:"+isTimeOut);
-				log.debug("isStop:"+isStop);
+				log.debug(obj+" isTimeOut:"+isTimeOut);
+				log.debug(obj+" isStop:"+isStop);
 				if(isStop) break;
 				if(isTimeOut) timeOutOperate.timeOutOperate(obj);
 			}

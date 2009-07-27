@@ -65,9 +65,11 @@ public class ControlThreadServer extends Thread {
 				try
 				{
 					HibernateSessionFactory.closeSession();
-					
-				//	System.out.println("CommandsSize : " + commandDAO.getWaitingCommands().size());
-					Iterator ite_Commands = commandDAO.getWaitingCommands().iterator();
+					Thread.sleep(2000);
+					List waitingCommands = commandDAO.getWaitingCommands();
+					log.info("WaitingCommands size: "+ waitingCommands.size());
+				//	System.out.println("CommandsSize : " + .size());
+					Iterator ite_Commands =waitingCommands.iterator();
 					
 					// 无待执行命令。
 					if (ite_Commands.hasNext()==false) 

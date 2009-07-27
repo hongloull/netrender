@@ -72,6 +72,8 @@ public class NodeUtils {
 			root.addAttribute("ramUsage", nodeStatus.getRamUsage()+"");
 			root.addAttribute("questName","null" );
 			root.addAttribute("frames", "null");
+			root.addAttribute("platform", nodeStatus.getPlatform()+"");
+			root.addAttribute("jobName",nodeStatus.getJobName()+"");
 			root.addAttribute("realTime",nodeMachine.isRealTime()?"Enable":"Disable");	
 			log.debug("bean2xml_State success nodeIp: "+node.getNodeIp());
 			return root;
