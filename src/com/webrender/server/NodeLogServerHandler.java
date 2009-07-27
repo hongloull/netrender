@@ -80,7 +80,8 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 				RealLogServer.getInstance().broadCast(ip+"***"+theMessage);
 			}
 		
-		}catch(Exception e){
+		}
+		catch(Exception e){
 			log.error("messageReceived fail",e);
 		}
 		

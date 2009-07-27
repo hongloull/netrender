@@ -18,7 +18,7 @@ public class TestNodeState {
 		System.out.println(result);
 	}
 	
-//	@Test
+	@Test
 	public void testGetNodesStatus()
 	{
 		NodesState ns = new NodesState();

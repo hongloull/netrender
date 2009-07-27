@@ -9,6 +9,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.session.Session;
 import org.apache.axis.transport.http.HTTPConstants;
 
+import com.webrender.dao.HibernateSessionFactory;
 import com.webrender.dao.ReguserDAO;
 import com.webrender.dao.Reguser;
 import com.webrender.logic.LoginValidate;
@@ -52,7 +53,9 @@ public class UserLogin extends BaseAxis {
 		}
 		
 	}
-	
+	public String get(){
+		return HibernateSessionFactory.getStatistics().getSessionCloseCount()+"         "+ HibernateSessionFactory.getStatistics().getSessionOpenCount();
+	}
 	public int isRun()
 	{
 		return Conversion.getInstance().getStatus();

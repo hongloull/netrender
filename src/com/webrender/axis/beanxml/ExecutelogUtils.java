@@ -31,7 +31,7 @@ public class ExecutelogUtils {
 		SimpleDateFormat dateFormat =new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String logTime = dateFormat.format(exeLog.getLogTime());
 		root.addAttribute("time", logTime);
-		root.addAttribute("Message",exeLog.getNote()+"");
+		root.addAttribute("message",exeLog.getNote()+"");
 		root.addAttribute("user","Service");
 		root.addAttribute("ip", exeLog.getNode().getNodeIp());
 		root.addAttribute("machine",exeLog.getNode().getNodeName());

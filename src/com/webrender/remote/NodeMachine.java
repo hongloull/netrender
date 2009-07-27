@@ -121,7 +121,7 @@ public class NodeMachine implements TimeoutOperate {
 		}
 		else
 		{
-			setPause(true);
+			
 			return false;
 		}
 //		resultStore.storeResult();
@@ -216,7 +216,7 @@ public class NodeMachine implements TimeoutOperate {
 		log.debug(ip +": "+ command);
 		if (this.testConnect()==false) return false;
 		session.write(command);
-    	for (int i = 0 ; i<100 ; i++)
+    	for (int i = 0 ; i<300 ; i++)
     	{
     		if (session.getAttribute("StartFlag")!=null)
     		{
@@ -225,7 +225,7 @@ public class NodeMachine implements TimeoutOperate {
     			return true;	
     		}
     		try {
-				Thread.sleep(200);
+				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -247,7 +247,6 @@ public class NodeMachine implements TimeoutOperate {
 	{
 		log.debug("getStatus nodeIp: "+this.ip);
 		if( this.isConnect()==false ){
-			log.debug("11");
 			status.setStatus("DISCONNECT");
 		}
 		else{
@@ -269,6 +268,7 @@ public class NodeMachine implements TimeoutOperate {
 		status.setHostName(root.getAttribute("hostName"));
 		status.setCpuUsage(root.getAttribute("cpuUsage"));
 		status.setRamUsage(root.getAttribute("ramUsage"));
+		status.setPlatform(root.getAttribute("platform"));
 //		status.setStatus (root.getAttribute("cpuUsage"));
 		log.debug("setStatusFromXML success");
 		return status;
@@ -379,7 +379,7 @@ public class NodeMachine implements TimeoutOperate {
 		this.isConnect = isConnect;
 		if (isConnect==false)
 		{
-			cleanRunCommands();
+			cleanRunCommands(this.ip+" disconnect");
 		}
 		else{
 			selfCheck();			
@@ -448,20 +448,20 @@ public class NodeMachine implements TimeoutOperate {
 	}
 	
 	
-	public void cleanRunCommands(){
+	public void cleanRunCommands(String message){
 		Iterator<Integer> ite_CurrentCommands = this.currentCommands.iterator();
 		while(ite_CurrentCommands.hasNext()){
-			cleanRunCommand( ite_CurrentCommands.next());
+			cleanRunCommand( ite_CurrentCommands.next(),message);
 		}
 	}
 	
-	private boolean cleanRunCommand(int commandId)
+	private boolean cleanRunCommand(int commandId,String message)
 	{
 		log.debug("cleanRunCommand commandId:"+ commandId);
 		if ( this.currentCommands.contains(commandId)){
 			
-			this.saveRealLog(commandId,false);
-
+			this.saveRealLog(commandId,false,message);
+			
 			Transaction tx = null;
 			CommandDAO commandDAO = new CommandDAO();
 			try{
@@ -503,7 +503,7 @@ public class NodeMachine implements TimeoutOperate {
 			if(message.startsWith("***GOODBYE***")){
 				log.info("addReadlog goodBye");
 				timeOutThread.cancel();
-				saveRealLog(commandId,true);
+				saveRealLog(commandId,true,"finish");
 				setFinish(commandId);
 				timeOutThread = null;
 			}
@@ -554,10 +554,6 @@ public class NodeMachine implements TimeoutOperate {
 				command.setStatus(statusDAO.findById(72)); //72->Finish
 				command.setSendTime(new Date());
 				commandDAO.attachDirty(command);							
-				
-				Executelog executelog = new  Executelog(command,statusDAO.findById(91),node,commandDAO.getNote(command)+" finish.",new Date()); 
-				ExecutelogDAO exeDAO = new ExecutelogDAO();
-				exeDAO.save(executelog);
 				log.info(ip+" finish command");
 			}
 //			else
@@ -596,20 +592,25 @@ public class NodeMachine implements TimeoutOperate {
 		log.debug("setFinish success");
 	}
 	
-	private synchronized void  saveRealLog(int commandId ,boolean isNormal){
+	private synchronized void  saveRealLog(int commandId ,boolean isNormal,String message){
 		log.debug("saveRealLog");
 		if(this.currentCommands.contains(commandId))
 		{
 			Transaction tx = null;
 			try{
-				int statusId = isNormal?80:81;
+				int realStatusId = isNormal?80:81;
+				int exeStatusId  = isNormal?91:99;
 				tx = HibernateSessionFactory.getSession().beginTransaction();				
 				CommandDAO commandDAO = new CommandDAO();
+				Command command = commandDAO.findById(commandId);
 				StatusDAO statusDAO = new StatusDAO();
 				NodeDAO nodeDAO = new NodeDAO();
-				Executelog executelog = new  Executelog(commandDAO.findById(commandId),statusDAO.findById(statusId),nodeDAO.findByNodeIp(ip),realLog.toString(),new Date());
 				ExecutelogDAO exeDAO = new ExecutelogDAO();
-				exeDAO.save(executelog);		
+				
+				Executelog reallog = new Executelog(command,statusDAO.findById(realStatusId),nodeDAO.findByNodeIp(ip),realLog.toString(),new Date());
+				Executelog exelog  = new Executelog(command,statusDAO.findById(exeStatusId),nodeDAO.findByNodeIp(ip),commandDAO.getNote(command) + message,new Date());
+				
+				exeDAO.save(reallog);		
 				tx.commit();
 				log.debug("saveRealLog success");
 			}catch(Exception e)
@@ -631,10 +632,10 @@ public class NodeMachine implements TimeoutOperate {
 
 	public void timeOutOperate(Object obj) {
 		// 超时  认为改命令执行出错
-		log.info("timethread timeOut!");
+		log.info("timethread timeOut! commandId: "+obj);
 		timeOutThread.cancel();
 	//	saveRealLog( (Integer)obj,false);
-		this.cleanRunCommand((Integer)obj);
+		this.cleanRunCommand((Integer)obj,"Timeout");
 		if (this.currentCommands.size()==0) setBusy(false);
 		timeOutThread = null;
 	}

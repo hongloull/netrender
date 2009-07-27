@@ -38,7 +38,7 @@ public class TestCommandDAO {
 		HibernateSessionFactory.closeSession();
 	}
 	@Test
-	public void testGetFinish()
+	public void testInprogress()
 	{
 		CommandDAO commandDAO = new CommandDAO();
 		QuestDAO questDAO = new QuestDAO();
@@ -47,7 +47,7 @@ public class TestCommandDAO {
 		{
 			Quest quest = ite.next();
 			try {
-				System.out.println(commandDAO.isInProgress(quest));
+				System.out.println(commandDAO.isInProgress(quest)+quest.getQuestId().toString());
 			} catch (Exception e) {
 				
 			}
