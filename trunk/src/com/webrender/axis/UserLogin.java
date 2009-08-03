@@ -53,8 +53,8 @@ public class UserLogin extends BaseAxis {
 		}
 		
 	}
-	public String get(){
-		return HibernateSessionFactory.getStatistics().getSessionCloseCount()+"         "+ HibernateSessionFactory.getStatistics().getSessionOpenCount();
+	public String getStatistics(){
+		return "getSessionCloseCount(): "+HibernateSessionFactory.getSessionFactory().getStatistics().getSessionCloseCount()+"  getSessionOpenCount(): "+ HibernateSessionFactory.getSessionFactory().getStatistics().getSessionOpenCount();
 	}
 	public int isRun()
 	{

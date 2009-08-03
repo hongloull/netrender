@@ -23,8 +23,14 @@ import com.webrender.dao.Timegroup;
 import com.webrender.dao.TimegroupDAO;
 
 public class NodeXMLConfig extends XMLConfig {
-	private static List lis_NGs = (new NodegroupDAO()).findAll();
+	private static List lis_NGs = null;
 	private static final Log log = LogFactory.getLog(NodeXMLConfig.class);
+	static {
+		NodegroupDAO nodeGroupDAO = new  NodegroupDAO();
+		lis_NGs  = nodeGroupDAO.findAll();
+		Nodegroup all = nodeGroupDAO.findByNodeGroupName("All");
+		if (all!=null) lis_NGs.remove(all);
+	}
 	@Override
 	public void loadFromXML(File file) throws JDOMException {
 		log.debug("loadFromXML");
@@ -34,7 +40,7 @@ public class NodeXMLConfig extends XMLConfig {
 		String nodeGroupName = file.getName().substring(0, index);
 		NodegroupDAO nodeGroupDAO = new NodegroupDAO();
 		Nodegroup nodeGroup = nodeGroupDAO.findByNodeGroupName(nodeGroupName);
-		NodeDAO nodeDAO = new NodeDAO();
+		NodeDAO nodeDAO 	= new NodeDAO();
 		TimegroupDAO tGroupDAO = new TimegroupDAO();
 		
 		Element root = doc.getRootElement();
@@ -87,8 +93,7 @@ public class NodeXMLConfig extends XMLConfig {
 			{
 				tx.rollback();
 			}
-		}			
-		
+		}
 	}
 	
 	public void deleteExtraData(){
@@ -103,7 +108,6 @@ public class NodeXMLConfig extends XMLConfig {
 			}
 			tx.commit();
 			log.debug("deleteExtraNodeGroup success");
-			
 		}catch(Exception e){
 			log.error("deleteExtraNodeGroup fail", e);
 			if (tx != null) 

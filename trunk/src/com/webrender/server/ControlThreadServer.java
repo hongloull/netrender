@@ -1,6 +1,7 @@
 
 package com.webrender.server;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +36,7 @@ public class ControlThreadServer extends Thread {
 	private static ControlThreadServer instance = new ControlThreadServer();
 	private static  boolean   threadStop   =   false;   
 	private static final Log log = LogFactory.getLog(ControlThreadServer.class);
+	private boolean noUsableNode = true;
 	private ControlThreadServer()
 	{
 		super.setName("ControlThread");
@@ -90,31 +92,44 @@ public class ControlThreadServer extends Thread {
 						//	Iterator ite_Nodes = nodeDAO.getIdleNodes(command).iterator();//从数据库中读取状态
 						//	Iterator ite_Nodes = nodeDAO.findAll().iterator();
 					
-						int nodes_Size = NodeMachineManager.idleMachines.size();
-					// nodes_Size 空闲节点机的个数。
-						if(nodes_Size == 0)
+				
+						if(NodeMachineManager.idleMachines.isEmpty())
 						{
 							if (threadStop ==true) break;
-							
+							noUsableNode = true;
 							log.info("NoIdleNode");
-							try {
-								this.sleep(20000);
-								break;
-							} catch (InterruptedException e) {
-								log.error("", e);
-								break;
-							}
+							break;
 						}
-						
-						Iterator ite_Nodes = NodeMachineManager.idleMachines.iterator();
-						while(ite_Nodes.hasNext())
+						NodeMachine nodeMachine = null;
+						Node node = null;
+						try{
+							Object[] nodeMachines = NodeMachineManager.idleMachines.toArray();
+							int length = nodeMachines.length;
+							for(int i = 0 ; i<length ; i++){
+								NodeMachine tempNodeMachine = (NodeMachine) nodeMachines[i];;
+								Node tempNode = nodeDAO.findByNodeIp(tempNodeMachine.getIp());
+								if( command.getQuest().getNodegroup().getNodes().contains(tempNode) ){
+									// 该节点保包含在任务执行池中，可以渲染
+									nodeMachine = tempNodeMachine;
+									node = tempNode;
+									noUsableNode = false;
+									break;
+								}
+								noUsableNode = true;
+							}
+							//  将游离的Command 变成 持久化
+						}
+						catch(Exception e){
+							log.error("getIdleMaichine fail",e);
+						}
+						if(nodeMachine!=null && node!=null) ///   111111111111
 						{
 //						Node node = (Node)ite_Nodes.next();
 //						NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(node.getNodeIp());
-							NodeMachine nodeMachine  = (NodeMachine)ite_Nodes.next();
-							Node node = nodeDAO.findByNodeIp(nodeMachine.getIp());
+							
 							//  将游离的Command 变成 持久化
 							commandDAO.attachClean(command);
+							
 							// 交给nodeMachine 执行 一条command
 							boolean result = nodeMachine.execute(command);
 							if (result){
@@ -197,7 +212,17 @@ public class ControlThreadServer extends Thread {
 								}
 								continue; //
 							}
+						}// end If 1111111111
+					} // end while commands
+					if(noUsableNode == true){
+						try {
+							log.info("NoUsableNode");
+							HibernateSessionFactory.closeSession();
+							this.sleep(20000);
+						} catch (InterruptedException e) {
+							log.error("noUsableNode waiting fail.", e);
 						}
+
 					}
 //				循环上述操作：到所有任务全部完成  停止该线程
 				}
