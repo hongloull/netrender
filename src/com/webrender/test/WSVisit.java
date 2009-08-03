@@ -11,9 +11,12 @@ public class WSVisit {
 			 * 
 			 */
 			call.setTargetEndpointAddress(new java.net.URL(endpoint));
-			call.setOperationName(new javax.xml.namespace.QName("http://www.edu-edu.com.cn/luopc/ws","LoginValidate"));
-			Object result=call.invoke(new Object[]{"wang","111111"});
-			System.out.println(result);
+			call.setOperationName(new javax.xml.namespace.QName("http://www.edu-edu.com.cn/luopc/ws","getStatistics"));
+			while(true){
+				Object result=call.invoke(new Object[]{});
+				System.out.println(result);
+				Thread.sleep(1000);
+			}
 			
 		}catch(Exception e){
 			System.err.println(e.toString());

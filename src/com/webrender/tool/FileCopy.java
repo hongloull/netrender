@@ -52,17 +52,8 @@ public class FileCopy {
     if (to_file.exists()) {
       if (!to_file.canWrite())
         abort("FileCopy: destination file is unwriteable: " + to_name);
-      // Ask whether to overwrite it
-      System.out.print("Overwrite existing file " + to_name + "? (Y/N): ");
-      System.out.flush();
-      // Get the user's response.
-      BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
-      String response = in.readLine();
-      // Check the response.  If not a Yes, abort the copy.
-      if (!response.equals("Y") && !response.equals("y"))
-        abort("FileCopy: existing file was not overwritten.");
     }
-    else {  
+    
       // if file doesn't exist, check if directory exists and is writeable.
       // If getParent() returns null, then the directory is the current dir.
       // so look up the user.dir system property to find out what that is.
@@ -75,7 +66,7 @@ public class FileCopy {
         abort("FileCopy: destination is not a directory: " + parent);
       if (!dir.canWrite())
         abort("FileCopy: destination directory is unwriteable: " + parent);
-    }
+    
     
     // If we've gotten this far, then everything is okay.
     // So we copy the file, a buffer of bytes at a time.

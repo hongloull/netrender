@@ -34,6 +34,12 @@ public class NodeDAO extends BaseHibernateDAO {
 		log.debug("saving Node instance");
 		try {
 			getSession().save(transientInstance);
+			NodegroupDAO nodeGroupDAO = new  NodegroupDAO();
+			Nodegroup all = nodeGroupDAO.findByNodeGroupName("All");
+			if(all!=null){
+				all.getNodes().add(transientInstance);
+				nodeGroupDAO.save(all);
+			}
 			log.debug("save successful");
 		} catch (RuntimeException re) {
 			log.error("save failed", re);

@@ -1,5 +1,6 @@
 package com.webrender.remote;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +22,9 @@ public class NodeMachineManager {
 			machines.put(ip,nodeMachine );
 		}
 		return machines.get(ip);
+	}
+	public static Collection<NodeMachine> getNodeMachines(){
+		return machines.values();
 	}
 	
 	public static void resetIdleMachines()

@@ -63,7 +63,7 @@ public class UserOperate extends BaseAxis {
 
 //		if (!file.canWrite()) throw new Exception("UsersXML ReadOnly");
 		File file = new File(userFile);
-		if(!file.exists()) return "UserNameNotExistError";
+		if(!file.exists()) return "UserNotExistError";
 		SAXBuilder sb =  new SAXBuilder();
 		Document document = null;
 		try {
@@ -98,7 +98,7 @@ public class UserOperate extends BaseAxis {
 		return BaseAxis.ActionSuccess;
 	}
 	public String delUser(String regName){
-		log.debug("delUser");
+		log.debug("delUser: "+regName);
 		ReguserDAO regUserDAO = new ReguserDAO();
 		Reguser regUser = regUserDAO.findByRegName(regName);
 		if (regUser==null) return "UserNotExistError";
@@ -122,46 +122,51 @@ public class UserOperate extends BaseAxis {
 					tx.rollback();
 				}
 				log.error("delUser from database fail",e);
-				return "Del"+regName+"FileError";
+				return "Del"+regName+"FromDBError";
 			}finally{
 				this.closeSession();
 			}
 		}
 	}
 	public String addUser(String regName ,String passWord){
-		log.debug("addUser");
-		
-		ReguserDAO regUserDAO = new ReguserDAO();
-		Reguser regUser = regUserDAO.findByRegName(regName);
-		if (regUser!=null) return "UserExistError";
-		String defConfig = GenericConfig.getInstance().getFile("users/default");
-		File defFile = new File(defConfig);
-		if(defFile.exists() && defFile.canRead())
-		{
-			String userFile = GenericConfig.getInstance().getFile("users/"+regName+".xml");
-			try {
-				regUser = new Reguser(regName,passWord+"");
-				regUserDAO.save(regUser);
-				FileCopy.copy(defConfig,userFile);
-				File file_User = new File(userFile);
-				if( file_User.exists() ){
-					UserXMLConfig loadConfig = new UserXMLConfig();
-					loadConfig.loadFromXML(file_User);
-				}
-			}catch (IOException e) {
-				log.error("addUser fail: DefaultFileCopyError", e);
-				return "DefaultConfigCopyError";
-			} catch (JDOMException e) {
-				log.error("addUser fail: DefaultFileParseError", e);
-				e.printStackTrace();
-			}finally{
-				this.closeSession();
+		log.debug("addUser: "+regName);
+		try{
+			ReguserDAO regUserDAO = new ReguserDAO();
+			Reguser regUser = regUserDAO.findByRegName(regName);
+			if (regUser!=null){
+				return "UserExistError";
 			}
-			return BaseAxis.ActionSuccess;
-		}
-		else{		
+			String defConfig = GenericConfig.getInstance().getFile("users/default");
+			File defFile = new File(defConfig);
+			if(defFile.exists() && defFile.canRead())
+			{
+				String userFile = GenericConfig.getInstance().getFile("users/"+regName+".xml");
+				try {
+					regUser = new Reguser(regName,passWord+"");
+					regUserDAO.save(regUser);
+					FileCopy.copy(defConfig,userFile);
+					File file_User = new File(userFile);
+					if( file_User.exists() ){
+						UserXMLConfig loadConfig = new UserXMLConfig();
+						loadConfig.loadFromXML(file_User);
+					}
+				}catch (IOException e) {
+					log.error("addUser fail: DefaultFileCopyError", e);
+					return "DefaultConfigCopyError";
+				} catch (JDOMException e) {
+					log.error("addUser fail: DefaultFileParseError", e);
+					return "DefaultFileParseError";
+				}
+				return BaseAxis.ActionSuccess;
+			}
+			else{		
+				return "DefaultConfigNotExistError";
+			}
+		}catch(Exception e){
+			log.error("addUser fail",e);
+			return BaseAxis.ActionFailure;
+		}finally{
 			this.closeSession();
-			return "DefaultConfigNotExistError";
 		}
 	}
 

@@ -103,6 +103,17 @@ public class NodeMachine implements TimeoutOperate {
 	    status = new NodeStatus();
 	}
 	
+	
+	@Override
+	public boolean equals(Object o){
+		if ( o instanceof NodeMachine ){
+			if ( (((NodeMachine)o).getIp()).equals(this.getIp()) ){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public boolean execute(Command command)
 	{
 		log.info("nodeIp: "+ip + " execute commandId: "+command.getCommandId());
@@ -381,9 +392,7 @@ public class NodeMachine implements TimeoutOperate {
 		{
 			cleanRunCommands(this.ip+" disconnect");
 		}
-		else{
-			selfCheck();			
-		}
+		selfCheck();			
 	}
 	public boolean isConnect() {
 		
@@ -609,7 +618,7 @@ public class NodeMachine implements TimeoutOperate {
 				
 				Executelog reallog = new Executelog(command,statusDAO.findById(realStatusId),nodeDAO.findByNodeIp(ip),realLog.toString(),new Date());
 				Executelog exelog  = new Executelog(command,statusDAO.findById(exeStatusId),nodeDAO.findByNodeIp(ip),commandDAO.getNote(command) + message,new Date());
-				
+				exeDAO.save(exelog);
 				exeDAO.save(reallog);		
 				tx.commit();
 				log.debug("saveRealLog success");
