@@ -14,28 +14,28 @@ import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 
-public class CommandmodelAxis extends BaseAxis {
-	private static final Log log = LogFactory.getLog(CommandmodelAxis.class);
+public class ModelOperate extends BaseAxis {
+	private static final Log LOG = LogFactory.getLog(ModelOperate.class);
 	
 	/**
 	 * 查看某个命令模板的详细信息
 	 * @param commandModelId  模板Id
 	 * @return XML形式的模板详细信息
 	 */
-	public String getCommandModel(String commandModelId)
+	public String getModel(String commandModelId)
 	{
 		// 权限判断
 		
-		try{
-			if ( ! this.canVisit(7)){
-				log.debug("VisitRight error");
-				return BaseAxis.RightError;
-			}			
-		}catch(Exception e){
-			log.error("RightVisit error",e);
-			return BaseAxis.RightError;
-		}
-		log.debug("getCommandModel");
+//		try{
+//			if ( ! this.canVisit(7)){
+//				LOG.debug("VisitRight error");
+//				return BaseAxis.RIGHTERROR;
+//			}			
+//		}catch(Exception e){
+//			LOG.error("RightVisit error",e);
+//			return BaseAxis.RIGHTERROR;
+//		}
+		LOG.debug("getCommandModel");
 		try {
 			CommandmodelDAO cMDAO = new CommandmodelDAO();
 			Commandmodel cm = cMDAO.findById(Integer.parseInt(commandModelId));
@@ -47,12 +47,12 @@ public class CommandmodelAxis extends BaseAxis {
 				Element ele_CMA = CommandmodelargUtils.bean2xml(cma);
 				root.addContent(ele_CMA);
 			}
-			log.debug("getCommandModel success");
+			LOG.debug("getCommandModel success");
 			return XMLOut.outputToString(doc);
 		}catch(Exception e)
 		{
-			log.error("getCommandModel error",e);
-			return BaseAxis.ActionFailure;
+			LOG.error("getCommandModel error",e);
+			return BaseAxis.ACTIONFAILURE;
 		}finally
 		{
 			this.closeSession();
@@ -63,18 +63,18 @@ public class CommandmodelAxis extends BaseAxis {
 	 * 所有模板简单列表
 	 * @return XML的模板列表
 	 */
-	public String getCommandModels()
+	public String getModels()
 	{
-		log.debug("getCommandModels");
+		LOG.debug("getCommandModels");
 		// 权限判断
-		try{
-			if ( ! this.canVisit(7)){
-				return BaseAxis.RightError;
-			}			
-		}catch(Exception e){
-			log.error("RightVisit error",e);
-			return BaseAxis.RightError;
-		}		
+//		try{
+//			if ( ! this.canVisit(7)){
+//				return BaseAxis.RightError;
+//			}			
+//		}catch(Exception e){
+//			log.error("RightVisit error",e);
+//			return BaseAxis.RightError;
+//		}		
 		
 		try{
 			CommandmodelDAO cMDAO = new CommandmodelDAO();
@@ -87,12 +87,12 @@ public class CommandmodelAxis extends BaseAxis {
 				Commandmodel cM = (Commandmodel)ite_CMS.next();
 				root.addContent(CommandmodelUtils.bean2xml(cM));
 			}
-			log.debug("getCommandModels success");
+			LOG.debug("getCommandModels success");
 			return XMLOut.outputToString(doc);
 		}catch(Exception e)
 		{
-			log.error("getCommandModels failure",e);
-			return BaseAxis.ActionFailure;
+			LOG.error("getCommandModels failure",e);
+			return BaseAxis.ACTIONFAILURE;
 		}finally
 		{
 			this.closeSession();

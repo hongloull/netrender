@@ -7,7 +7,7 @@ import java.io.FileOutputStream;
 import org.jdom.Document;
 import org.jdom.output.XMLOutputter;
 
-public  class XMLOut {
+public final class XMLOut {
 	
 	
 	public static String outputToString(Document document)

@@ -13,7 +13,7 @@ import com.webrender.config.GenericConfig;
  * current thread of execution.  Follows the Thread Local Session
  * pattern, see {@link http://hibernate.org/42.html }.
  */
-public class HibernateSessionFactory {
+public final class HibernateSessionFactory {
 
     /** 
      * Location of hibernate.cfg.xml file.
@@ -23,7 +23,7 @@ public class HibernateSessionFactory {
      * in the default package. Use #setConfigFile() to update 
      * the location of the configuration file for the current session.   
      */
-//	private static final Log log = LogFactory.getLog(HibernateSessionFactory.class);
+	private static final Log LOG = LogFactory.getLog(HibernateSessionFactory.class);
     private static String CONFIG_FILE_LOCATION = "/hibernate.cfg.xml";
 	private static final ThreadLocal<Session> threadLocal = new ThreadLocal<Session>();
     private  static Configuration configuration = new Configuration();    
@@ -66,6 +66,7 @@ public class HibernateSessionFactory {
 			}
 			session = (sessionFactory != null) ? sessionFactory.openSession()
 					: null;
+//			LOG.info("session==null or isClose, openNewSession ");
 //			log.info("getSession  session close threadLocal.set(session)");
 			threadLocal.set(session);
 		}
@@ -100,8 +101,8 @@ public class HibernateSessionFactory {
         threadLocal.set(null);
 
         if (session != null) {
-//        	log.info("closeSession session.close");
             session.close();
+//            LOG.info("closeSession session.close");
         }
 //        log.debug("closeSession success");
     }

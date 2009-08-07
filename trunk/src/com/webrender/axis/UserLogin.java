@@ -8,8 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.axis.MessageContext;
 import org.apache.axis.session.Session;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.hibernate.Transaction;
 
 import com.webrender.dao.HibernateSessionFactory;
+import com.webrender.dao.Operatelog;
 import com.webrender.dao.ReguserDAO;
 import com.webrender.dao.Reguser;
 import com.webrender.logic.LoginValidate;
@@ -19,12 +21,13 @@ public class UserLogin extends BaseAxis {
 	public String LoginValidate(String regName ,String passWord)
 	{
 		try{
-			Reguser loginReguser = LoginValidate.Check(regName,passWord);
+			Reguser loginReguser = LoginValidate.check(regName,passWord);
 			if(loginReguser != null)
 			{
 				MessageContext mc = MessageContext.getCurrentContext();
 				Session session = mc.getSession(); 
-				session.set("RegUserId", loginReguser.getRegUserId());
+				int regUserId = loginReguser.getRegUserId();
+				session.set("RegUserId", regUserId);
 				
 				ReguserDAO regUserDAO = new ReguserDAO();
 				Set<Integer> rightValue = regUserDAO.getRightValue(loginReguser);
@@ -38,16 +41,27 @@ public class UserLogin extends BaseAxis {
 					if (ite_Rights.hasNext()) result.append(",");
 				}
 				result.append("]");
+				Transaction tx = null;
+				try{
+					tx = getTransaction();
+					logOperate(regUserId,Operatelog.LOGIN,null);
+					tx.commit();
+				}catch(Exception e){
+					if(tx!=null){
+						tx.rollback();
+					}
+					e.printStackTrace();
+				}
 				return result.toString();
 			}
 			else
 			{
-				return BaseAxis.ActionFailure;
+				return BaseAxis.ACTIONFAILURE;
 			}
 			
 		}catch(Exception e)
 		{
-			return BaseAxis.ActionFailure;
+			return BaseAxis.ACTIONFAILURE;
 		}finally{
 			closeSession();
 		}

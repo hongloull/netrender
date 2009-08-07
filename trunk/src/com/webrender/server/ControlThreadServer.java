@@ -1,25 +1,21 @@
 
 package com.webrender.server;
 
-import java.util.Collections;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Transaction;
 
 import com.webrender.dao.Command;
 import com.webrender.dao.CommandDAO;
-import com.webrender.dao.Commandarg;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
 import com.webrender.dao.HibernateSessionFactory;
 import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
-import com.webrender.dao.Status;
 import com.webrender.dao.StatusDAO;
 import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
@@ -32,17 +28,18 @@ import com.webrender.remote.NodeMachineManager;
 //  
 //
 //
-public class ControlThreadServer extends Thread {
+public final class ControlThreadServer extends Thread {
 	private static ControlThreadServer instance = new ControlThreadServer();
 	private static  boolean   threadStop   =   false;   
-	private static final Log log = LogFactory.getLog(ControlThreadServer.class);
-	private boolean noUsableNode = true;
+	private static final Log LOG = LogFactory.getLog(ControlThreadServer.class);
+	private static boolean noUsableNode = true;
 	private ControlThreadServer()
 	{
+		super();
 		super.setName("ControlThread");
 	}
 	
-	public final static ControlThreadServer getInstance()
+	public static ControlThreadServer getInstance()
 	{
 		return instance;
 	}
@@ -56,33 +53,43 @@ public class ControlThreadServer extends Thread {
 //		}
 		NodeDAO nodeDAO = new NodeDAO();
 		CommandDAO commandDAO = new CommandDAO();
+		StatusDAO statusDAO = new StatusDAO();
 		while(true)
 		{
-			log.info("ControlThreadServer Run");
+			LOG.info("ControlThreadServerRun");
 //				获取未完成的Quest ，得到相关命令，交给空闲的节点
-			if (threadStop!=true)
+			if (!threadStop)
 			{
 //				根据优先级获取未完成的Quest
 //				将其子命令中待执行的命令取出来
 				try
 				{
-					HibernateSessionFactory.closeSession();
-					Thread.sleep(2000);
-					List waitingCommands = commandDAO.getWaitingCommands();
-					log.info("WaitingCommands size: "+ waitingCommands.size());
+					List<Command> waitingCommands = commandDAO.getWaitingCommands();
+					int waitingCommandsSize = waitingCommands.size();
+					StringBuilder commandsInfo = new StringBuilder();
+					for(int i=0;i<waitingCommandsSize;i++){
+						commandsInfo.append(waitingCommands.get(i).getCommandId()).append(" ");
+					}
+					LOG.info("WaitingCommands size: "+ waitingCommandsSize);
+					LOG.info(commandsInfo);
+					
 				//	System.out.println("CommandsSize : " + .size());
 					Iterator ite_Commands =waitingCommands.iterator();
 					
 					// 无待执行命令。
-					if (ite_Commands.hasNext()==false) 
+					if (!ite_Commands.hasNext()) 
 					{
-						this.threadSuspend("No WaitingCommands");
+						// 停顿半分钟
+						sleepUpdateVersion("NoWaitingCommand",60000);
+						noUsableNode = false;
 												
 					}
 					// 按序执行命令
 					while(ite_Commands.hasNext())
 					{
-						if (threadStop == true) break;
+						if (threadStop){
+							break;
+						}
 						
 						Command command = (Command)ite_Commands.next();
 						
@@ -95,9 +102,10 @@ public class ControlThreadServer extends Thread {
 				
 						if(NodeMachineManager.idleMachines.isEmpty())
 						{
-							if (threadStop ==true) break;
+							if (threadStop){
+								break;
+							}
 							noUsableNode = true;
-							log.info("NoIdleNode");
 							break;
 						}
 						NodeMachine nodeMachine = null;
@@ -106,7 +114,7 @@ public class ControlThreadServer extends Thread {
 							Object[] nodeMachines = NodeMachineManager.idleMachines.toArray();
 							int length = nodeMachines.length;
 							for(int i = 0 ; i<length ; i++){
-								NodeMachine tempNodeMachine = (NodeMachine) nodeMachines[i];;
+								NodeMachine tempNodeMachine = (NodeMachine) nodeMachines[i];
 								Node tempNode = nodeDAO.findByNodeIp(tempNodeMachine.getIp());
 								if( command.getQuest().getNodegroup().getNodes().contains(tempNode) ){
 									// 该节点保包含在任务执行池中，可以渲染
@@ -120,7 +128,7 @@ public class ControlThreadServer extends Thread {
 							//  将游离的Command 变成 持久化
 						}
 						catch(Exception e){
-							log.error("getIdleMaichine fail",e);
+							LOG.error("getIdleMaichine fail",e);
 						}
 						if(nodeMachine!=null && node!=null) ///   111111111111
 						{
@@ -144,13 +152,13 @@ public class ControlThreadServer extends Thread {
 								Transaction tx = null;
 								try{
 									tx = HibernateSessionFactory.getSession().beginTransaction();
-									StatusDAO statusDAO = new StatusDAO();
+									statusDAO = new StatusDAO();
 									//		node.setStatus(statusDAO.findById(42));
 									//		nodeDAO.attachDirty(node);
 									command.setNode(node);
 									command.setStatus(statusDAO.findById(71));
 									commandDAO.attachDirty(command);	
-									// add log
+									// add LOG
 									
 									Executelog executelog = new  Executelog(command,statusDAO.findById(90),node,commandDAO.getNote(command).toString(),new Date()); 
 									ExecutelogDAO exeDAO = new ExecutelogDAO();
@@ -158,14 +166,14 @@ public class ControlThreadServer extends Thread {
 									
 									tx.commit();
 									
-									log.debug(node.getNodeIp()+" :executeOperate Success save to database");
+									LOG.debug(node.getNodeIp()+" :executeOperate Success save to database");
 									//	HibernateSessionFactory.closeSession();
 									//	System.out.println ("发送成功：closeSession : " + nodeDAO.getIdleNodes(command).size() );
 									
 								}
 								catch(Exception e)
 								{
-									log.error("save commandStatus fail",e);
+									LOG.error("save commandStatus fail",e);
 									if (tx != null) 
 									{
 										tx.rollback();
@@ -187,21 +195,21 @@ public class ControlThreadServer extends Thread {
 								Transaction tx = null;
 								try{
 									tx = HibernateSessionFactory.getSession().beginTransaction();
-									StatusDAO statusDAO = new StatusDAO();
+									statusDAO = new StatusDAO();
 									//		node.setStatus(statusDAO.findById(44)); //disconnect
 									//		nodeDAO.attachDirty(node);	
 									Executelog executelog = new  Executelog(command,statusDAO.findById(99),node,"SendError: " +commandDAO.getNote(command),new Date()); 
 									ExecutelogDAO exeDAO = new ExecutelogDAO();
 									exeDAO.save(executelog);
 									tx.commit();
-									log.debug(node.getNodeIp()+" :executeOperate Error  save to database");
+									LOG.debug(node.getNodeIp()+" :executeOperate fail  save to database");
 									//		HibernateSessionFactory.closeSession();
 									//	System.out.println (" 发送错误 : closeSession : " + nodeDAO.getIdleNodes(command).size() );
 									
 								}
 								catch(Exception e)
 								{
-									log.error("", e);
+									LOG.error("", e);
 									if (tx != null) 
 									{
 										tx.rollback();
@@ -212,37 +220,30 @@ public class ControlThreadServer extends Thread {
 								}
 								continue; //
 							}
-						}// end If 1111111111
+						} // end If 1111111111
 					} // end while commands
-					if(noUsableNode == true){
-						try {
-							log.info("NoUsableNode");
-							HibernateSessionFactory.closeSession();
-							this.sleep(20000);
-						} catch (InterruptedException e) {
-							log.error("noUsableNode waiting fail.", e);
-						}
-
+					if(noUsableNode){
+						sleepUpdateVersion("NoUsabelNode",20000);
 					}
 //				循环上述操作：到所有任务全部完成  停止该线程
 				}
 				catch(org.hibernate.exception.JDBCConnectionException e)
 				{
-					log.info("Cann't connect database !");
+					LOG.info("Cann't connect database !");
 					try {
-						this.sleep(10000);
+						Thread.sleep(20000);
 					} catch (InterruptedException e1) {
-						log.error("",e);
+						LOG.error("",e);
 					}
 				}
 				catch(Exception e)
 				{
-					log.warn("ControlThreadServer Error", e);
+					LOG.warn("ControlThreadServer Error", e);
 					
 					try {
-						this.sleep(10000);
+						Thread.sleep(20000);
 					} catch (InterruptedException e1) {
-						log.error("",e1);
+						LOG.error("",e1);
 					}
 				}
 			}//end thread==true;
@@ -250,17 +251,15 @@ public class ControlThreadServer extends Thread {
 			{
 				// 调用一次threadStop()，只停一次。
 				threadStop = false;
-				log.info("ControlThreadServer threadStop Suspend");
+				LOG.info("ControlThreadServer threadStop Suspend");
 				HibernateSessionFactory.closeSession();
 				this.suspend();
 				try {
-					log.info("ControlThreadServer resume");
-					//关2次，因为遇到有待执行命令查询不到的问题
-					Thread.sleep(10000);
-					HibernateSessionFactory.closeSession();
 					
-				} catch (InterruptedException e) {
-					log.error("ControlThread Sleep", e);
+					sleepUpdateVersion("ControlThreadServer resume",10000);
+					
+				}catch (InterruptedException e) {
+					LOG.error("ControlThread Sleep", e);
 				}
 			}
 		}
@@ -268,10 +267,31 @@ public class ControlThreadServer extends Thread {
 	
 	
 //	暂停某Quest的时候 可能需要先将 分发线程暂停，再运行
-	public void threadSuspend(String reason)
+	public void threadSuspend(final String reason)
 	{
-		log.info(reason);
+		LOG.info(reason);
 		threadStop = true;
+	}
+	
+	private void sleepUpdateVersion(String message,long millis) throws InterruptedException
+	{
+		LOG.info(message);
+		HibernateSessionFactory.closeSession();	
+		Thread.sleep(millis);
+		StatusDAO statusDAO = new StatusDAO();
+		Transaction tx = null;
+		try {
+			tx = HibernateSessionFactory.getSession().beginTransaction();
+			statusDAO.updateSystemVersion();
+			tx.commit();							
+		}catch (Exception e){					
+			LOG.error(message+" UpdateSystemVersion Error", e);
+			if(tx!=null){
+				tx.rollback();
+			}
+		}finally{
+			HibernateSessionFactory.closeSession();			
+		}
 	}
 	
 }

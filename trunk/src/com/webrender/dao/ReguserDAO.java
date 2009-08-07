@@ -23,62 +23,62 @@ import org.hibernate.criterion.Example;
  */
 
 public class ReguserDAO extends BaseHibernateDAO {
-	private static final Log log = LogFactory.getLog(ReguserDAO.class);
+	private static final Log LOG = LogFactory.getLog(ReguserDAO.class);
 	// property constants
 	public static final String REG_NAME = "regName";
 	public static final String PASS_WORD = "passWord";
 
 	public void save(Reguser transientInstance) {
-		log.debug("saving Reguser instance");
+		LOG.debug("saving Reguser instance");
 		try {
 			getSession().save(transientInstance);
-			log.debug("save successful");
+			LOG.debug("save successful");
 		} catch (RuntimeException re) {
-			log.error("save failed", re);
+			LOG.error("save failed", re);
 			throw re;
 		}
 	}
 
 	public void delete(Reguser persistentInstance) {
-		log.debug("deleting Reguser instance");
+		LOG.debug("deleting Reguser instance");
 		try {
 			getSession().delete(persistentInstance);
-			log.debug("delete successful");
+			LOG.debug("delete successful");
 		} catch (RuntimeException re) {
-			log.error("delete failed", re);
+			LOG.error("delete failed", re);
 			throw re;
 		}
 	}
 
 	public Reguser findById(java.lang.Integer id) {
-		log.debug("getting Reguser instance with id: " + id);
+		LOG.debug("getting Reguser instance with id: " + id);
 		try {
 			Reguser instance = (Reguser) getSession().get(
 					"com.webrender.dao.Reguser", id);
 			return instance;
 		} catch (RuntimeException re) {
-			log.error("get failed", re);
+			LOG.error("get failed", re);
 			throw re;
 		}
 	}
 
 	public List findByExample(Reguser instance) {
-		log.debug("finding Reguser instance by example");
+		LOG.debug("finding Reguser instance by example");
 		try {
 			List results = getSession().createCriteria(
 					"com.webrender.dao.Reguser").add(Example.create(instance))
 					.list();
-			log.debug("find by example successful, result size: "
+			LOG.debug("find by example successful, result size: "
 					+ results.size());
 			return results;
 		} catch (RuntimeException re) {
-			log.error("find by example failed", re);
+			LOG.error("find by example failed", re);
 			throw re;
 		}
 	}
 
 	public List findByProperty(String propertyName, Object value) {
-		log.debug("finding Reguser instance with property: " + propertyName
+		LOG.debug("finding Reguser instance with property: " + propertyName
 				+ ", value: " + value);
 		try {
 			String queryString = "from Reguser as model where model."
@@ -87,7 +87,7 @@ public class ReguserDAO extends BaseHibernateDAO {
 			queryObject.setParameter(0, value);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find by property name failed", re);
+			LOG.error("find by property name failed", re);
 			throw re;
 		}
 	}
@@ -103,53 +103,53 @@ public class ReguserDAO extends BaseHibernateDAO {
 	}
 
 	public List findAll() {
-		log.debug("finding all Reguser instances");
+		LOG.debug("finding all Reguser instances");
 		try {
 			String queryString = "from Reguser";
 			Query queryObject = getSession().createQuery(queryString);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find all failed", re);
+			LOG.error("find all failed", re);
 			throw re;
 		}
 	}
 
 	public Reguser merge(Reguser detachedInstance) {
-		log.debug("merging Reguser instance");
+		LOG.debug("merging Reguser instance");
 		try {
 			Reguser result = (Reguser) getSession().merge(detachedInstance);
-			log.debug("merge successful");
+			LOG.debug("merge successful");
 			return result;
 		} catch (RuntimeException re) {
-			log.error("merge failed", re);
+			LOG.error("merge failed", re);
 			throw re;
 		}
 	}
 
 	public void attachDirty(Reguser instance) {
-		log.debug("attaching dirty Reguser instance");
+		LOG.debug("attaching dirty Reguser instance");
 		try {
 			getSession().saveOrUpdate(instance);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
 			throw re;
 		}
 	}
 
 	public void attachClean(Reguser instance) {
-		log.debug("attaching clean Reguser instance");
+		LOG.debug("attaching clean Reguser instance");
 		try {
 			getSession().lock(instance, LockMode.NONE);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
 			throw re;
 		}
 	}
 	
 	public Set<Integer> getRightValue(Reguser instance){
-		log.debug("getRightValue");
+		LOG.debug("getRightValue");
 		Set<Integer> rightValue = new HashSet<Integer>();
 		try{
 			Iterator ite_Rights = instance.getRights().iterator();
@@ -157,9 +157,9 @@ public class ReguserDAO extends BaseHibernateDAO {
 				Right right = (Right) ite_Rights.next();
 				rightValue.add(right.getRightId());
 			}			
-			log.debug("getRightValue success");
+			LOG.debug("getRightValue success");
 		}catch(Exception e){
-			log.error("getRightValue fail",e);
+			LOG.error("getRightValue fail",e);
 		}
 		return rightValue;
 	}

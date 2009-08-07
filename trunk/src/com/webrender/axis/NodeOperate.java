@@ -29,6 +29,7 @@ import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
 import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
+import com.webrender.dao.Operatelog;
 import com.webrender.dao.Quest;
 import com.webrender.dao.QuestDAO;
 import com.webrender.dao.Questarg;
@@ -43,82 +44,116 @@ import com.webrender.server.ControlThreadServer;
 
 public class NodeOperate extends BaseAxis {
 	
-	private static final Log log = LogFactory.getLog(NodeOperate.class);
+	private static final Log LOG = LogFactory.getLog(NodeOperate.class);
 	
 	public String pauseNode(String nodeIp)
 	{
-		log.debug("pauseNode");
+		LOG.debug("pauseNode");
 		try{
 			if ( ! this.canVisit(5)){
-				return BaseAxis.RightError;
+				return BaseAxis.RIGHTERROR;
 			}			
 		}catch(Exception e){
-			log.error("RightVisit error",e);
-			return BaseAxis.RightError;
+			LOG.error("RightVisit error",e);
+			return BaseAxis.RIGHTERROR;
 		}
+		Transaction tx = null;
 		try{
 			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(nodeIp);
+			String result = this.killCommand(nodeIp);
 			nodeMachine.setPause(true);
-			log.debug("pauseNode success");
-			return BaseAxis.ActionSuccess;			
+			tx = getTransaction();
+			logOperate(getLoginUserId(),Operatelog.MOD,"Pause "+nodeIp);
+			tx.commit();
+			if(BaseAxis.ACTIONSUCCESS.equals(result)){
+				LOG.debug("pauseNode success");
+				return BaseAxis.ACTIONSUCCESS;							
+			}
+			else{
+				LOG.error("pauseNode fail killCommandError");
+				nodeMachine.setPause(true);
+				return "KillCommandError";
+			}
 		}catch(Exception e){
-			log.error("pauseNode", e);
-			return BaseAxis.ActionFailure;
+			LOG.error("pauseNode fail", e);
+			if(tx!=null){
+				tx.rollback();
+			}
+			return BaseAxis.ACTIONFAILURE;
+		}finally{
+			this.closeSession();
 		}
 	}
 	public String resumeNode(String nodeIp)
 	{
-		log.debug("resumeNode");
+		LOG.debug("resumeNode");
 		try{
 			if ( ! this.canVisit(5)){
-				return BaseAxis.RightError;
+				return BaseAxis.RIGHTERROR;
 			}			
 		}catch(Exception e){
-			log.error("RightVisit error",e);
-			return BaseAxis.RightError;
+			LOG.error("RightVisit error",e);
+			return BaseAxis.RIGHTERROR;
 		}
+		Transaction tx = null;
 		try{
 			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(nodeIp);
 			nodeMachine.setPause(false);
-			log.debug("resumeNode success");
-			return BaseAxis.ActionSuccess;			
+			LOG.debug("resumeNode success");
+			tx = getTransaction();
+			logOperate(getLoginUserId(),Operatelog.MOD,"Resume "+nodeIp);
+			tx.commit();
+			return BaseAxis.ACTIONSUCCESS;			
 		}catch(Exception e){
-			log.error("resumeNode fail");
-			return BaseAxis.ActionFailure;
+			LOG.error("resumeNode fail");
+			if(tx!=null){
+				tx.rollback();
+			}
+			return BaseAxis.ACTIONFAILURE;
+		}finally{
+			this.closeSession();
 		}
 	}
 	public String setRealLog(String nodeIp,int isOpen){
-		log.debug("setRealLog");
+		LOG.debug("setRealLog");
 		try{
 			if ( ! this.canVisit(7)){
-				return BaseAxis.RightError;
+				return BaseAxis.RIGHTERROR;
 			}			
 		}catch(Exception e){
-			log.error("RightVisit error",e);
-			return BaseAxis.RightError;
+			LOG.error("RightVisit error",e);
+			return BaseAxis.RIGHTERROR;
 		}
-		
+		Transaction tx = null;
 		try{
-		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(nodeIp);
-		nodeMachine.setRealTime(isOpen==1?true:false);
-		log.debug("setRealLog success");
-		return BaseAxis.ActionSuccess;
+			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(nodeIp);
+			nodeMachine.setRealTime(isOpen==1?true:false);
+			LOG.debug("setRealLog success");
+			tx = getTransaction();
+			logOperate(getLoginUserId(),Operatelog.MOD,"SetRealTime "+(isOpen==1?"open":"close") );
+			tx.commit();
+			return BaseAxis.ACTIONSUCCESS;
 		}catch(Exception e)
 		{
-			log.error("setRealLog fail" ,e);
-			return BaseAxis.ActionFailure;
+			LOG.error("setRealLog fail" ,e);
+			if(tx!=null){
+				tx.rollback();
+			}
+			return BaseAxis.ACTIONFAILURE;
+		}finally{
+			this.closeSession();
 		}
 	}
 	public String killCommand(String nodeIp)
 	{
-		log.debug("killCommand");
+		LOG.debug("killCommand");
 		try{
 			if ( ! this.canVisit(5)){
-				return BaseAxis.RightError;
+				return BaseAxis.RIGHTERROR;
 			}			
 		}catch(Exception e){
-			log.error("RightVisit error",e);
-			return BaseAxis.RightError;
+			LOG.error("RightVisit error",e);
+			return BaseAxis.RIGHTERROR;
 		}
 		
 		Transaction tx = null;
@@ -129,7 +164,8 @@ public class NodeOperate extends BaseAxis {
 			Node node = nodeDAO.findByNodeIp(nodeIp) ;
 			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(node.getNodeIp());
 			boolean flag = nodeMachine.execute("***KILL***");
-			CommandDAO commandDAO = new CommandDAO();
+			//CommandDAO commandDAO = new CommandDAO();
+			logOperate(getLoginUserId(),Operatelog.MOD,"kill Commands in "+nodeIp );
 			StatusDAO statusDAO = new StatusDAO();
 			if (flag)
 			{
@@ -141,23 +177,23 @@ public class NodeOperate extends BaseAxis {
 				ExecutelogDAO exeDAO = new ExecutelogDAO();
 				exeDAO.save(executelog);
 				nodeMachine.setPause(true);
-				return BaseAxis.ActionFailure;
+				return BaseAxis.ACTIONFAILURE;
 			}
 			tx.commit();
 			nodeMachine.setBusy(false);
-			ControlThreadServer.getInstance().resume();
-			log.debug("killCommand success");
-			return BaseAxis.ActionSuccess;
+//			ControlThreadServer.getInstance().resume();
+			LOG.debug("killCommand success");
+			return BaseAxis.ACTIONSUCCESS;
 		}
 		
 		catch(Exception e)
 		{
-			log.error("killCommand error",e);
+			LOG.error("killCommand error",e);
 			if (tx != null) 
 			{
 				tx.rollback();
 			}			
-			return BaseAxis.ActionFailure;
+			return BaseAxis.ACTIONFAILURE;
 		}
 		finally
 		{
@@ -167,32 +203,60 @@ public class NodeOperate extends BaseAxis {
 	public String  shutdownNode(String nodeIp ,int Flag)
 	{
 		// FLAG  0 shutdown  1 reboot 2 soft restart
-		log.debug("shutdownNode");
+		LOG.debug("shutdownNode");
 		try{
 			if ( ! this.canVisit(5)){
-				return BaseAxis.RightError;
+				return BaseAxis.RIGHTERROR;
 			}			
 		}catch(Exception e){
-			log.error("RightVisit error",e);
-			return BaseAxis.RightError;
+			LOG.error("RightVisit error",e);
+			return BaseAxis.RIGHTERROR;
 		}
-		
-		if (Flag==0)  //shutdown
-		{
+		Transaction tx =null;
+		boolean exeFlag = false;
+		String message = "";
+		try{
+			tx = getTransaction();
 			NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(nodeIp);
-			return nodeMachine.execute("***SYSTEM***shutdown")? BaseAxis.ActionSuccess : BaseAxis.ActionFailure;
+			if (Flag==0)  //shutdown
+			{
+				if( nodeMachine.execute("***SYSTEM***shutdown"))
+				{
+					exeFlag =true;
+					message = "shutdown "+nodeIp;
+				}
+				else{
+					message = "shutdown "+nodeIp+" fail!";
+				}
+			}
+			else if (Flag==1) // reboot
+			{
+				if( nodeMachine.execute("***SYSTEM***reboot")){
+					exeFlag = true;
+					message = "reboot "+nodeIp;
+				}
+				else{
+					message = "reboot "+nodeIp+" fail!";
+				}
+			}
+			else if (Flag == 2 )// soft restart
+			{
+				if( nodeMachine.execute("***SYSTEM***softrestart")){
+					exeFlag = true;
+					message = "soft restart "+nodeIp;
+				}else{
+					message = "soft restart "+nodeIp+" fail!";
+				}
+			}
+			logOperate(getLoginUserId(),exeFlag?Operatelog.MOD:Operatelog.DEL,message);
+			tx.commit();
+			return exeFlag?ACTIONSUCCESS:ACTIONFAILURE;
+		}catch(Exception e){
+			
+			return ACTIONFAILURE;
+		}finally{
+			closeSession();
 		}
-		else if (Flag==1)
-		{
-			NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(nodeIp);
-			return nodeMachine.execute("***SYSTEM***reboot")? BaseAxis.ActionSuccess : BaseAxis.ActionFailure;
-		}
-		else if (Flag == 2 )
-		{
-			NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(nodeIp);
-			return nodeMachine.execute("***SYSTEM***softrestart")? BaseAxis.ActionSuccess : BaseAxis.ActionFailure;
-		}
-		return BaseAxis.ActionFailure;
 	}
 	
 	

@@ -7,6 +7,9 @@ import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.Example;
 
+import com.webrender.axis.beanxml.OperatelogUtils;
+import com.webrender.server.ExecuteLogServer;
+
 /**
  * A data access object (DAO) providing persistence and search support for
  * Operatelog entities. Transaction control of the save(), update() and delete()
@@ -20,7 +23,7 @@ import org.hibernate.criterion.Example;
  */
 
 public class OperatelogDAO extends BaseHibernateDAO {
-	private static final Log log = LogFactory.getLog(OperatelogDAO.class);
+	private static final Log LOG = LogFactory.getLog(OperatelogDAO.class);
 	// property constants
 	public static final String OPERATE_INFORMATION = "operateInformation";
 	public static final String TYPE = "type";
@@ -28,56 +31,58 @@ public class OperatelogDAO extends BaseHibernateDAO {
 	public static final String TABLE_ID = "tableId";
 
 	public void save(Operatelog transientInstance) {
-		log.debug("saving Operatelog instance");
+		LOG.debug("saving Operatelog instance");
 		try {
 			getSession().save(transientInstance);
-			log.debug("save successful");
+			LOG.debug("save successful");
+			String xmlLog = OperatelogUtils.bean2XMLString(transientInstance);
+			ExecuteLogServer.getInstance().broadCast(xmlLog);	
 		} catch (RuntimeException re) {
-			log.error("save failed", re);
+			LOG.error("save failed", re);
 			throw re;
 		}
 	}
 
 	public void delete(Operatelog persistentInstance) {
-		log.debug("deleting Operatelog instance");
+		LOG.debug("deleting Operatelog instance");
 		try {
 			getSession().delete(persistentInstance);
-			log.debug("delete successful");
+			LOG.debug("delete successful");
 		} catch (RuntimeException re) {
-			log.error("delete failed", re);
+			LOG.error("delete failed", re);
 			throw re;
 		}
 	}
 
 	public Operatelog findById(java.lang.Integer id) {
-		log.debug("getting Operatelog instance with id: " + id);
+		LOG.debug("getting Operatelog instance with id: " + id);
 		try {
 			Operatelog instance = (Operatelog) getSession().get(
 					"com.webrender.dao.Operatelog", id);
 			return instance;
 		} catch (RuntimeException re) {
-			log.error("get failed", re);
+			LOG.error("get failed", re);
 			throw re;
 		}
 	}
 
 	public List findByExample(Operatelog instance) {
-		log.debug("finding Operatelog instance by example");
+		LOG.debug("finding Operatelog instance by example");
 		try {
 			List results = getSession().createCriteria(
 					"com.webrender.dao.Operatelog").add(
 					Example.create(instance)).list();
-			log.debug("find by example successful, result size: "
+			LOG.debug("find by example successful, result size: "
 					+ results.size());
 			return results;
 		} catch (RuntimeException re) {
-			log.error("find by example failed", re);
+			LOG.error("find by example failed", re);
 			throw re;
 		}
 	}
 
 	public List findByProperty(String propertyName, Object value) {
-		log.debug("finding Operatelog instance with property: " + propertyName
+		LOG.debug("finding Operatelog instance with property: " + propertyName
 				+ ", value: " + value);
 		try {
 			String queryString = "from Operatelog as model where model."
@@ -86,7 +91,7 @@ public class OperatelogDAO extends BaseHibernateDAO {
 			queryObject.setParameter(0, value);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find by property name failed", re);
+			LOG.error("find by property name failed", re);
 			throw re;
 		}
 	}
@@ -108,48 +113,48 @@ public class OperatelogDAO extends BaseHibernateDAO {
 	}
 
 	public List findAll() {
-		log.debug("finding all Operatelog instances");
+		LOG.debug("finding all Operatelog instances");
 		try {
 			String queryString = "from Operatelog";
 			Query queryObject = getSession().createQuery(queryString);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find all failed", re);
+			LOG.error("find all failed", re);
 			throw re;
 		}
 	}
 
 	public Operatelog merge(Operatelog detachedInstance) {
-		log.debug("merging Operatelog instance");
+		LOG.debug("merging Operatelog instance");
 		try {
 			Operatelog result = (Operatelog) getSession().merge(
 					detachedInstance);
-			log.debug("merge successful");
+			LOG.debug("merge successful");
 			return result;
 		} catch (RuntimeException re) {
-			log.error("merge failed", re);
+			LOG.error("merge failed", re);
 			throw re;
 		}
 	}
 
 	public void attachDirty(Operatelog instance) {
-		log.debug("attaching dirty Operatelog instance");
+		LOG.debug("attaching dirty Operatelog instance");
 		try {
 			getSession().saveOrUpdate(instance);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
 			throw re;
 		}
 	}
 
 	public void attachClean(Operatelog instance) {
-		log.debug("attaching clean Operatelog instance");
+		LOG.debug("attaching clean Operatelog instance");
 		try {
 			getSession().lock(instance, LockMode.NONE);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
 			throw re;
 		}
 	}

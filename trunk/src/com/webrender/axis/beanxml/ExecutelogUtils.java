@@ -11,7 +11,7 @@ import org.jdom.Element;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
 
-public class ExecutelogUtils {
+public final class ExecutelogUtils {
 	public static Element bean2xml(Executelog exeLog)
 	{
 		Element root = new Element("Executelog");
@@ -45,18 +45,18 @@ public class ExecutelogUtils {
 		return XMLOut.outputToString(doc);
 		
 	}
-	public static String exeLog2xml()
-	{
-		ExecutelogDAO executeLogDAO = new ExecutelogDAO();
-		List<Executelog> list_ExeLogs = executeLogDAO.findAll();
-		for(int i = list_ExeLogs.size()-1 ;i>=0;i--)
-		{
-			if(list_ExeLogs.get(i).getStatus().getStatusId()>=90){
-// 	  	  		root.addContent( bean2xml(list_ExeLogs.get(i)) );
-				System.out.println( bean2XMLString(list_ExeLogs.get(i)) );
-			}
-		}
-		return null;
-//		return XMLOut.outputToString(doc);
-	}
+//	public static String exeLog2xml()
+//	{
+//		ExecutelogDAO executeLogDAO = new ExecutelogDAO();
+//		List<Executelog> list_ExeLogs = executeLogDAO.findAll();
+//		for(int i = list_ExeLogs.size()-1 ;i>=0;i--)
+//		{
+//			if(list_ExeLogs.get(i).getStatus().getStatusId()>=90){
+//// 	  	  		root.addContent( bean2xml(list_ExeLogs.get(i)) );
+//				System.out.println( bean2XMLString(list_ExeLogs.get(i)) );
+//			}
+//		}
+//		return null;
+////		return XMLOut.outputToString(doc);
+//	}
 }

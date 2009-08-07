@@ -16,11 +16,11 @@
 		</property>
 		<property name="connection.driver_class">
 			com.mysql.jdbc.Driver
-		</property>
-
-		<property name="cache.use_ query_cache">true</property>
-		
+		</property>		
 		<property name="connection.password">111111</property>
+		<property name="hibernate.cache.use_second_level_cache">false</property>
+		<property name="hibernate.cache.use_query_cache">false</property>
+		<property name="hibernate.cache.use_minimal_puts">false</property>
 		<mapping resource="com/webrender/dao/Operatelog.hbm.xml" />
 		<mapping resource="com/webrender/dao/Nodegroup.hbm.xml" />
 		<mapping resource="com/webrender/dao/Timegroup.hbm.xml" />

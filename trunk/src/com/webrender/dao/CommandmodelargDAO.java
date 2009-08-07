@@ -21,63 +21,63 @@ import org.hibernate.criterion.Example;
  */
 
 public class CommandmodelargDAO extends BaseHibernateDAO {
-	private static final Log log = LogFactory.getLog(CommandmodelargDAO.class);
+	private static final Log LOG = LogFactory.getLog(CommandmodelargDAO.class);
 	// property constants
 	public static final String ARG_NAME = "argName";
 	public static final String ARG_INSTRUCTION = "argInstruction";
 	public static final String TYPE = "type";
 
 	public void save(Commandmodelarg transientInstance) {
-		log.debug("saving Commandmodelarg instance");
+		LOG.debug("saving Commandmodelarg instance");
 		try {
 			getSession().save(transientInstance);
-			log.debug("save successful");
+			LOG.debug("save successful");
 		} catch (RuntimeException re) {
-			log.error("save failed", re);
+			LOG.error("save failed", re);
 			throw re;
 		}
 	}
 
 	public void delete(Commandmodelarg persistentInstance) {
-		log.debug("deleting Commandmodelarg instance");
+		LOG.debug("deleting Commandmodelarg instance");
 		try {
 			getSession().delete(persistentInstance);
-			log.debug("delete successful");
+			LOG.debug("delete successful");
 		} catch (RuntimeException re) {
-			log.error("delete failed", re);
+			LOG.error("delete failed", re);
 			throw re;
 		}
 	}
 
 	public Commandmodelarg findById(java.lang.Integer id) {
-		log.debug("getting Commandmodelarg instance with id: " + id);
+		LOG.debug("getting Commandmodelarg instance with id: " + id);
 		try {
 			Commandmodelarg instance = (Commandmodelarg) getSession().get(
 					"com.webrender.dao.Commandmodelarg", id);
 			return instance;
 		} catch (RuntimeException re) {
-			log.error("get failed", re);
+			LOG.error("get failed", re);
 			throw re;
 		}
 	}
 
 	public List findByExample(Commandmodelarg instance) {
-		log.debug("finding Commandmodelarg instance by example");
+		LOG.debug("finding Commandmodelarg instance by example");
 		try {
 			List results = getSession().createCriteria(
 					"com.webrender.dao.Commandmodelarg").add(
 					Example.create(instance)).list();
-			log.debug("find by example successful, result size: "
+			LOG.debug("find by example successful, result size: "
 					+ results.size());
 			return results;
 		} catch (RuntimeException re) {
-			log.error("find by example failed", re);
+			LOG.error("find by example failed", re);
 			throw re;
 		}
 	}
 
 	public List findByProperty(String propertyName, Object value) {
-		log.debug("finding Commandmodelarg instance with property: "
+		LOG.debug("finding Commandmodelarg instance with property: "
 				+ propertyName + ", value: " + value);
 		try {
 			String queryString = "from Commandmodelarg as model where model."
@@ -86,7 +86,7 @@ public class CommandmodelargDAO extends BaseHibernateDAO {
 			queryObject.setParameter(0, value);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find by property name failed", re);
+			LOG.error("find by property name failed", re);
 			throw re;
 		}
 	}
@@ -104,48 +104,48 @@ public class CommandmodelargDAO extends BaseHibernateDAO {
 	}
 
 	public List findAll() {
-		log.debug("finding all Commandmodelarg instances");
+		LOG.debug("finding all Commandmodelarg instances");
 		try {
 			String queryString = "from Commandmodelarg";
 			Query queryObject = getSession().createQuery(queryString);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find all failed", re);
+			LOG.error("find all failed", re);
 			throw re;
 		}
 	}
 
 	public Commandmodelarg merge(Commandmodelarg detachedInstance) {
-		log.debug("merging Commandmodelarg instance");
+		LOG.debug("merging Commandmodelarg instance");
 		try {
 			Commandmodelarg result = (Commandmodelarg) getSession().merge(
 					detachedInstance);
-			log.debug("merge successful");
+			LOG.debug("merge successful");
 			return result;
 		} catch (RuntimeException re) {
-			log.error("merge failed", re);
+			LOG.error("merge failed", re);
 			throw re;
 		}
 	}
 
 	public void attachDirty(Commandmodelarg instance) {
-		log.debug("attaching dirty Commandmodelarg instance");
+		LOG.debug("attaching dirty Commandmodelarg instance");
 		try {
 			getSession().saveOrUpdate(instance);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
 			throw re;
 		}
 	}
 
 	public void attachClean(Commandmodelarg instance) {
-		log.debug("attaching clean Commandmodelarg instance");
+		LOG.debug("attaching clean Commandmodelarg instance");
 		try {
 			getSession().lock(instance, LockMode.NONE);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
 			throw re;
 		}
 	}

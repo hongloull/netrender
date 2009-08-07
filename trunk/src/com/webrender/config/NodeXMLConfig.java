@@ -23,17 +23,17 @@ import com.webrender.dao.Timegroup;
 import com.webrender.dao.TimegroupDAO;
 
 public class NodeXMLConfig extends XMLConfig {
-	private static List lis_NGs = null;
-	private static final Log log = LogFactory.getLog(NodeXMLConfig.class);
+	private static List lisNGs = null;
+	private static final Log LOG = LogFactory.getLog(NodeXMLConfig.class);
 	static {
 		NodegroupDAO nodeGroupDAO = new  NodegroupDAO();
-		lis_NGs  = nodeGroupDAO.findAll();
+		lisNGs  = nodeGroupDAO.findAll();
 		Nodegroup all = nodeGroupDAO.findByNodeGroupName("All");
-		if (all!=null) lis_NGs.remove(all);
+		if (all!=null) lisNGs.remove(all);
 	}
 	@Override
 	public void loadFromXML(File file) throws JDOMException {
-		log.debug("loadFromXML");
+		LOG.debug("loadFromXML");
 		SAXBuilder sb =  new SAXBuilder();
 		Document doc = sb.build(file);
 		int index = file.getName().lastIndexOf(".xml");
@@ -83,12 +83,12 @@ public class NodeXMLConfig extends XMLConfig {
 			set_Nodes.retainAll(set_RetainNodes);
 			
 			tx.commit();
-			lis_NGs.remove(nodeGroup);
-			log.debug("loadFromXML success");
+			lisNGs.remove(nodeGroup);
+			LOG.debug("loadFromXML success");
 		}
 		catch(Exception e)
 		{
-			log.error("loadFromXML fail",e);
+			LOG.error("loadFromXML fail",e);
 			if (tx != null) 
 			{
 				tx.rollback();
@@ -98,18 +98,18 @@ public class NodeXMLConfig extends XMLConfig {
 	
 	public void deleteExtraData(){
 		Transaction tx = null;
-		log.debug("deleteExtraNodeGroup");
+		LOG.debug("deleteExtraNodeGroup");
 		try{
 			tx = getTransaction();
-			Iterator ite_NGs = lis_NGs.iterator();
+			Iterator ite_NGs = lisNGs.iterator();
 			NodegroupDAO nGDAO = new NodegroupDAO();
 			while(ite_NGs.hasNext()){
 				nGDAO.delete( (Nodegroup)ite_NGs.next() );
 			}
 			tx.commit();
-			log.debug("deleteExtraNodeGroup success");
+			LOG.debug("deleteExtraNodeGroup success");
 		}catch(Exception e){
-			log.error("deleteExtraNodeGroup fail", e);
+			LOG.error("deleteExtraNodeGroup fail", e);
 			if (tx != null) 
 			{
 				tx.rollback();

@@ -26,15 +26,15 @@ import com.webrender.server.ExecuteLogServer;
  */
 
 public class ExecutelogDAO extends BaseHibernateDAO {
-	private static final Log log = LogFactory.getLog(ExecutelogDAO.class);
+	private static final Log LOG = LogFactory.getLog(ExecutelogDAO.class);
 	// property constants
 	public static final String NOTE = "note";
 
 	public void save(Executelog transientInstance) {
-		log.debug("saving Executelog instance");
+		LOG.debug("saving Executelog instance");
 		try {
 			getSession().save(transientInstance);
-			log.debug("save successful");
+			LOG.debug("save successful");
 			
 			if(transientInstance.getStatus().getStatusId()>=90){
 				//executeLog send to client;
@@ -42,51 +42,51 @@ public class ExecutelogDAO extends BaseHibernateDAO {
 				ExecuteLogServer.getInstance().broadCast(xmlExecuteLog);				
 			}
 		} catch (RuntimeException re) {
-			log.error("save failed", re);
+			LOG.error("save failed", re);
 			throw re;
 		}
 	}
 
 	public void delete(Executelog persistentInstance) {
-		log.debug("deleting Executelog instance");
+		LOG.debug("deleting Executelog instance");
 		try {
 			getSession().delete(persistentInstance);
-			log.debug("delete successful");
+			LOG.debug("delete successful");
 		} catch (RuntimeException re) {
-			log.error("delete failed", re);
+			LOG.error("delete failed", re);
 			throw re;
 		}
 	}
 
 	public Executelog findById(java.lang.Integer id) {
-		log.debug("getting Executelog instance with id: " + id);
+		LOG.debug("getting Executelog instance with id: " + id);
 		try {
 			Executelog instance = (Executelog) getSession().get(
 					"com.webrender.dao.Executelog", id);
 			return instance;
 		} catch (RuntimeException re) {
-			log.error("get failed", re);
+			LOG.error("get failed", re);
 			throw re;
 		}
 	}
 
 	public List findByExample(Executelog instance) {
-		log.debug("finding Executelog instance by example");
+		LOG.debug("finding Executelog instance by example");
 		try {
 			List results = getSession().createCriteria(
 					"com.webrender.dao.Executelog").add(
 					Example.create(instance)).list();
-			log.debug("find by example successful, result size: "
+			LOG.debug("find by example successful, result size: "
 					+ results.size());
 			return results;
 		} catch (RuntimeException re) {
-			log.error("find by example failed", re);
+			LOG.error("find by example failed", re);
 			throw re;
 		}
 	}
 
 	public List findByProperty(String propertyName, Object value) {
-		log.debug("finding Executelog instance with property: " + propertyName
+		LOG.debug("finding Executelog instance with property: " + propertyName
 				+ ", value: " + value);
 		try {
 			String queryString = "from Executelog as model where model."
@@ -95,7 +95,7 @@ public class ExecutelogDAO extends BaseHibernateDAO {
 			queryObject.setParameter(0, value);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find by property name failed", re);
+			LOG.error("find by property name failed", re);
 			throw re;
 		}
 	}
@@ -105,72 +105,72 @@ public class ExecutelogDAO extends BaseHibernateDAO {
 	}
 
 	public List findAll() {
-		log.debug("finding all Executelog instances");
+		LOG.debug("finding all Executelog instances");
 		try {
 			String queryString = "from Executelog";
 			Query queryObject = getSession().createQuery(queryString);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find all failed", re);
+			LOG.error("find all failed", re);
 			throw re;
 		}
 	}
 
 	public Executelog merge(Executelog detachedInstance) {
-		log.debug("merging Executelog instance");
+		LOG.debug("merging Executelog instance");
 		try {
 			Executelog result = (Executelog) getSession().merge(
 					detachedInstance);
-			log.debug("merge successful");
+			LOG.debug("merge successful");
 			return result;
 		} catch (RuntimeException re) {
-			log.error("merge failed", re);
+			LOG.error("merge failed", re);
 			throw re;
 		}
 	}
 
 	public void attachDirty(Executelog instance) {
-		log.debug("attaching dirty Executelog instance");
+		LOG.debug("attaching dirty Executelog instance");
 		try {
 			getSession().saveOrUpdate(instance);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
 			throw re;
 		}
 	}
 
 	public void attachClean(Executelog instance) {
-		log.debug("attaching clean Executelog instance");
+		LOG.debug("attaching clean Executelog instance");
 		try {
 			getSession().lock(instance, LockMode.NONE);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
 			throw re;
 		}
 	}
 	public List getRealLog(Command command){
-		log.debug("getRealLog commandId: " +command.getCommandId());
+		LOG.debug("getRealLog commandId: " +command.getCommandId());
 		try{
 			String queryString = "from Executelog as model where model.command.commandId= ? and model.status.statusId<90 ";
 			Query queryObject = getSession().createQuery(queryString);
 			queryObject.setParameter(0, command.getCommandId());
 			return queryObject.list();
 		}catch(RuntimeException re){
-			log.error("getRealLog",re);
+			LOG.error("getRealLog",re);
 			throw re;
 		}
 	}
 	public boolean hasError(Command command){
-		log.debug("hasError commandId: "+command.getCommandId());
+		LOG.debug("hasError commandId: "+command.getCommandId());
 		try{
 			String queryString = "from Executelog as model where model.command.commandId= ? and model.status.statusId=81 ";
 			Query queryObject = getSession().createQuery(queryString);
 			queryObject.setParameter(0, command.getCommandId());
 			return queryObject.list().size()==0?false:true;
 		}catch(RuntimeException re){
-			log.error("getRealLog",re);
+			LOG.error("getRealLog",re);
 			throw re;
 		}
 	}

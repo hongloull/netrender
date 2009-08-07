@@ -19,7 +19,7 @@ public class TestQuestsState {
 	public void testGetQuestsStatus()
 	{
 		QuestsState qs = new QuestsState();
-		QuestDAO questDAO = new QuestDAO();
+	//	QuestDAO questDAO = new QuestDAO();
 		for(int i =0 ; i<10;i++){
 			qs.getQuestsStatus();
 			

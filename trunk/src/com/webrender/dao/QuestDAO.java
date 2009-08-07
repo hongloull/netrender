@@ -23,7 +23,7 @@ import org.hibernate.criterion.Example;
  */
 
 public class QuestDAO extends BaseHibernateDAO {
-	private static final Log log = LogFactory.getLog(QuestDAO.class);
+	private static final Log LOG = LogFactory.getLog(QuestDAO.class);
 	// property constants
 	public static final String QUEST_NAME = "questName";
 	public static final String INFORMATION = "information";
@@ -32,56 +32,56 @@ public class QuestDAO extends BaseHibernateDAO {
 	public static final String PACKET_SIZE = "packetSize";
 
 	public void save(Quest transientInstance) {
-		log.debug("saving Quest instance");
+		LOG.debug("saving Quest instance");
 		try {
 			getSession().save(transientInstance);
-			log.debug("save successful");
+			LOG.debug("save successful");
 		} catch (RuntimeException re) {
-			log.error("save failed", re);
+			LOG.error("save failed", re);
 			throw re;
 		}
 	}
 
 	public void delete(Quest persistentInstance) {
-		log.debug("deleting Quest instance");
+		LOG.debug("deleting Quest instance");
 		try {
 			getSession().delete(persistentInstance);
-			log.debug("delete successful");
+			LOG.debug("delete successful");
 		} catch (RuntimeException re) {
-			log.error("delete failed", re);
+			LOG.error("delete failed", re);
 			throw re;
 		}
 	}
 
 	public Quest findById(java.lang.Integer id) {
-		log.debug("getting Quest instance with id: " + id);
+		LOG.debug("getting Quest instance with id: " + id);
 		try {
 			Quest instance = (Quest) getSession().get(
 					"com.webrender.dao.Quest", id);
 			return instance;
 		} catch (RuntimeException re) {
-			log.error("get failed", re);
+			LOG.error("get failed", re);
 			throw re;
 		}
 	}
 
 	public List findByExample(Quest instance) {
-		log.debug("finding Quest instance by example");
+		LOG.debug("finding Quest instance by example");
 		try {
 			List results = getSession().createCriteria(
 					"com.webrender.dao.Quest").add(Example.create(instance))
 					.list();
-			log.debug("find by example successful, result size: "
+			LOG.debug("find by example successful, result size: "
 					+ results.size());
 			return results;
 		} catch (RuntimeException re) {
-			log.error("find by example failed", re);
+			LOG.error("find by example failed", re);
 			throw re;
 		}
 	}
 
 	public List findByProperty(String propertyName, Object value) {
-		log.debug("finding Quest instance with property: " + propertyName
+		LOG.debug("finding Quest instance with property: " + propertyName
 				+ ", value: " + value);
 		try {
 			String queryString = "from Quest as model where model."
@@ -90,7 +90,7 @@ public class QuestDAO extends BaseHibernateDAO {
 			queryObject.setParameter(0, value);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find by property name failed", re);
+			LOG.error("find by property name failed", re);
 			throw re;
 		}
 	}
@@ -116,77 +116,77 @@ public class QuestDAO extends BaseHibernateDAO {
 	}
 
 	public List findAll() {
-		log.debug("finding all Quest instances");
+		LOG.debug("finding all Quest instances");
 		try {
 			String queryString = "from Quest as  quest order by quest.questId desc";
 			Query queryObject = getSession().createQuery(queryString);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find all failed", re);
+			LOG.error("find all failed", re);
 			throw re;
 		}
 	}
 
 	public Quest merge(Quest detachedInstance) {
-		log.debug("merging Quest instance");
+		LOG.debug("merging Quest instance");
 		try {
 			Quest result = (Quest) getSession().merge(detachedInstance);
-			log.debug("merge successful");
+			LOG.debug("merge successful");
 			return result;
 		} catch (RuntimeException re) {
-			log.error("merge failed", re);
+			LOG.error("merge failed", re);
 			throw re;
 		}
 	}
 
 	public void attachDirty(Quest instance) {
-		log.debug("attaching dirty Quest instance");
+		LOG.debug("attaching dirty Quest instance");
 		try {
 			getSession().saveOrUpdate(instance);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
 			throw re;
 		}
 	}
 
 	public void attachClean(Quest instance) {
-		log.debug("attaching clean Quest instance");
+		LOG.debug("attaching clean Quest instance");
 		try {
 			getSession().lock(instance, LockMode.NONE);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
 			throw re;
 		}
 	}
 	public void pauseQuest(Quest instance) {
-		log.debug("pauseQuest");
+		LOG.debug("pauseQuest");
 		try {
 			StatusDAO statusDAO = new StatusDAO();
 			instance.setStatus(statusDAO.findById(51));
 			this.attachDirty(instance);
-			log.debug("pauseQuest successful");
+			LOG.debug("pauseQuest successful");
 		} catch (RuntimeException re) {
-			log.error("pauseQuest failed", re);
+			LOG.error("pauseQuest failed", re);
 			throw re;
 		}
 	}
 	public void resumeQuest(Quest instance) {
-		log.debug("resumeQuest");
+		LOG.debug("resumeQuest");
 		try {
 			StatusDAO statusDAO = new StatusDAO();
 			instance.setStatus(statusDAO.findById(50));
 			this.attachDirty(instance);
-			log.debug("resumeQuest successful");
+			LOG.debug("resumeQuest successful");
 		} catch (RuntimeException re) {
-			log.error("resumeQuest failed", re);
+			LOG.error("resumeQuest failed", re);
 			throw re;
 		}
 	}
 	public void reinitQuest(Quest instance)
 	{
-		log.debug("reinitQuest");
+		LOG.debug("reinitQuest");
 		try {
 			CommandDAO commandDAO = new CommandDAO();
 			Iterator ite_Commands = instance.getCommands().iterator();
@@ -195,9 +195,9 @@ public class QuestDAO extends BaseHibernateDAO {
 				commandDAO.reinitCommand( (Command)ite_Commands.next() );				
 			}
 			
-			log.debug("reinitQuest successful");
+			LOG.debug("reinitQuest successful");
 		} catch (RuntimeException re) {
-			log.error("reinitQuest failed", re);
+			LOG.error("reinitQuest failed", re);
 			throw re;
 		}
 	}
@@ -208,14 +208,14 @@ public class QuestDAO extends BaseHibernateDAO {
 	 * @return pause inprogress complete waiting 
 	 */
 	public String getStatus(Quest quest) {
-		log.debug("getStatus");
+		LOG.debug("getStatus");
 		try {
 			int isPause = quest.getStatus().getStatusId()==51?1:0;
 			CommandDAO commandDAO = new CommandDAO();
 			boolean isProgress = commandDAO.isInProgress(quest);
 			int finish = commandDAO.getFinish(quest).size();
 			int total = quest.getCommands().size() ;	
-			log.debug("getStatus successful");
+			LOG.debug("getStatus successful");
 			if (finish ==total) return "Complete";
 			else if (isPause==1) return "Pause";
 			else if (isProgress == true) return "InProgress";
@@ -223,7 +223,7 @@ public class QuestDAO extends BaseHibernateDAO {
 			
 		}
 		catch (RuntimeException re) {
-			log.error("getStatus failed", re);
+			LOG.error("getStatus failed", re);
 			throw re;
 		}
 	}

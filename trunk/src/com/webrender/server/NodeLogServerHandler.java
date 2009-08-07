@@ -23,7 +23,7 @@ import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
 
 public class NodeLogServerHandler extends IoHandlerAdapter {
-	private static final Log log = LogFactory.getLog(NodeLogServerHandler.class);
+	private static final Log LOG = LogFactory.getLog(NodeLogServerHandler.class);
 	public void exceptionCaught(IoSession session, Throwable cause) {
 		  // Close connection when unexpected exception is caught.
 		  session.close();
@@ -37,11 +37,11 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 		String ip = ((InetSocketAddress)session.getRemoteAddress()).getAddress().getHostAddress();
 		
 		String theMessage = (String) message;
-		log.debug(ip+": "+theMessage);
+		LOG.debug(ip+": "+theMessage);
 		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(ip);
 		
 		if(theMessage.startsWith("***RUN***")){
-			log.debug(ip+theMessage);
+			LOG.debug(ip+theMessage);
 			NodeDAO nodeDAO  = new NodeDAO();
 			Transaction tx = null;
 			try{
@@ -54,15 +54,15 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 				node.setNodeName(theMessage.substring(9));//***RUN***之后的字符
 				nodeDAO.save(node);
 				tx.commit();
-				log.debug(ip+" RUN OK");
+				LOG.debug(ip+" RUN OK");
 				//	NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(ip);
-				ConnectTest cTest = new ConnectTest(nodeMachine);
-				cTest.start();
+				
 				session.write("***OK***");
+				nodeMachine.testConnect();
 			}
 			catch(Exception e)
 			{
-				log.error(ip+" run fail ",e );
+				LOG.error(ip+" run fail ",e );
 				if (tx != null) 
 				{
 					tx.rollback();
@@ -73,16 +73,25 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 			return;
 		}
 		try{
-			nodeMachine.addRealLog(nodeMachine.getCurrentCommands().iterator().next(),theMessage);
-			
-			if (  nodeMachine.isRealTime() )
-			{
-				RealLogServer.getInstance().broadCast(ip+"***"+theMessage);
+			Iterator iteCommands = nodeMachine.getCurrentCommands().iterator();
+			if(iteCommands.hasNext()){
+				nodeMachine.addRealLog(nodeMachine.getCurrentCommands().iterator().next(),theMessage);
+				if (  nodeMachine.isRealTime() )
+				{
+					RealLogServer.getInstance().broadCast(ip+"***"+theMessage);
+				}
+				
 			}
+			else{
+				LOG.debug(theMessage);
+			}
+			
 		
 		}
 		catch(Exception e){
-			log.error("messageReceived fail",e);
+			LOG.error("messageReceived fail",e);
+		}finally{
+			HibernateSessionFactory.closeSession();
 		}
 		
 		

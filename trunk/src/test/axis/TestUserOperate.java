@@ -39,7 +39,7 @@ public class TestUserOperate {
 	}
 	@Test
 	public void testGetUser(){
-		String regName   = "ad";
+		String regName   = "jma";
 		String passWord  = "111111";
 		String groupName = "user";
 		UserOperate uo = new UserOperate();

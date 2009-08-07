@@ -6,7 +6,7 @@ import com.webrender.dao.Quest;
 import com.webrender.dao.QuestDAO;
 import com.webrender.logic.CalcFrame;
 
-public class testCalcFrame {
+public class TestCalcFrame {
 	@Test
 	public void test()
 	{

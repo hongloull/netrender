@@ -14,10 +14,10 @@ import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 
-public class ExecuteLogServer {
+public final class ExecuteLogServer {
     private static ExecuteLogServer instance = new ExecuteLogServer();
     private static final int PORT = 10063;
-    private static final Log log = LogFactory.getLog(ExecuteLogServer.class);
+    private static final Log LOG = LogFactory.getLog(ExecuteLogServer.class);
     private IoAcceptor acceptor = new SocketAcceptor();
     private IoAcceptorConfig config = new SocketAcceptorConfig();
     private  DefaultIoFilterChainBuilder chain = config.getFilterChain();
@@ -34,7 +34,7 @@ public class ExecuteLogServer {
     			new TextLineCodecFactory()));
     	acceptor.bind(new InetSocketAddress(PORT), ioHandler,
     			config);
-    	log.debug("ExecuteLogServer Listening on port " + PORT);
+    	LOG.debug("ExecuteLogServer Listening on port " + PORT);
     }
     public void broadCast(String message)
     {

@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-public class NodeMachineManager {
+public final  class  NodeMachineManager {
 	private NodeMachineManager(){}
 	
 	private static Map<String,NodeMachine> machines= new Hashtable<String,NodeMachine>();
@@ -23,22 +23,22 @@ public class NodeMachineManager {
 		}
 		return machines.get(ip);
 	}
-	public static Collection<NodeMachine> getNodeMachines(){
-		return machines.values();
+	public static Set<String> getNodeMachines(){
+		return machines.keySet();
 	}
 	
-	public static void resetIdleMachines()
-	{
-		Iterator ite_Machines = machines.values().iterator();
-		while(ite_Machines.hasNext())
-		{
-			NodeMachine nodeMachine = ((NodeMachine)ite_Machines.next() );
-			ConnectTest cTest = new ConnectTest(nodeMachine);
-			cTest.start();
-//			if (nodeMachine.testConnect() && nodeMachine.isBusy()==false && nodeMachine.isPause()==false && NodeMachineManager.idleMachines.contains(nodeMachine)==false)
-//			{
-//				NodeMachineManager.idleMachines.add(nodeMachine);
-//			}
-		}
-	}
+//	public static void resetIdleMachines()
+//	{
+//		Iterator ite_Machines = machines.values().iterator();
+//		while(ite_Machines.hasNext())
+//		{
+//			NodeMachine nodeMachine = ((NodeMachine)ite_Machines.next() );
+//			ConnectTest cTest = new ConnectTest(nodeMachine);
+//			cTest.start();
+////			if (nodeMachine.testConnect() && nodeMachine.isBusy()==false && nodeMachine.isPause()==false && NodeMachineManager.idleMachines.contains(nodeMachine)==false)
+////			{
+////				NodeMachineManager.idleMachines.add(nodeMachine);
+////			}
+//		}
+//	}
 }

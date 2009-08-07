@@ -17,37 +17,40 @@ import com.webrender.dao.Quest;
 import com.webrender.dao.QuestDAO;
 
 public class QuestsState extends BaseAxis {
-	private static final Log log = LogFactory.getLog(QuestsState.class);
+	private static final Log LOG = LogFactory.getLog(QuestsState.class);
 	
 	public String getQuestStatus(String questId)
 	{
-		log.debug("getQuestStatus: id = "+questId);
-		try{
-			if (!this.canVisit(7) ){
-				return BaseAxis.RightError;
-			}			
-		}catch(Exception e){
-			log.error("RightVisit error",e);
-			return BaseAxis.RightError;
+		if(questId==null || questId.equals("")){
+			return BaseAxis.ACTIONFAILURE;
 		}
+		LOG.debug("getQuestStatus: id = "+questId);
+//		try{
+//			if (!this.canVisit(7) ){
+//				return BaseAxis.RIGHTERROR;
+//			}			
+//		}catch(Exception e){
+//			LOG.error("RightVisit error",e);
+//			return BaseAxis.RIGHTERROR;
+//		}
 		
 		try{
 			QuestDAO questDAO = new QuestDAO();
-			Element root = QuestUtils.bean2xml_State(questDAO.findById(Integer.parseInt(questId)));
+			Element root = QuestUtils.bean2xmlWithState(questDAO.findById(Integer.parseInt(questId)));
 			Document doc = new Document(root);
-			log.info("QuestID: "+questId + "  Progress: "+root.getAttributeValue("progress"));
+			LOG.debug("QuestID: "+questId + "  Progress: "+root.getAttributeValue("progress"));
 		
-			log.debug("getQuestStatus success: id = "+questId);
+			LOG.debug("getQuestStatus success: id = "+questId);
 			return XMLOut.outputToString(doc);
 		}
 		catch(NullPointerException e){
-			log.error("getQuestStatus failure: id = "+questId,e);
+			LOG.error("getQuestStatus failure: id = "+questId,e);
 			return "QuestNotExistError";
 		}
 		catch(Exception e)
 		{
-			log.error("getQuestStatus failure: id = "+questId,e);
-			return BaseAxis.ActionFailure;
+			LOG.error("getQuestStatus failure: id = "+questId,e);
+			return BaseAxis.ACTIONFAILURE;
 		}finally
 		{
 			this.closeSession();
@@ -57,16 +60,16 @@ public class QuestsState extends BaseAxis {
 	
 	public String getQuestsStatus()
 	{
-		log.debug("getQuestsStatus");
+		LOG.debug("getQuestsStatus");
 		
-		try{
-			if (!this.canVisit(7) ){
-				return BaseAxis.RightError;
-			}			
-		}catch(Exception e){
-			log.error("RightVisit error",e);
-			return BaseAxis.RightError;
-		}
+//		try{
+//			if (!this.canVisit(7) ){
+//				return BaseAxis.RIGHTERROR;
+//			}			
+//		}catch(Exception e){
+//			LOG.error("RightVisit error",e);
+//			return BaseAxis.RIGHTERROR;
+//		}
 		MessageContext mc = MessageContext.getCurrentContext();
 		String remoteAdd = ( (HttpServletRequest) mc.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST)).getRemoteAddr();
 		try{
@@ -82,21 +85,21 @@ public class QuestsState extends BaseAxis {
 			while(ite_Quests.hasNext())
 			{
 				Quest quest = (Quest)ite_Quests.next();
-				Element ele_Quest = QuestUtils.bean2xml_State(quest);
+				Element ele_Quest = QuestUtils.bean2xmlWithState(quest);
 				root.addContent(ele_Quest);
 			}
 			String result = XMLOut.outputToString(doc);
-//			log.info(result);
-			log.debug(remoteAdd+" ThreadID:"+Thread.currentThread().getId()+" QuestsNum: "+ size);
-			log.debug("getQuestsStatus success");
+//			LOG.info(result);
+			LOG.debug(remoteAdd+" ThreadID:"+Thread.currentThread().getId()+" QuestsNum: "+ size);
+			LOG.debug("getQuestsStatus success");
 			return result;			
 		}catch(Exception e)
 		{
-			log.error("getQuestsStatus error",e);
-			return BaseAxis.ActionFailure;
+			LOG.error("getQuestsStatus error",e);
+			return BaseAxis.ACTIONFAILURE;
 		}finally
 		{
-//			log.info(" getQuestsStatus finally closeSession");
+//			LOG.info(" getQuestsStatus finally closeSession");
 			this.closeSession();
 		}
 	}

@@ -10,7 +10,7 @@ import com.webrender.dao.Commandarg;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
 
-public class ChunkDetailUtils {
+public final class ChunkDetailUtils {
 	public static Element getElement(Command command)
 	{
 		Element root = new Element("Detail");
@@ -69,8 +69,10 @@ public class ChunkDetailUtils {
 			root.addAttribute("renderedBy", nodeName);
 			root.addAttribute("nodeIp",nodeIp);
 			root.addAttribute("startingTime",start);
-			root.addAttribute("endingTime", end);
-			root.addAttribute("timeSpan",timeSpan);
+			if(statusId==72){
+				root.addAttribute("endingTime", end);
+				root.addAttribute("timeSpan",timeSpan);				
+			}
 			return root;
 		}
 		return null;

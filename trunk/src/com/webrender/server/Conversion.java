@@ -8,10 +8,10 @@ import org.apache.commons.logging.LogFactory;
 import com.webrender.config.GenericConfig;
 import com.webrender.config.XMLConfigManager;
 
-public class Conversion extends Thread {
+public final class Conversion extends Thread {
 	private  String mainServer = GenericConfig.getInstance().getMainServer();
 	private  String subServer  = GenericConfig.getInstance().getSubServer();
-	private static final Log log = LogFactory.getLog(Conversion.class);
+	private static final Log LOG = LogFactory.getLog(Conversion.class);
 	private static Conversion instance = new Conversion(); 
 	// 标记该服务器类型 flag = 0 无用，1为主机 2为副机
 	private  int flag = 0; 
@@ -28,7 +28,7 @@ public class Conversion extends Thread {
 		InetAddress myIp;
 		try {
 			myIp = InetAddress.getLocalHost();
-			log.info("local IP : "+myIp.getHostAddress());
+			LOG.info("local IP : "+myIp.getHostAddress());
 			if (myIp.getHostAddress().equals(mainServer)) flag = 1;
 			else if (myIp.getHostAddress().equals(subServer))  flag = 2;
 		} catch (UnknownHostException e) {
@@ -46,7 +46,7 @@ public class Conversion extends Thread {
 		case 1:{// MainServer
 			// 通知SubServer，暂停工作，运行转交MainServer
 			// MainServer运行 start()
-			log.info("MainServer Run");
+			LOG.info("MainServer Run");
 			XMLConfigManager.loadConfig();
 			this.runServer();
 			break;
@@ -70,7 +70,7 @@ public class Conversion extends Thread {
 					i++;
 					if (i>=5)
 					{
-						log.info("SubServer Run");
+						LOG.info("SubServer Run");
 						this.runServer();
 						i = 0;
 					}
@@ -90,7 +90,7 @@ public class Conversion extends Thread {
 			}
 		}
 		case 0:{
-			log.error("Neither mainServer nor subServer ,Server don't run!!!!!!!!!!!!!");
+			LOG.error("Neither mainServer nor subServer ,Server don't run!!!!!!!!!!!!!");
 			break;
 		}
 		}
@@ -105,7 +105,7 @@ public class Conversion extends Thread {
 		}
 		
 		if (status == 0){
-			log.info("SocketServer Run");
+			LOG.info("SocketServer Run");
 			try {
 				NodeLogServer.getInstance().run();
 			} catch (Exception e) {
@@ -126,7 +126,7 @@ public class Conversion extends Thread {
 		}
 		else if (status ==2)
 		{
-			log.info("ControlThreadServer NodeThreadServer restart");
+			LOG.info("ControlThreadServer restart");
 			ControlThreadServer.getInstance().resume();
 //			NodeThreadServer.getInstance().resume();
 		}
@@ -137,7 +137,7 @@ public class Conversion extends Thread {
 	{
 		if ( status == 1)
 		{
-			ControlThreadServer.getInstance().threadSuspend(" ControlThreadServer stop");
+			ControlThreadServer.getInstance().threadSuspend("pauseServer");
 //			NodeThreadServer.getInstance().threadStop("NodeThreadServer stop");
 			status = 2;
 		}
@@ -149,7 +149,7 @@ public class Conversion extends Thread {
 		
 	private boolean isRun(String mainServer2) {						
 		try{
-			log.debug("isRun ? "+mainServer2);
+			LOG.debug("isRun ? "+mainServer2);
 			String endpoint="http://"+mainServer2+":8080/WebRender/services/UserLogin?wsdl";
 			org.apache.axis.client.Service service=new org.apache.axis.client.Service();
 			org.apache.axis.client.Call call=(org.apache.axis.client.Call)service.createCall();
@@ -158,17 +158,17 @@ public class Conversion extends Thread {
 			call.setTimeout(2000);
 			Object result=call.invoke(new Object[]{});
 			if ( result.equals(1) ){
-				log.debug(mainServer2+" already run");
+				LOG.debug(mainServer2+" already run");
 				return true;
 			}
 			else 
 			{
-				log.debug(mainServer2+" not run");
+				LOG.debug(mainServer2+" not run");
 				return false;
 			}
 			
 		}catch(Exception e){
-			log.debug(mainServer2+" not run");
+			LOG.debug(mainServer2+" not run");
 			return false;
 		}
 	}

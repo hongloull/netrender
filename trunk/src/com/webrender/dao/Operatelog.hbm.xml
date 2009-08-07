@@ -25,5 +25,8 @@
         <property name="tableId" type="java.lang.Integer">
             <column name="TableID" />
         </property>
+        <property name="logTime" type="java.util.Date">
+            <column name="LogTime" length="19" not-null="true" />
+        </property>
     </class>
 </hibernate-mapping>

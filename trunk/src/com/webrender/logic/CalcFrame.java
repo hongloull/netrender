@@ -17,7 +17,7 @@ import com.webrender.dao.StatusDAO;
 public class CalcFrame {
 	
 	private BigDecimal startFrame=null,endFrame=null,byFrame=null,framePerNode=null;
-	private Commandmodelarg startTag = null,endTag=null,byTag=null;
+	private Commandmodelarg startTag = null,endTag=null;
 //	private Set<String> results = null;
 	
 	public  void calcFrames(Quest quest,Short packetSize)
@@ -37,7 +37,7 @@ public class CalcFrame {
 							endTag  = questArg.getCommandmodelarg();
 							break;
 				case 63:    byFrame   = new BigDecimal(questArg.getValue());
-							byTag  = questArg.getCommandmodelarg();
+							
 							break;
 				}
 			}
@@ -120,7 +120,7 @@ public class CalcFrame {
 						endTag  = questArg.getCommandmodelarg();
 						break;
 			case 63:    byFrame   = new BigDecimal(questArg.getValue());
-						byTag  = questArg.getCommandmodelarg();
+						
 						break;
 			}
 		}

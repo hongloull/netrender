@@ -15,10 +15,11 @@ import com.webrender.dao.Command;
 import com.webrender.dao.CommandDAO;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
+import com.webrender.dao.Operatelog;
 import com.webrender.server.ControlThreadServer;
 
 public class CommandOperate extends BaseAxis {
-	private static final Log log = LogFactory.getLog(CommandOperate.class);
+	private static final Log LOG = LogFactory.getLog(CommandOperate.class);
 	
 	public String getRealLogs(String commandId){
 		
@@ -32,8 +33,8 @@ public class CommandOperate extends BaseAxis {
 //			return BaseAxis.RightError;
 //		}
 		
-		log.debug("getRealLogs");
-		Transaction tx = null;
+		LOG.debug("getRealLogs");
+		
 		try{
 			CommandDAO commandDAO = new CommandDAO();
 			ExecutelogDAO exeLogDAO = new ExecutelogDAO();
@@ -45,17 +46,14 @@ public class CommandOperate extends BaseAxis {
 				Executelog log = (Executelog)ite_Executelogs.next();
 					root.addContent( ExecutelogUtils.bean2xml(log) );
 			}
-			log.debug("getRealLog success");
+			LOG.debug("getRealLog success");
 		//	XMLOut.outputToFile(doc,new File("d:/reallog.xml") );
 			return XMLOut.outputToString(doc);
 		}catch(Exception e)
 		{
-			log.error("getRealLog fail",e);
-			if (tx != null) 
-			{
-				tx.rollback();
-			}			
-			return BaseAxis.ActionFailure;
+			LOG.error("getRealLog fail",e);
+						
+			return BaseAxis.ACTIONFAILURE;
 		}
 		finally
 		{
@@ -66,31 +64,34 @@ public class CommandOperate extends BaseAxis {
 	
 	public String reinitCommand(String commandId){
 			
-		log.debug("reinitCommand");
+		LOG.debug("reinitCommand");
 		try{
 			if (!this.canVisit(3) && ( !this.canVisit(2) || !this.isSelf(Integer.parseInt(commandId)) ) ){
-				return BaseAxis.RightError;
+				return BaseAxis.RIGHTERROR;
 			}			
 		}catch(Exception e){
-			log.error("RightVisit error",e);
-			return BaseAxis.RightError;
+			LOG.error("RightVisit error",e);
+			return BaseAxis.RIGHTERROR;
 		}
 		Transaction tx = null;
 		try{
 			tx = getTransaction();
 			CommandDAO commandDAO = new CommandDAO();
-			commandDAO.reinitCommand( commandDAO.findById(Integer.parseInt(commandId)) );
+			Command command = commandDAO.findById(Integer.parseInt(commandId));
+			commandDAO.reinitCommand(command );
+			logOperate(this.getLoginUserId(),Operatelog.MOD,"ReInit Command: "+commandDAO.getNote(command));
 			tx.commit();
-			ControlThreadServer.getInstance().resume();
-			log.debug("reinitCommand success");
-			return BaseAxis.ActionSuccess;
+//			ControlThreadServer.getInstance().resume();
+			
+			LOG.debug("reinitCommand success");
+			return BaseAxis.ACTIONSUCCESS;
 		}catch(Exception e){
-			log.error("reinitCommand fail",e);
+			LOG.error("reinitCommand fail",e);
 			if (tx != null) 
 			{
 				tx.rollback();
 			}			
-			return BaseAxis.ActionFailure;
+			return BaseAxis.ACTIONFAILURE;
 		}
 		finally
 		{

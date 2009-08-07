@@ -13,10 +13,10 @@ import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 
-public class NodeLogServer {
+public final class NodeLogServer {
 	private static NodeLogServer instance = new NodeLogServer();
     private static final int PORT = 10061;
-    private static final Log log = LogFactory.getLog(NodeLogServer.class);
+    private static final Log LOG = LogFactory.getLog(NodeLogServer.class);
     private IoAcceptor acceptor = new SocketAcceptor();
     private IoAcceptorConfig config = new SocketAcceptorConfig();
     private  DefaultIoFilterChainBuilder chain = config.getFilterChain();
@@ -33,7 +33,7 @@ public class NodeLogServer {
     			new TextLineCodecFactory()));
     	acceptor.bind(new InetSocketAddress(PORT), ioHandler,
     			config);
-    	log.debug("NodeLogServer Listening on port " + PORT);
+    	LOG.debug("NodeLogServer Listening on port " + PORT);
     }
 
 }

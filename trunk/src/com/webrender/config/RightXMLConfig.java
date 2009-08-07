@@ -15,16 +15,16 @@ import com.webrender.dao.Right;
 import com.webrender.dao.RightDAO;
 
 public class RightXMLConfig extends XMLConfig {
-	private static final Log log = LogFactory.getLog(RightXMLConfig.class);
+	private static final Log LOG = LogFactory.getLog(RightXMLConfig.class);
 	@Override
 	public void deleteExtraData() {
 	}
 
 	@Override
 	public void loadFromXML(File file) throws JDOMException {
-		log.debug("loadFromXML");
+		LOG.debug("loadFromXML");
 		if(file.canWrite()){
-			log.info(file.getAbsoluteFile()+": canWrite");
+			LOG.info(file.getAbsoluteFile()+": canWrite");
 			RightDAO rightDAO = new RightDAO();
 			Iterator ite_Rights = rightDAO.findAll().iterator();
 			Element root = new Element("Rights");
@@ -34,9 +34,9 @@ public class RightXMLConfig extends XMLConfig {
 				root.addContent(element);
 			}
 			XMLOut.outputToFile(doc,file);
-			log.debug("loadFromXML success");
+			LOG.debug("loadFromXML success");
 		}
-		else  log.error(file.getAbsoluteFile()+": cannot Write");
+		else  LOG.error(file.getAbsoluteFile()+": cannot Write");
 		
 	}
 

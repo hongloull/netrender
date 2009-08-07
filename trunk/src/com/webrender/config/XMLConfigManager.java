@@ -12,7 +12,7 @@ public class XMLConfigManager {
 	private static String[] xmls = {"templates","nodes","right","users"};
 //	private static boolean[] pathExist = {false,false};
 //	private static String basePath = XMLConfigManager.class.getResource("/").getPath();
-	private static final Log log = LogFactory.getLog(XMLConfigManager.class);
+	private static final Log LOG = LogFactory.getLog(XMLConfigManager.class);
 	public static void loadConfig()
 	{
 		int length = xmls.length;
@@ -24,7 +24,7 @@ public class XMLConfigManager {
 				if( dir.isDirectory() ){
 					File[] files = dir.listFiles();
 					int filesNum = files.length;
-					log.info("Read ConfigDir : "+ dir.getAbsolutePath() +" filesNum "+filesNum);
+					LOG.info("Read ConfigDir : "+ dir.getAbsolutePath() +" filesNum "+filesNum);
 					XMLConfig load = null;
 					for(int j=0;j<filesNum;j++){
 						if (files[j].isFile()){
@@ -41,10 +41,10 @@ public class XMLConfigManager {
 				}
 			}
 			catch(NullPointerException e){
-				log.error(xmls[i] +" not exist! ",e);
+				LOG.error(xmls[i] +" not exist! ",e);
 			}
 			catch(Exception e){
-				log.error("",e);
+				LOG.error("",e);
 			}finally{
 				HibernateSessionFactory.closeSession();
 			}

@@ -1,5 +1,6 @@
 package com.webrender.axis;
 
+import java.util.Date;
 import java.util.Set;
 
 import org.apache.axis.MessageContext;
@@ -7,14 +8,17 @@ import org.apache.axis.session.Session;
 import org.hibernate.Transaction;
 
 import com.webrender.dao.HibernateSessionFactory;
+import com.webrender.dao.Operatelog;
+import com.webrender.dao.OperatelogDAO;
+import com.webrender.dao.Reguser;
+import com.webrender.dao.ReguserDAO;
 
 public abstract class BaseAxis {
 	
-	protected static final String NotLogin = "NotLogin";
-	protected static final String ActionSuccess = "Success";
-	protected static final String ActionFailure = "Failure";	
-	protected static final String RightError = "NoRight";
-	protected static final String NameExist = "NameExistError";
+	protected static final String NOTLOGIN = "NotLogin";
+	protected static final String ACTIONSUCCESS = "Success";
+	protected static final String ACTIONFAILURE = "Failure";	
+	protected static final String RIGHTERROR = "NoRight";
 	/**
 	 * 查看登录用户ID
 	 * @return ReguserId 0为未登录
@@ -50,8 +54,27 @@ public abstract class BaseAxis {
 			return false;
 		}
 	}
+	/**
+	 * 
+	 * @param regUserId
+	 * @param type Operate.LOGIN ADD MOD DEL ERROR
+	 * @param information
+	 */
+	protected void logOperate(int regUserId,Short type,String information){
+		ReguserDAO regUserDAO = new ReguserDAO();
+		Reguser regUser = regUserDAO.findById(regUserId);
+		if(regUser==null){
+			
+		}
+		else{
+			OperatelogDAO operateLogDAO = new OperatelogDAO();
+			Operatelog transientInstance = new Operatelog(regUser,type,new Date());
+			transientInstance.setOperateInformation(information);
+			operateLogDAO.save(transientInstance);
+		}
+	}
 	
-	protected boolean isSelf(int id){
+	protected boolean isSelf(int objectId){
 		return false;
 	}
 	protected Transaction getTransaction()
@@ -66,8 +89,5 @@ public abstract class BaseAxis {
 	{
 		HibernateSessionFactory.closeSession();
 	}
-	protected void evict(Class obj)
-	{
-		HibernateSessionFactory.getSessionFactory().evict(obj);
-	}
+	
 }
