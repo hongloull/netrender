@@ -7,7 +7,7 @@ import com.webrender.dao.QuestDAO;
 import com.webrender.dao.QuestargDAO;
 import com.webrender.logic.CalcFrame;
 
-public class QuestUtils {
+public final class QuestUtils {
 	 public static Element bean2xml(Quest quest){
 		 Element root = new Element("Quest");
 		 root.addAttribute("questId",quest.getQuestId().toString());
@@ -60,7 +60,7 @@ public class QuestUtils {
 		 return quest;
 	 }
 	 
-	 public static Element bean2xml_State(Quest quest)
+	 public static Element bean2xmlWithState(Quest quest)
 	 {
 		 QuestargDAO questargDAO = new QuestargDAO();
 		 QuestDAO questDAO = new QuestDAO();
@@ -68,8 +68,8 @@ public class QuestUtils {
 		 root.addAttribute("status",questDAO.getStatus(quest)+"");
 		 root.addAttribute("progress",questDAO.getProgress(quest)+"");
 		 root.addAttribute("commandModelName",quest.getCommandmodel().getCommandModelName());
-		 String startFrame = questargDAO.getStartFrame(quest)+"";
-		 String endFrame   = questargDAO.getEndFrame(quest)+"";
+//		 String startFrame = questargDAO.getStartFrame(quest)+"";
+//		 String endFrame   = questargDAO.getEndFrame(quest)+"";
 		 try{
 			 CalcFrame cF = new CalcFrame();
 			 root.addAttribute("totalFrames",cF.getTotalFrames(quest));

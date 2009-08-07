@@ -25,11 +25,11 @@ import com.webrender.tool.FileCopy;
 
 
 public class UserOperate extends BaseAxis {
-	private static final Log log = LogFactory.getLog(UserOperate.class);
+	private static final Log LOG = LogFactory.getLog(UserOperate.class);
 	
 	public String getUsersList()
 	{
-		log.debug("getUserConfig");
+		LOG.debug("getUserConfig");
 		try {
 			this.closeSession();
 			String users = GenericConfig.getInstance().getFile("users");
@@ -45,18 +45,18 @@ public class UserOperate extends BaseAxis {
 				ele.addAttribute("name", user.getRegName());
 				root.addContent(ele);
 			}
-			log.debug("getUsersList success");
+			LOG.debug("getUsersList success");
 			return XMLOut.outputToString(doc);
 		} catch (Exception e) {
-			log.error("getUsersList ",e);
-			return BaseAxis.ActionFailure;
+			LOG.error("getUsersList ",e);
+			return BaseAxis.ACTIONFAILURE;
 		}finally{
 			this.closeSession();
 		}
 	}
 	
 	public String getUserConfig(String regName){
-		log.debug("getUserConfig");
+		LOG.debug("getUserConfig");
 		
 		String userFile = GenericConfig.getInstance().getFile("users/"+regName+".xml");
 		
@@ -70,14 +70,14 @@ public class UserOperate extends BaseAxis {
 			document = sb.build(file);
 			return XMLOut.outputToString(document);
 		} catch (Exception e) {
-			log.error("getUserConfig fail userName: "+regName, e);
-			return BaseAxis.ActionFailure;
+			LOG.error("getUserConfig fail userName: "+regName, e);
+			return BaseAxis.ACTIONFAILURE;
 		}finally{
 			this.closeSession();
 		}
 	}
 	public String modUserConfig(String userName,String questXML){
-		log.debug("modUserConfig");
+		LOG.debug("modUserConfig");
 		String userFile = GenericConfig.getInstance().getFile("users/"+userName+".xml");
 		File file = new File(userFile);
 		if(!file.exists()) return "UserNameNotExistError";
@@ -89,16 +89,16 @@ public class UserOperate extends BaseAxis {
 			XMLOut.outputToFile(doc, file);
 			UserXMLConfig loadConfig = new UserXMLConfig();
 			loadConfig.loadFromXML(file);
+			return BaseAxis.ACTIONSUCCESS;
 		} catch (JDOMException e) {
-			log.warn("moduserConfig fail:questXMLParseError userName:"+userName);
+			LOG.warn("moduserConfig fail:questXMLParseError userName:"+userName);
 			return "XMLParseError";
 		}finally{
 			this.closeSession();
 		}
-		return BaseAxis.ActionSuccess;
 	}
 	public String delUser(String regName){
-		log.debug("delUser: "+regName);
+		LOG.debug("delUser: "+regName);
 		ReguserDAO regUserDAO = new ReguserDAO();
 		Reguser regUser = regUserDAO.findByRegName(regName);
 		if (regUser==null) return "UserNotExistError";
@@ -115,13 +115,13 @@ public class UserOperate extends BaseAxis {
 				tx = getTransaction();
 				regUserDAO.delete(regUser);
 				tx.commit();
-				log.debug("delUser success");
-				return BaseAxis.ActionSuccess;
+				LOG.debug("delUser success");
+				return BaseAxis.ACTIONSUCCESS;
 			}catch(Exception e){
 				if(tx!=null){
 					tx.rollback();
 				}
-				log.error("delUser from database fail",e);
+				LOG.error("delUser from database fail",e);
 				return "Del"+regName+"FromDBError";
 			}finally{
 				this.closeSession();
@@ -129,7 +129,7 @@ public class UserOperate extends BaseAxis {
 		}
 	}
 	public String addUser(String regName ,String passWord){
-		log.debug("addUser: "+regName);
+		LOG.debug("addUser: "+regName);
 		try{
 			ReguserDAO regUserDAO = new ReguserDAO();
 			Reguser regUser = regUserDAO.findByRegName(regName);
@@ -151,20 +151,20 @@ public class UserOperate extends BaseAxis {
 						loadConfig.loadFromXML(file_User);
 					}
 				}catch (IOException e) {
-					log.error("addUser fail: DefaultFileCopyError", e);
+					LOG.error("addUser fail: DefaultFileCopyError", e);
 					return "DefaultConfigCopyError";
 				} catch (JDOMException e) {
-					log.error("addUser fail: DefaultFileParseError", e);
+					LOG.error("addUser fail: DefaultFileParseError", e);
 					return "DefaultFileParseError";
 				}
-				return BaseAxis.ActionSuccess;
+				return BaseAxis.ACTIONSUCCESS;
 			}
 			else{		
 				return "DefaultConfigNotExistError";
 			}
 		}catch(Exception e){
-			log.error("addUser fail",e);
-			return BaseAxis.ActionFailure;
+			LOG.error("addUser fail",e);
+			return BaseAxis.ACTIONFAILURE;
 		}finally{
 			this.closeSession();
 		}

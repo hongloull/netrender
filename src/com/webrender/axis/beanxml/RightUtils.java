@@ -3,7 +3,7 @@ package com.webrender.axis.beanxml;
 import org.jdom.Element;
 import com.webrender.dao.Right;
 
-public class RightUtils {
+public final class RightUtils {
 	public static Element bean2xml(Right right){
 		Element root = new Element("Right");
 		root.addAttribute("Id",right.getRightId().toString());

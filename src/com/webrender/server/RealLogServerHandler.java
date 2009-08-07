@@ -22,7 +22,7 @@ public class RealLogServerHandler extends IoHandlerAdapter {
 	  }
 	  
 	  public void messageReceived(IoSession session, Object message) {
-	        System.out.println("RealLogServer:"+ message);
+//	        System.out.println("RealLogServer:"+ message);
 	  }
 	  public void broadcast(String message) {
 		  synchronized (sessions) {

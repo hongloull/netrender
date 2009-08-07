@@ -2,15 +2,15 @@ package test.axis;
 
 import org.junit.Test;
 
-import com.webrender.axis.CommandmodelAxis;
+import com.webrender.axis.ModelOperate;
 import com.webrender.axis.QuestOperate;
 
 public class TestAxis {
 	@Test
 	public void testGetCommandModel()
 	{
-		CommandmodelAxis cmAxis = new CommandmodelAxis();
-		System.out.println( cmAxis.getCommandModel("1") ); 
+		ModelOperate cmAxis = new ModelOperate();
+		System.out.println( cmAxis.getModel("1") ); 
 		
 	}
 

@@ -12,8 +12,8 @@ import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
 import com.webrender.remote.NodeMachine.NodeStatus;
 
-public class NodeUtils {
-	private static final Log log = LogFactory.getLog(NodeUtils.class);
+public final class NodeUtils {
+	private static final Log LOG = LogFactory.getLog(NodeUtils.class);
 	
 	public static Element bean2xml(Node node)
 	{
@@ -49,9 +49,9 @@ public class NodeUtils {
 		return node;
 	}
 	
-	public static Element bean2xml_State(Node node)
+	public static Element bean2xmlWithState(Node node)
 	{
-		log.debug("bean2xml_State nodeIp: "+node.getNodeIp());
+		LOG.debug("bean2xml_State nodeIp: "+node.getNodeIp());
 		Element root = NodeUtils.bean2xml(node);
 		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(node.getNodeIp());
 		if (nodeMachine.isConnect())
@@ -75,11 +75,11 @@ public class NodeUtils {
 			root.addAttribute("platform", nodeStatus.getPlatform()+"");
 			root.addAttribute("jobName",nodeStatus.getJobName()+"");
 			root.addAttribute("realTime",nodeMachine.isRealTime()?"Enable":"Disable");	
-			log.debug("bean2xml_State success nodeIp: "+node.getNodeIp());
+			LOG.debug("bean2xml_State success nodeIp: "+node.getNodeIp());
 			return root;
 		}
 		else{
-			log.debug("bean2xml_State disconnect nodeIp: "+node.getNodeIp());
+			LOG.debug("bean2xml_State disconnect nodeIp: "+node.getNodeIp());
 			return null;
 		}
 	}

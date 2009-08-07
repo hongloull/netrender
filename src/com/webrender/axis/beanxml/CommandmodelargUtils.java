@@ -5,7 +5,7 @@ import com.webrender.dao.Commandmodelarg;
 import com.webrender.dao.CommandmodelargDAO;
 import com.webrender.dao.StatusDAO;
 
-public class CommandmodelargUtils {
+public final class CommandmodelargUtils {
 	public static Element bean2xml(Commandmodelarg arg)
 	{
 		Element root  = new Element("Commandmodelarg");
@@ -15,12 +15,12 @@ public class CommandmodelargUtils {
 		root.addAttribute("argInstruction", arg.getArgInstruction());
 		return root;
 	}
-	public static Element bean2xml_Status(Commandmodelarg arg)
-	{
-		Element root = bean2xml(arg);
-		root.addAttribute("statusId",(arg.getStatus()!=null) ?arg.getStatus().getStatusId().toString() :"60");
-		return root;
-	}
+//	public static Element bean2xml_Status(Commandmodelarg arg)
+//	{
+//		Element root = bean2xml(arg);
+//		root.addAttribute("statusId",(arg.getStatus()!=null) ?arg.getStatus().getStatusId().toString() :"60");
+//		return root;
+//	}
 	public static  Commandmodelarg xml2bean(Element element){
 		Commandmodelarg instance =null;
 		CommandmodelargDAO dao = new CommandmodelargDAO();

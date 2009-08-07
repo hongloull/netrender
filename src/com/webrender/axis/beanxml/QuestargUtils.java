@@ -7,7 +7,7 @@ import com.webrender.dao.CommandmodelargDAO;
 import com.webrender.dao.Questarg;
 import com.webrender.dao.QuestargDAO;
 
-public class QuestargUtils {
+public final class QuestargUtils {
 	public static Element bean2xml(Questarg questarg)
 	{
 		Element root = new Element("Questarg");

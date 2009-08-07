@@ -27,10 +27,10 @@ import com.webrender.remote.NodeMachineManager;
 import com.webrender.tool.FileCopy;
 
 public class PoolOperate extends BaseAxis {
-	private static final Log log = LogFactory.getLog(PoolOperate.class);
+	private static final Log LOG = LogFactory.getLog(PoolOperate.class);
 	
 	public String addPool(String name){
-		log.debug("addPool :"+name);
+		LOG.debug("addPool :"+name);
 		try{
 			NodegroupDAO nGDAO = new NodegroupDAO();
 			Nodegroup pool = nGDAO.findByNodeGroupName(name);
@@ -52,23 +52,23 @@ public class PoolOperate extends BaseAxis {
 					loadConfig.loadFromXML(file_Pool);
 				}
 			}catch(IOException e){
-				log.error("addPool fail: DefaultFileCopyError",e);
+				LOG.error("addPool fail: DefaultFileCopyError",e);
 				return "DefaultFileCopyError";
 			}catch (JDOMException e) {
-				log.error("addUser fail: DefaultFileParseError", e);
+				LOG.error("addUser fail: DefaultFileParseError", e);
 				return "DefaultFileParseError";
 			}
-			return BaseAxis.ActionSuccess;
+			return BaseAxis.ACTIONSUCCESS;
 		}catch(Exception e){
-			log.error("addPool fail",e);
-			return BaseAxis.ActionFailure;
+			LOG.error("addPool fail",e);
+			return BaseAxis.ACTIONFAILURE;
 		}finally{
 			this.closeSession();
 		}
 	}
 	
 	public String modPool(String name ,String questXML){
-		log.debug("modPoolConfig: "+name);
+		LOG.debug("modPoolConfig: "+name);
 		try{			
 			String poolFile = GenericConfig.getInstance().getFile("nodes/"+name+".xml");
 			File file = new File(poolFile);
@@ -80,21 +80,21 @@ public class PoolOperate extends BaseAxis {
 			XMLOut.outputToFile(doc, file);
 			NodeXMLConfig loadConfig = new NodeXMLConfig();
 			loadConfig.loadFromXML(file);
-			return BaseAxis.ActionSuccess;
+			return BaseAxis.ACTIONSUCCESS;
 		}catch(JDOMException e){
-			log.warn("modPool fail: XMLParseError name: "+name);
+			LOG.warn("modPool fail: XMLParseError name: "+name);
 			return "XMLParseError";
 		}
 		catch(Exception e){
-			log.error("modPool fail name: "+name,e);
-			return BaseAxis.ActionFailure;
+			LOG.error("modPool fail name: "+name,e);
+			return BaseAxis.ACTIONFAILURE;
 		}finally{
 			this.closeSession();
 		}
 	}
 	
 	public String getPoolConfig(String name){
-		log.debug("getPoolConfig: "+name);
+		LOG.debug("getPoolConfig: "+name);
 		try{
 			String poolFile = GenericConfig.getInstance().getFile("nodes/"+name+".xml");
 			File file = new File(poolFile);
@@ -105,15 +105,15 @@ public class PoolOperate extends BaseAxis {
 			document = sb.build(file);			
 			return XMLOut.outputToString(document);
 		}catch(Exception e){
-			log.error("getPoolConfig fail poolName: "+name,e);
-			return BaseAxis.ActionFailure;
+			LOG.error("getPoolConfig fail poolName: "+name,e);
+			return BaseAxis.ACTIONFAILURE;
 		}finally{
 			this.closeSession();
 		}
 	}
 	
 	public String delPool(String name){
-		log.debug("delPool: " +name);
+		LOG.debug("delPool: " +name);
 		try{
 			if(name.equalsIgnoreCase("All") ) return "DelPoolAllError";
 			NodegroupDAO nGDAO = new NodegroupDAO();
@@ -130,18 +130,18 @@ public class PoolOperate extends BaseAxis {
 					tx = getTransaction();
 					nGDAO.delete(pool);
 					tx.commit();
-					log.debug("delPool success");
-					return BaseAxis.ActionSuccess;
+					LOG.debug("delPool success");
+					return BaseAxis.ACTIONSUCCESS;
 				}catch(Exception e){
 					if(tx!=null){
 						tx.rollback();
 					}
-					log.error("delPool from database fail",e);
+					LOG.error("delPool from database fail",e);
 					return "Del"+name+"FromDBError";
 				}
 			}
 		}catch(Exception e){
-			return BaseAxis.ActionFailure;
+			return BaseAxis.ACTIONFAILURE;
 		}finally{
 			this.closeSession();
 		}
@@ -160,7 +160,7 @@ public class PoolOperate extends BaseAxis {
 			}
 			return XMLOut.outputToString(doc);
 		} catch (Exception e) {
-			return BaseAxis.ActionFailure;
+			return BaseAxis.ACTIONFAILURE;
 		}finally{
 			this.closeSession();
 		}
@@ -171,11 +171,11 @@ public class PoolOperate extends BaseAxis {
 	}
 	
 	public String getNodes(){
-		log.debug("getNodes");
+		LOG.debug("getNodes");
 		try{
 			Element root = new Element("Nodes");
 			Document doc = new Document(root);
-			Collection machines = NodeMachineManager.getNodeMachines();
+//			Collection machines = NodeMachineManager.getNodeMachines();
 			NodeDAO nodeDAO = new NodeDAO();
 			Element element = null;
 			Iterator ite_Nodes = nodeDAO.findAll().iterator();
@@ -190,10 +190,10 @@ public class PoolOperate extends BaseAxis {
 				}
 			}
 			String result = XMLOut.outputToString(doc);
-			log.debug("getNodes success");
+			LOG.debug("getNodes success");
 			return result;
 		}catch(Exception e){
-			log.error("getNodes fail",e);
+			LOG.error("getNodes fail",e);
 			return null;
 		}finally{
 			this.closeSession();

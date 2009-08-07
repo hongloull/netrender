@@ -29,7 +29,7 @@ public class Right implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public Right(String instruction, Set reguser) {
+	public Right(String instruction, Set regusers) {
 		this.instruction = instruction;
 		this.regusers = regusers;
 	}

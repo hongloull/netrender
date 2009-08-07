@@ -1,5 +1,7 @@
 package com.webrender.dao;
 
+import java.util.Date;
+
 /**
  * Operatelog entity.
  * 
@@ -9,13 +11,18 @@ package com.webrender.dao;
 public class Operatelog implements java.io.Serializable {
 
 	// Fields
-
+	public static final Short LOGIN = 1;
+	public static final Short MOD = 3;
+	public static final Short ADD = 4;
+	public static final Short DEL = 5;
+	public static final Short ERROR = 7;
 	private Integer operateLogId;
 	private Reguser reguser;
 	private String operateInformation;
 	private Short type;
 	private String table;
 	private Integer tableId;
+	private Date logTime;
 
 	// Constructors
 
@@ -23,20 +30,26 @@ public class Operatelog implements java.io.Serializable {
 	public Operatelog() {
 	}
 
-	/** minimal constructor */
-	public Operatelog(Reguser reguser, Short type) {
+	/**
+	 * 
+	 * @param reguser
+	 * @param type 1:login. 2:query. 3:modify. 4:add. 5:delete. 6:OM. 7:Error.
+	 */
+	public Operatelog(Reguser reguser, Short type, Date logTime) {
 		this.reguser = reguser;
 		this.type = type;
+		this.logTime = logTime;
 	}
 
 	/** full constructor */
 	public Operatelog(Reguser reguser, String operateInformation, Short type,
-			String table, Integer tableId) {
+			String table, Integer tableId, Date logTime) {
 		this.reguser = reguser;
 		this.operateInformation = operateInformation;
 		this.type = type;
 		this.table = table;
 		this.tableId = tableId;
+		this.logTime = logTime;
 	}
 
 	// Property accessors
@@ -87,6 +100,14 @@ public class Operatelog implements java.io.Serializable {
 
 	public void setTableId(Integer tableId) {
 		this.tableId = tableId;
+	}
+	
+	public Date getLogTime() {
+		return this.logTime;
+	}
+
+	public void setLogTime(Date logTime) {
+		this.logTime = logTime;
 	}
 
 }

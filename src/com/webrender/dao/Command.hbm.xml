@@ -31,7 +31,7 @@
             </key>
             <one-to-many class="com.webrender.dao.Commandarg" />
         </set>
-        <set name="executelogs" inverse="true" order-by="executeLogId asc" >
+        <set name="executelogs" inverse="true" order-by="executeLogId desc" >
             <key>
                 <column name="CommandID" />
             </key>

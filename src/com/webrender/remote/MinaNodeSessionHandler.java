@@ -12,20 +12,20 @@ import org.apache.mina.common.IoSession;
 public class MinaNodeSessionHandler extends IoHandlerAdapter {
 	
 	private NodeMachine nodeMachine = null;
-	private static final Log log = LogFactory.getLog(MinaNodeSessionHandler.class);
+	private static final Log LOG = LogFactory.getLog(MinaNodeSessionHandler.class);
 	public MinaNodeSessionHandler(NodeMachine nodeMachine){
 		this.nodeMachine = nodeMachine;
 	}
 	
 	public void sessionOpened(IoSession session) {
 		
-		log.info("Connect to "+session.getRemoteAddress());
+		LOG.info("Connect to "+session.getRemoteAddress());
 		this.nodeMachine.setConnect(true);
 	}
 	
 	public void sessionClosed(IoSession session) {	
 		
-		log.info("Total " + session.getReadBytes() + " byte(s)");
+		LOG.info("Total " + session.getReadBytes() + " byte(s)");
 		this.nodeMachine.setConnect(false);
 	}
 
@@ -35,14 +35,14 @@ public class MinaNodeSessionHandler extends IoHandlerAdapter {
 			session.setAttribute("StartFlag","Success");
 		}
 		else{
-			log.debug("StatusMessage:"+message);
+			LOG.debug("StatusMessage:"+message);
 		//	session.setAttachment(message);
 			this.nodeMachine.updateStatus((String)message);
 		}
 	}
 	
 	public void exceptionCaught(IoSession session, Throwable cause) {
-	//	log.error("ServerConnectNode error",cause);
+	//	LOG.error("ServerConnectNode error",cause);
 		session.close();
 	}
 }

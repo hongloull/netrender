@@ -14,27 +14,32 @@ import com.webrender.axis.beanxml.XMLOut;
 import com.webrender.config.GenericConfig;
 
 public class ConfigOperate extends BaseAxis {
-	private static final Log log = LogFactory.getLog(ConfigOperate.class);
+	private static final Log LOG = LogFactory.getLog(ConfigOperate.class);
 	public String getPathConfig(){
+		LOG.debug("getPathConfig");
 		try{
 		String mapDir = GenericConfig.getInstance().getFile("mapDir.xml");
 		File file = new File(mapDir);
 		if(!file.exists()) return "FileNotExistError";
 		SAXBuilder sb =  new SAXBuilder();
 		Document doc = null;
-			doc = sb.build(file);
-			return XMLOut.outputToString(doc);
+		doc = sb.build(file);
+		LOG.debug("getPathConfig success");
+		return XMLOut.outputToString(doc);
 		}catch(JDOMException e){
+			LOG.error("getPathConfig ParsError", e);
 			return "XMLParseError";
 		}
 		catch(Exception e){
-			return BaseAxis.ActionFailure;
+			LOG.error("getPathConfig fail",e);
+			return BaseAxis.ACTIONFAILURE;
 		}finally{
+			this.closeSession();
 		}
 	}
 	
 	public String setPathConfig(String questXML){
-
+		LOG.debug("setPathConfig");
 		try {
 			String mapDir = GenericConfig.getInstance().getFile("mapDir.xml");
 			File file = new File(mapDir);
@@ -43,11 +48,16 @@ public class ConfigOperate extends BaseAxis {
 					.getBytes());
 			Document doc = builder.build(inputStream);
 			XMLOut.outputToFile(doc, file);
-			return BaseAxis.ActionSuccess;
+			LOG.debug("setPathConfig success");
+			return BaseAxis.ACTIONSUCCESS;
 		} catch (JDOMException e) {
+			LOG.error("setPathConfig ParseError",e);
 			return "XMLParseError";
 		}catch(Exception e){
-			return BaseAxis.ActionFailure;
+			LOG.error("setPathConfig fail",e);
+			return BaseAxis.ACTIONFAILURE;
+		}finally{
+			this.closeSession();
 		}
 	}
 	

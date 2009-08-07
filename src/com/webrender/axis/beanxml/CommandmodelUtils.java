@@ -7,7 +7,7 @@ import org.jdom.Element;
 import com.webrender.dao.Commandmodel;
 import com.webrender.dao.CommandmodelDAO;
 
-public class CommandmodelUtils {
+public final class CommandmodelUtils {
 	public static Element bean2xml(Commandmodel model)
 	{
 		Element root  = new Element("Commandmodel");

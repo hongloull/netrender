@@ -22,17 +22,17 @@ import com.webrender.dao.CommandmodelDAO;
 import com.webrender.dao.Commandmodelarg;
 import com.webrender.dao.CommandmodelargDAO;
 public class CommandModelXMLConfig extends XMLConfig {
-	private static List lis_CMs = (new CommandmodelDAO()).findAll();
-	private static final Log log = LogFactory.getLog(CommandModelXMLConfig.class);
+	private static List lisCMs = (new CommandmodelDAO()).findAll();
+	private static final Log LOG = LogFactory.getLog(CommandModelXMLConfig.class);
 	
 	public void loadFromXML(File file) throws JDOMException {
-		log.debug("loadFromXML");
+		LOG.debug("loadFromXML");
 		SAXBuilder sb =  new SAXBuilder();
 		Document doc = sb.build(file);
 		int index = file.getName().lastIndexOf(".xml");
 		String commandModelName = file.getName().substring(0, index);
-		if(file.canWrite()) log.info(file.getAbsoluteFile()+": canWrite");
-		else  log.error(file.getAbsoluteFile()+": cannot Write");
+		if(file.canWrite()) LOG.info(file.getAbsoluteFile()+": canWrite");
+		else  LOG.error(file.getAbsoluteFile()+": cannot Write");
 	
 		Transaction tx = null;
 		CommandmodelDAO cMDAO = new CommandmodelDAO();
@@ -75,13 +75,13 @@ public class CommandModelXMLConfig extends XMLConfig {
 			}
 			tx.commit();
 			XMLOut.outputToFile(doc,file);
-			lis_CMs.remove(cM);
+			lisCMs.remove(cM);
 			
 			
 		}
 		catch(Exception e)
 		{
-			log.error("",e);
+			LOG.error("",e);
 			if (tx != null) 
 			{
 				tx.rollback();
@@ -92,20 +92,20 @@ public class CommandModelXMLConfig extends XMLConfig {
 	
 	public void deleteExtraData(){
 		Transaction tx = null;
-		log.debug("deleteExtraModel");
+		LOG.debug("deleteExtraModel");
 		try{
 			tx = getTransaction();
-			Iterator ite_CMs = lis_CMs.iterator();
+			Iterator ite_CMs = lisCMs.iterator();
 			CommandmodelDAO cmDAO = new CommandmodelDAO();
 			while(ite_CMs.hasNext()){
 				cmDAO.delete( (Commandmodel)ite_CMs.next() );
 			}
 			tx.commit();
-			log.debug("deleteExtraModel success");
+			LOG.debug("deleteExtraModel success");
 		}
 		catch(Exception e)
 		{
-			log.error("deleteExtraModel fail", e);
+			LOG.error("deleteExtraModel fail", e);
 			if (tx != null) 
 			{
 				tx.rollback();

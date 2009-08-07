@@ -1,6 +1,7 @@
 package com.webrender.axis;
 
 import java.util.Iterator;
+import java.util.Set;
 
 
 import org.apache.commons.logging.Log;
@@ -12,31 +13,32 @@ import com.webrender.axis.beanxml.NodeUtils;
 import com.webrender.axis.beanxml.XMLOut;
 import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
+import com.webrender.remote.NodeMachineManager;
 
 
 public class NodesState extends BaseAxis{
-	private static final Log log = LogFactory.getLog(NodesState.class);
+	private static final Log LOG = LogFactory.getLog(NodesState.class);
 	public String getNodeStatus(String nodeIp)
 	{
-		log.debug("getNodeStatus nodeIp:"+nodeIp);
+		LOG.debug("getNodeStatus nodeIp:"+nodeIp);
 		try{
 			if ( ! this.canVisit(7)){
-				return BaseAxis.RightError;
+				return BaseAxis.RIGHTERROR;
 			}			
 		}catch(Exception e){
-			log.error("RightVisit error",e);
-			return BaseAxis.RightError;
+			LOG.error("RightVisit error",e);
+			return BaseAxis.RIGHTERROR;
 		}
 		
 		try {
 			NodeDAO nodeDAO = new NodeDAO();
-			Element root = NodeUtils.bean2xml_State(nodeDAO.findByNodeIp(nodeIp) );
+			Element root = NodeUtils.bean2xmlWithState(nodeDAO.findByNodeIp(nodeIp) );
 			Document doc = new Document(root);
-			log.debug("getNodeStatus success");
+			LOG.debug("getNodeStatus success");
 			return XMLOut.outputToString(doc);
 		} catch(Exception e){
-			log.error("getNodeStatus fail",e);
-			return BaseAxis.ActionFailure;
+			LOG.error("getNodeStatus fail nodeIp: "+nodeIp );
+			return BaseAxis.ACTIONFAILURE;
 		}finally
 		{
 			this.closeSession();
@@ -44,14 +46,14 @@ public class NodesState extends BaseAxis{
 	}
 	public String getNodesStatus()
 	{
-		log.debug("get AllNodes Status begin");
+		LOG.debug("get AllNodes Status begin");
 		try{
 			if ( ! this.canVisit(7)){
-				return BaseAxis.RightError;
+				return BaseAxis.RIGHTERROR;
 			}			
 		}catch(Exception e){
-			log.error("RightVisit error",e);
-			return BaseAxis.RightError;
+			LOG.error("RightVisit error",e);
+			return BaseAxis.RIGHTERROR;
 		}
 		
 		try{
@@ -59,20 +61,22 @@ public class NodesState extends BaseAxis{
 			Document doc = new Document(root);
 			NodeDAO nodeDAO = new NodeDAO();
 			Iterator ite_Nodes = nodeDAO.findAll().iterator();
+			Set<String> ips = NodeMachineManager.getNodeMachines();
 			while (ite_Nodes.hasNext()) {
 				Node node = (Node) ite_Nodes.next();
-				Element ele_Node = NodeUtils.bean2xml_State(node);
-				
-				if (ele_Node != null)
-					root.addContent(ele_Node);
+				if(ips.contains(node.getNodeIp())){
+					Element ele_Node = NodeUtils.bean2xmlWithState(node);
+					if (ele_Node != null)
+						root.addContent(ele_Node);					
+				}
 			}
 			String result = XMLOut.outputToString(doc);
-			log.info("get all Nodes Status success "+result);
+			LOG.debug("get Nodes Status success "+result);
 			return result;
 		}catch(Exception e)
 		{
-			log.error("get all nodes status fail",e);
-			return BaseAxis.ActionFailure;
+			LOG.error("get all nodes status fail",e);
+			return BaseAxis.ACTIONFAILURE;
 		}finally
 		{
 			this.closeSession();

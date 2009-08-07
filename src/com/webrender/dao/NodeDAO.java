@@ -1,7 +1,6 @@
 package com.webrender.dao;
 
 import java.util.List;
-import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.LockMode;
@@ -21,7 +20,7 @@ import org.hibernate.criterion.Example;
  */
 
 public class NodeDAO extends BaseHibernateDAO {
-	private static final Log log = LogFactory.getLog(NodeDAO.class);
+	private static final Log LOG = LogFactory.getLog(NodeDAO.class);
 	// property constants
 	public static final String NODE_NAME = "nodeName";
 	public static final String NODE_IP = "nodeIp";
@@ -31,7 +30,7 @@ public class NodeDAO extends BaseHibernateDAO {
 	public static final String REAL_TIME = "realTime";
 
 	public void save(Node transientInstance) {
-		log.debug("saving Node instance");
+		LOG.debug("saving Node instance");
 		try {
 			getSession().save(transientInstance);
 			NodegroupDAO nodeGroupDAO = new  NodegroupDAO();
@@ -40,53 +39,53 @@ public class NodeDAO extends BaseHibernateDAO {
 				all.getNodes().add(transientInstance);
 				nodeGroupDAO.save(all);
 			}
-			log.debug("save successful");
+			LOG.debug("save successful");
 		} catch (RuntimeException re) {
-			log.error("save failed", re);
+			LOG.error("save failed", re);
 			throw re;
 		}
 	}
 
 	public void delete(Node persistentInstance) {
-		log.debug("deleting Node instance");
+		LOG.debug("deleting Node instance");
 		try {
 			getSession().delete(persistentInstance);
-			log.debug("delete successful");
+			LOG.debug("delete successful");
 		} catch (RuntimeException re) {
-			log.error("delete failed", re);
+			LOG.error("delete failed", re);
 			throw re;
 		}
 	}
 
 	public Node findById(java.lang.Integer id) {
-		log.debug("getting Node instance with id: " + id);
+		LOG.debug("getting Node instance with id: " + id);
 		try {
 			Node instance = (Node) getSession().get("com.webrender.dao.Node",
 					id);
 			return instance;
 		} catch (RuntimeException re) {
-			log.error("get failed", re);
+			LOG.error("get failed", re);
 			throw re;
 		}
 	}
 
 	public List findByExample(Node instance) {
-		log.debug("finding Node instance by example");
+		LOG.debug("finding Node instance by example");
 		try {
 			List results = getSession()
 					.createCriteria("com.webrender.dao.Node").add(
 							Example.create(instance)).list();
-			log.debug("find by example successful, result size: "
+			LOG.debug("find by example successful, result size: "
 					+ results.size());
 			return results;
 		} catch (RuntimeException re) {
-			log.error("find by example failed", re);
+			LOG.error("find by example failed", re);
 			throw re;
 		}
 	}
 
 	public List findByProperty(String propertyName, Object value) {
-		log.debug("finding Node instance with property: " + propertyName
+		LOG.debug("finding Node instance with property: " + propertyName
 				+ ", value: " + value);
 		try {
 			String queryString = "from Node as model where model."
@@ -95,7 +94,7 @@ public class NodeDAO extends BaseHibernateDAO {
 			queryObject.setParameter(0, value);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find by property name failed", re);
+			LOG.error("find by property name failed", re);
 			throw re;
 		}
 	}
@@ -127,84 +126,84 @@ public class NodeDAO extends BaseHibernateDAO {
 	}
 
 	public List findAll() {
-		log.debug("finding all Node instances");
+		LOG.debug("finding all Node instances");
 		try {
 			String queryString = "from Node";
 			Query queryObject = getSession().createQuery(queryString);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find all failed", re);
+			LOG.error("find all failed", re);
 			throw re;
 		}
 	}
 
 	public Node merge(Node detachedInstance) {
-		log.debug("merging Node instance");
+		LOG.debug("merging Node instance");
 		try {
 			Node result = (Node) getSession().merge(detachedInstance);
-			log.debug("merge successful");
+			LOG.debug("merge successful");
 			return result;
 		} catch (RuntimeException re) {
-			log.error("merge failed", re);
+			LOG.error("merge failed", re);
 			throw re;
 		}
 	}
 
 	public void attachDirty(Node instance) {
-		log.debug("attaching dirty Node instance");
+		LOG.debug("attaching dirty Node instance");
 		try {
 			getSession().saveOrUpdate(instance);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
 			throw re;
 		}
 	}
 
 	public void attachClean(Node instance) {
-		log.debug("attaching clean Node instance");
+		LOG.debug("attaching clean Node instance");
 		try {
 			getSession().lock(instance, LockMode.NONE);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
 			throw re;
 		}
 	}
 //	public List getIdleNodes(Command instance)
 //	{
-//		log.debug("getIdleNodes for instance");
+//		LOG.debug("getIdleNodes for instance");
 //		try
 //		{
 //			return getSession().createQuery("from Node as node where node.status.statusId=41").list();
 //		}catch(RuntimeException re){
-//			log.error("getIdleNodes failed",re);
+//			LOG.error("getIdleNodes failed",re);
 //			throw re;
 //		}
 //	}
 
 //	public void pauseNode(Node node) {
-//		log.debug("pauseNode");
+//		LOG.debug("pauseNode");
 //		try {
 //			StatusDAO statusDAO = new StatusDAO();
 //			node.setStatus(statusDAO.findById(43));
 //			this.attachDirty(node);
-//			log.debug("pauseNode successful");
+//			LOG.debug("pauseNode successful");
 //		} catch (RuntimeException re) {
-//			log.error("pauseNode failed", re);
+//			LOG.error("pauseNode failed", re);
 //			throw re;
 //		}
 //	}
 //	public void resumeNode(Node node)
 //	{
-//		log.debug("resumeNode");
+//		LOG.debug("resumeNode");
 //		try {
 //			StatusDAO statusDAO = new StatusDAO();
 //			node.setStatus(statusDAO.findById(41));
 //			this.attachDirty(node);
-//			log.debug("resumeNode successful");
+//			LOG.debug("resumeNode successful");
 //		} catch (RuntimeException re) {
-//			log.error("resumeNode failed", re);
+//			LOG.error("resumeNode failed", re);
 //			throw re;
 //		}
 //	}

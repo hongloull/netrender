@@ -20,11 +20,11 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 
-public class GenericConfig {
+public final class GenericConfig {
 	private String  configPath = GenericConfig.class.getResource("/").getPath();
 	private static GenericConfig instance = new GenericConfig();
 	private static final String CONF_FILE = "config.properties";
-	private static final Log log = LogFactory.getLog(GenericConfig.class);
+	private static final Log LOG = LogFactory.getLog(GenericConfig.class);
 	private Configuration config = null;
 
 	
@@ -101,7 +101,7 @@ public class GenericConfig {
 	
 	public String getMainServer()
 	{
-		log.debug("getMainServer");
+		LOG.debug("getMainServer");
 		File file = new File( getFile("server.xml") );
 		if( file.exists() ){
 			String address = "";
@@ -110,15 +110,15 @@ public class GenericConfig {
 				Document doc = sb.build(file);
 				address = doc.getRootElement().getAttributeValue("primary");
 			} catch (JDOMException e) {
-				log.error("getMainServer fail", e);
+				LOG.error("getMainServer fail", e);
 				e.printStackTrace();
 				return null;
 			}
-			log.debug("getMainServer success");
+			LOG.debug("getMainServer success");
 			return address;				
 		}
 		else{
-			log.error("getMainServer readFile NotExist return localHostIP");
+			LOG.error("getMainServer readFile NotExist return localHostIP");
 			try {
 				return InetAddress.getLocalHost().getHostAddress();
 			} catch (UnknownHostException e) {
@@ -130,7 +130,7 @@ public class GenericConfig {
 	
 	public String getDatabaseServer()
 	{
-		log.debug("getDatabaseServer");
+		LOG.debug("getDatabaseServer");
 		File file = new File( getFile("server.xml") );
 		if( file.exists() ){
 			String address = "";
@@ -139,15 +139,15 @@ public class GenericConfig {
 				Document doc = sb.build(file);
 				address = doc.getRootElement().getAttributeValue("database");
 			} catch (JDOMException e) {
-				log.error("getDatabaseServer fail",e);
+				LOG.error("getDatabaseServer fail",e);
 				e.printStackTrace();
 				return null;
 			}
-			log.debug("getDatabaseServer success");
+			LOG.debug("getDatabaseServer success");
 			return address;				
 		}
 		else{
-			log.error("getDatabaseServer readFile NotExist return localHostIP");
+			LOG.error("getDatabaseServer readFile NotExist return localHostIP");
 			try {
 				return InetAddress.getLocalHost().getHostAddress();
 			} catch (UnknownHostException e) {
@@ -159,7 +159,7 @@ public class GenericConfig {
 	
 	public String getSubServer()
 	{
-		log.debug("getSubServer");
+		LOG.debug("getSubServer");
 		File file = new File( getFile("server.xml") );
 		if( file.exists() ){
 			String address = "";
@@ -168,15 +168,15 @@ public class GenericConfig {
 				Document doc = sb.build(file);
 				address = doc.getRootElement().getAttributeValue("slate");
 			} catch (JDOMException e) {
-				log.error("getSubServer fail",e);
+				LOG.error("getSubServer fail",e);
 				e.printStackTrace();
 				return null;
 			}
-			log.debug("getSubServer success");
+			LOG.debug("getSubServer success");
 			return address;				
 		}
 		else{
-			log.error("getSubServer readFile NotExist return localHostIP");
+			LOG.error("getSubServer readFile NotExist return localHostIP");
 			try {
 				return InetAddress.getLocalHost().getHostAddress();
 			} catch (UnknownHostException e) {

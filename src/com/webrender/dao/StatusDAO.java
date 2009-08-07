@@ -21,62 +21,62 @@ import org.hibernate.criterion.Example;
  */
 
 public class StatusDAO extends BaseHibernateDAO {
-	private static final Log log = LogFactory.getLog(StatusDAO.class);
+	private static final Log LOG = LogFactory.getLog(StatusDAO.class);
 	// property constants
 	public static final String TYPE = "type";
 	public static final String VALUE = "value";
 
 	public void save(Status transientInstance) {
-		log.debug("saving Status instance");
+		LOG.debug("saving Status instance");
 		try {
 			getSession().save(transientInstance);
-			log.debug("save successful");
+			LOG.debug("save successful");
 		} catch (RuntimeException re) {
-			log.error("save failed", re);
+			LOG.error("save failed", re);
 			throw re;
 		}
 	}
 
 	public void delete(Status persistentInstance) {
-		log.debug("deleting Status instance");
+		LOG.debug("deleting Status instance");
 		try {
 			getSession().delete(persistentInstance);
-			log.debug("delete successful");
+			LOG.debug("delete successful");
 		} catch (RuntimeException re) {
-			log.error("delete failed", re);
+			LOG.error("delete failed", re);
 			throw re;
 		}
 	}
 
 	public Status findById(java.lang.Integer id) {
-		log.debug("getting Status instance with id: " + id);
+		LOG.debug("getting Status instance with id: " + id);
 		try {
 			Status instance = (Status) getSession().get(
 					"com.webrender.dao.Status", id);
 			return instance;
 		} catch (RuntimeException re) {
-			log.error("get failed", re);
+			LOG.error("get failed", re);
 			throw re;
 		}
 	}
 
 	public List findByExample(Status instance) {
-		log.debug("finding Status instance by example");
+		LOG.debug("finding Status instance by example");
 		try {
 			List results = getSession().createCriteria(
 					"com.webrender.dao.Status").add(Example.create(instance))
 					.list();
-			log.debug("find by example successful, result size: "
+			LOG.debug("find by example successful, result size: "
 					+ results.size());
 			return results;
 		} catch (RuntimeException re) {
-			log.error("find by example failed", re);
+			LOG.error("find by example failed", re);
 			throw re;
 		}
 	}
 
 	public List findByProperty(String propertyName, Object value) {
-		log.debug("finding Status instance with property: " + propertyName
+		LOG.debug("finding Status instance with property: " + propertyName
 				+ ", value: " + value);
 		try {
 			String queryString = "from Status as model where model."
@@ -85,7 +85,7 @@ public class StatusDAO extends BaseHibernateDAO {
 			queryObject.setParameter(0, value);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find by property name failed", re);
+			LOG.error("find by property name failed", re);
 			throw re;
 		}
 	}
@@ -99,47 +99,64 @@ public class StatusDAO extends BaseHibernateDAO {
 	}
 
 	public List findAll() {
-		log.debug("finding all Status instances");
+		LOG.debug("finding all Status instances");
 		try {
 			String queryString = "from Status";
 			Query queryObject = getSession().createQuery(queryString);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find all failed", re);
+			LOG.error("find all failed", re);
 			throw re;
 		}
 	}
 
 	public Status merge(Status detachedInstance) {
-		log.debug("merging Status instance");
+		LOG.debug("merging Status instance");
 		try {
 			Status result = (Status) getSession().merge(detachedInstance);
-			log.debug("merge successful");
+			LOG.debug("merge successful");
 			return result;
 		} catch (RuntimeException re) {
-			log.error("merge failed", re);
+			LOG.error("merge failed", re);
 			throw re;
 		}
 	}
 
 	public void attachDirty(Status instance) {
-		log.debug("attaching dirty Status instance");
+		LOG.debug("attaching dirty Status instance");
 		try {
 			getSession().saveOrUpdate(instance);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
 			throw re;
 		}
 	}
 
 	public void attachClean(Status instance) {
-		log.debug("attaching clean Status instance");
+		LOG.debug("attaching clean Status instance");
 		try {
 			getSession().lock(instance, LockMode.NONE);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
+			throw re;
+		}
+	}
+	public void updateSystemVersion(){
+		LOG.debug("updateSystemVersion");
+		try {
+			Status status = findById(100);
+			if(status == null){
+				status = new Status("System","0");
+			}
+			Long version = Long.parseLong( status.getValue() );
+			version++;
+			status.setValue( version.toString() );
+			attachDirty(status);
+			LOG.debug("attach successful");
+		} catch (RuntimeException re) {
+		//	LOG.error("attach failed", re);
 			throw re;
 		}
 	}

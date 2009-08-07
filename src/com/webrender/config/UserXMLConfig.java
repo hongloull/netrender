@@ -25,12 +25,12 @@ import com.webrender.dao.RightDAO;
 
 
 public class UserXMLConfig extends XMLConfig {
-	private static final Log log = LogFactory.getLog(UserXMLConfig.class);
-	private static List lis_Users = (new ReguserDAO()).findAll();
+	private static final Log LOG = LogFactory.getLog(UserXMLConfig.class);
+	private static List lisUsers = (new ReguserDAO()).findAll();
 
 	@Override
 	public void loadFromXML(File file) throws JDOMException {
-		log.debug("loadFromXML");
+		LOG.debug("loadFromXML");
 		SAXBuilder sb =  new SAXBuilder();
 		Document doc = sb.build(file);
 		int index = file.getName().lastIndexOf(".xml");
@@ -74,7 +74,7 @@ public class UserXMLConfig extends XMLConfig {
 					}
 				}
 				catch(Exception e){
-					log.warn("loadFromXML rightError. fileName: "+file.getName()+"; rightOrder:"+i);
+					LOG.warn("loadFromXML rightError. fileName: "+file.getName()+"; rightOrder:"+i);
 				}
 			}
 			set_Rights.retainAll(set_RetainRights);
@@ -92,7 +92,7 @@ public class UserXMLConfig extends XMLConfig {
 						set_Models.add(model);
 					}
 				}catch(Exception e){
-					log.warn("loadFromXML modelError. fileName: "+file.getName()+"; modelOrder:"+i);
+					LOG.warn("loadFromXML modelError. fileName: "+file.getName()+"; modelOrder:"+i);
 				}
 			}
 			set_Models.retainAll(set_RetainModels);
@@ -110,20 +110,20 @@ public class UserXMLConfig extends XMLConfig {
 						set_NGroups.add(nodeGroup);
 					}
 				}catch(Exception e){
-					log.warn("loadFromXML modelError. fileName: "+file.getName()+"; nodeGroupOrder:"+i);
+					LOG.warn("loadFromXML modelError. fileName: "+file.getName()+"; nodeGroupOrder:"+i);
 				}
 			}
 			set_NGroups.retainAll(set_RetainNGroups);
 			
 //			-------------commit----------------
 			tx.commit();
-			lis_Users.remove(reguser);
-			log.debug("loadFromXML success fileName: "+file.getName());
+			lisUsers.remove(reguser);
+			LOG.debug("loadFromXML success fileName: "+file.getName());
 		}catch(Exception e){
 			if(tx!=null){
 				tx.rollback();
 			}
-			log.error("loadFromXML fail fileName: "+file.getName(),e);
+			LOG.error("loadFromXML fail fileName: "+file.getName(),e);
 		}
 		
 	
@@ -132,18 +132,18 @@ public class UserXMLConfig extends XMLConfig {
 	@Override
 	public void deleteExtraData() {
 		Transaction tx = null;
-		log.debug("deleteExtraUsers");
+		LOG.debug("deleteExtraUsers");
 		try{
 			tx = getTransaction();
-			Iterator<Reguser> ite_Users = lis_Users.iterator();
+			Iterator<Reguser> ite_Users = lisUsers.iterator();
 			ReguserDAO regUserDAO = new ReguserDAO();
 			while(ite_Users.hasNext()){
 				regUserDAO.delete( ite_Users.next());
 			}
 			tx.commit();
-			log.debug("deleteExtraUsers ok");
+			LOG.debug("deleteExtraUsers ok");
 		}catch(Exception e){
-			log.error("deleteExtraUsers fail", e);
+			LOG.error("deleteExtraUsers fail", e);
 			if (tx != null) 
 			{
 				tx.rollback();

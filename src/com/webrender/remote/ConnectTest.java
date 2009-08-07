@@ -4,7 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class ConnectTest extends Thread {
-	private final static Log log = LogFactory.getLog(ConnectTest.class);
+	private final static Log LOG = LogFactory.getLog(ConnectTest.class);
 	private NodeMachine nodeMachine = null;
 	public ConnectTest(NodeMachine nodeMachine)
 	{
@@ -13,11 +13,15 @@ public class ConnectTest extends Thread {
 	
 	public void run()
 	{
-		if (nodeMachine.testConnect() && nodeMachine.isBusy()==false && nodeMachine.isPause()==false && NodeMachineManager.idleMachines.contains(nodeMachine)==false)
-		{
-			NodeMachineManager.idleMachines.add(nodeMachine);
+		nodeMachine.testConnect();
+		LOG.info("IdleMachines Size: "+NodeMachineManager.idleMachines.size());
+		while(true){
+			try {
+				nodeMachine.testStatus();
+				Thread.sleep(20000);
+			} catch (InterruptedException e) {
+			}
 		}
-		log.info("IdleMachines Size: "+NodeMachineManager.idleMachines.size());
 	}
 
 }

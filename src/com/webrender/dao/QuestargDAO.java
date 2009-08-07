@@ -20,61 +20,61 @@ import org.hibernate.criterion.Example;
  */
 
 public class QuestargDAO extends BaseHibernateDAO {
-	private static final Log log = LogFactory.getLog(QuestargDAO.class);
+	private static final Log LOG = LogFactory.getLog(QuestargDAO.class);
 	// property constants
 	public static final String VALUE = "value";
 	
 	public void save(Questarg transientInstance) {
-		log.debug("saving Questarg instance");
+		LOG.debug("saving Questarg instance");
 		try {
 			getSession().save(transientInstance);
-			log.debug("save successful");
+			LOG.debug("save successful");
 		} catch (RuntimeException re) {
-			log.error("save failed", re);
+			LOG.error("save failed", re);
 			throw re;
 		}
 	}
 	
 	public void delete(Questarg persistentInstance) {
-		log.debug("deleting Questarg instance");
+		LOG.debug("deleting Questarg instance");
 		try {
 			getSession().delete(persistentInstance);
-			log.debug("delete successful");
+			LOG.debug("delete successful");
 		} catch (RuntimeException re) {
-			log.error("delete failed", re);
+			LOG.error("delete failed", re);
 			throw re;
 		}
 	}
 	
 	public Questarg findById(java.lang.Integer id) {
-		log.debug("getting Questarg instance with id: " + id);
+		LOG.debug("getting Questarg instance with id: " + id);
 		try {
 			Questarg instance = (Questarg) getSession().get(
 					"com.webrender.dao.Questarg", id);
 			return instance;
 		} catch (RuntimeException re) {
-			log.error("get failed", re);
+			LOG.error("get failed", re);
 			throw re;
 		}
 	}
 	
 	public List findByExample(Questarg instance) {
-		log.debug("finding Questarg instance by example");
+		LOG.debug("finding Questarg instance by example");
 		try {
 			List results = getSession().createCriteria(
 			"com.webrender.dao.Questarg").add(Example.create(instance))
 			.list();
-			log.debug("find by example successful, result size: "
+			LOG.debug("find by example successful, result size: "
 					+ results.size());
 			return results;
 		} catch (RuntimeException re) {
-			log.error("find by example failed", re);
+			LOG.error("find by example failed", re);
 			throw re;
 		}
 	}
 	
 	public List findByProperty(String propertyName, Object value) {
-		log.debug("finding Questarg instance with property: " + propertyName
+		LOG.debug("finding Questarg instance with property: " + propertyName
 				+ ", value: " + value);
 		try {
 			String queryString = "from Questarg as model where model."
@@ -83,7 +83,7 @@ public class QuestargDAO extends BaseHibernateDAO {
 			queryObject.setParameter(0, value);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find by property name failed", re);
+			LOG.error("find by property name failed", re);
 			throw re;
 		}
 	}
@@ -93,53 +93,53 @@ public class QuestargDAO extends BaseHibernateDAO {
 	}
 	
 	public List findAll() {
-		log.debug("finding all Questarg instances");
+		LOG.debug("finding all Questarg instances");
 		try {
 			String queryString = "from Questarg";
 			Query queryObject = getSession().createQuery(queryString);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find all failed", re);
+			LOG.error("find all failed", re);
 			throw re;
 		}
 	}
 	
 	public Questarg merge(Questarg detachedInstance) {
-		log.debug("merging Questarg instance");
+		LOG.debug("merging Questarg instance");
 		try {
 			Questarg result = (Questarg) getSession().merge(detachedInstance);
-			log.debug("merge successful");
+			LOG.debug("merge successful");
 			return result;
 		} catch (RuntimeException re) {
-			log.error("merge failed", re);
+			LOG.error("merge failed", re);
 			throw re;
 		}
 	}
 	
 	public void attachDirty(Questarg instance) {
-		log.debug("attaching dirty Questarg instance");
+		LOG.debug("attaching dirty Questarg instance");
 		try {
 			getSession().saveOrUpdate(instance);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
 			throw re;
 		}
 	}
 	
 	public void attachClean(Questarg instance) {
-		log.debug("attaching clean Questarg instance");
+		LOG.debug("attaching clean Questarg instance");
 		try {
 			getSession().lock(instance, LockMode.NONE);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
 			throw re;
 		}
 	}
 	public List getConstantArgs(Quest quest)
 	{
-		log.debug("getConstantArgs");
+		LOG.debug("getConstantArgs");
 		try{
 			// 获取某Quest中的常数变量
 			Query query = getSession().createQuery("from Questarg as arg where arg.quest.questId = ? and arg.commandmodelarg.status.statusId in(60,64) order by arg.commandmodelarg.status.statusId asc");
@@ -147,14 +147,14 @@ public class QuestargDAO extends BaseHibernateDAO {
 			return query.list();
 			
 		} catch (RuntimeException re) {
-			log.error("getConstantArgs failed", re);
+			LOG.error("getConstantArgs failed", re);
 			throw re;
 		}
 		
 	}
 	public String getStartFrame(Quest quest)
 	{
-		log.debug("getStartFrame");
+		LOG.debug("getStartFrame");
 		try{
 			// 获取某Quest中StartFrame;
 			Query query = getSession().createQuery("from Questarg as arg where arg.quest.questId = ? and arg.commandmodelarg.status.statusId = 61");
@@ -170,13 +170,13 @@ public class QuestargDAO extends BaseHibernateDAO {
 				return null;
 			}
 		} catch (RuntimeException re) {
-			log.error("getStartFrame failed", re);
+			LOG.error("getStartFrame failed", re);
 			throw re;
 		}
 	}
 	public String getEndFrame(Quest quest)
 	{
-		log.debug("getEndFrame");
+		LOG.debug("getEndFrame");
 		try{
 			// 获取某Quest中getEndFrame;
 			Query query = getSession().createQuery("from Questarg as arg where arg.quest.questId = ? and arg.commandmodelarg.status.statusId = 62 ");
@@ -192,13 +192,13 @@ public class QuestargDAO extends BaseHibernateDAO {
 				return null;
 			}
 		} catch (RuntimeException re) {
-			log.error("getEndFrame failed", re);
+			LOG.error("getEndFrame failed", re);
 			throw re;
 		}
 	}
 	public String getByFrame(Quest quest)
 	{
-		log.debug("getByFrame");
+		LOG.debug("getByFrame");
 		try{
 			// 获取某Quest中getByFrame;
 			Query query = getSession().createQuery("from Questarg as arg where arg.quest.questId = ? and arg.commandmodelarg.status.statusId = 63 ");
@@ -214,13 +214,13 @@ public class QuestargDAO extends BaseHibernateDAO {
 				return null;
 			}
 		} catch (RuntimeException re) {
-			log.error("getByFrame failed", re);
+			LOG.error("getByFrame failed", re);
 			throw re;
 		}
 	}
 
 	public String getFileName(Quest quest) {
-		log.debug("getFileName");
+		LOG.debug("getFileName");
 		try{
 			// 获取某Quest中getByFrame;
 			Query query = getSession().createQuery("from Questarg as arg where arg.quest.questId = ? and arg.commandmodelarg.status.statusId = 64 ");
@@ -236,7 +236,7 @@ public class QuestargDAO extends BaseHibernateDAO {
 				return null;
 			}
 		} catch (RuntimeException re) {
-			log.error("getFileName failed", re);
+			LOG.error("getFileName failed", re);
 			throw re;
 		}
 	}

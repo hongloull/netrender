@@ -4,7 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class TimeoutThread extends Thread {
-	private static final Log log = LogFactory.getLog(TimeoutThread.class);
+	private static final Log LOG = LogFactory.getLog(TimeoutThread.class);
 	private long timeOut;
 	private boolean isTimeOut;
 	private boolean isStop;
@@ -36,8 +36,8 @@ public class TimeoutThread extends Thread {
 				if(isStop) break;
 				isTimeOut = true;
 				Thread.sleep(timeOut);
-				log.debug(obj+" isTimeOut:"+isTimeOut);
-				log.debug(obj+" isStop:"+isStop);
+				LOG.debug(obj+" isTimeOut:"+isTimeOut);
+				LOG.debug(obj+" isStop:"+isStop);
 				if(isStop) break;
 				if(isTimeOut) timeOutOperate.timeOutOperate(obj);
 			}

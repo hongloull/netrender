@@ -41,7 +41,6 @@ public class TestNodeMachine {
 			System.out.println( nodeMachine.getStatus().toString() );	
 			try {
 				Thread.sleep(2000);
-			
 			} catch (InterruptedException e) {
 				//e.printStackTrace();
 			}

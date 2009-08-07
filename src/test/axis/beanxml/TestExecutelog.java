@@ -9,7 +9,7 @@ public class TestExecutelog {
 	@Test
 	public void testAll2XML()
 	{
-		System.out.println( ExecutelogUtils.exeLog2xml());
+//		System.out.println( ExecutelogUtils.exeLog2xml());
 
 	}
 }

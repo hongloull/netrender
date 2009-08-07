@@ -1,19 +1,19 @@
 package test.axis;
 
-import com.webrender.axis.CommandmodelAxis;
+import com.webrender.axis.ModelOperate;
 import org.junit.Test;
 public class TestCommandmodelAxis {
 	@Test
 	public void testGetCommandModels()
 	{
-		CommandmodelAxis axis = new CommandmodelAxis();
-		System.out.println( axis.getCommandModels() );
+		ModelOperate axis = new ModelOperate();
+		System.out.println( axis.getModels() );
 		
 	}
 	@Test
 	public void testGetCommandModel()
 	{
-		CommandmodelAxis axis = new CommandmodelAxis();
-		System.out.println( axis.getCommandModel("1") );
+		ModelOperate axis = new ModelOperate();
+		System.out.println( axis.getModel("1") );
 	}
 }

@@ -8,7 +8,7 @@ public class TestCommandOperate {
 	@Test
 	public void testGetRealLogs(){
 		CommandOperate cOperate = new CommandOperate();
-		String result = cOperate.getRealLogs("182");
+		String result = cOperate.getRealLogs("592");
 		System.out.println( result );
 	}
 }

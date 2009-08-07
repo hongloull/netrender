@@ -21,61 +21,61 @@ import org.hibernate.criterion.Example;
  */
 
 public class RightDAO extends BaseHibernateDAO {
-	private static final Log log = LogFactory.getLog(RightDAO.class);
+	private static final Log LOG = LogFactory.getLog(RightDAO.class);
 	// property constants
 	public static final String INSTRUCTION = "instruction";
 
 	public void save(Right transientInstance) {
-		log.debug("saving Right instance");
+		LOG.debug("saving Right instance");
 		try {
 			getSession().save(transientInstance);
-			log.debug("save successful");
+			LOG.debug("save successful");
 		} catch (RuntimeException re) {
-			log.error("save failed", re);
+			LOG.error("save failed", re);
 			throw re;
 		}
 	}
 
 	public void delete(Right persistentInstance) {
-		log.debug("deleting Right instance");
+		LOG.debug("deleting Right instance");
 		try {
 			getSession().delete(persistentInstance);
-			log.debug("delete successful");
+			LOG.debug("delete successful");
 		} catch (RuntimeException re) {
-			log.error("delete failed", re);
+			LOG.error("delete failed", re);
 			throw re;
 		}
 	}
 
 	public Right findById(java.lang.Integer id) {
-		log.debug("getting Right instance with id: " + id);
+		LOG.debug("getting Right instance with id: " + id);
 		try {
 			Right instance = (Right) getSession().get(
 					"com.webrender.dao.Right", id);
 			return instance;
 		} catch (RuntimeException re) {
-			log.error("get failed", re);
+			LOG.error("get failed", re);
 			throw re;
 		}
 	}
 
 	public List findByExample(Right instance) {
-		log.debug("finding Right instance by example");
+		LOG.debug("finding Right instance by example");
 		try {
 			List results = getSession().createCriteria(
 					"com.webrender.dao.Right").add(Example.create(instance))
 					.list();
-			log.debug("find by example successful, result size: "
+			LOG.debug("find by example successful, result size: "
 					+ results.size());
 			return results;
 		} catch (RuntimeException re) {
-			log.error("find by example failed", re);
+			LOG.error("find by example failed", re);
 			throw re;
 		}
 	}
 
 	public List findByProperty(String propertyName, Object value) {
-		log.debug("finding Right instance with property: " + propertyName
+		LOG.debug("finding Right instance with property: " + propertyName
 				+ ", value: " + value);
 		try {
 			String queryString = "from Right as model where model."
@@ -84,7 +84,7 @@ public class RightDAO extends BaseHibernateDAO {
 			queryObject.setParameter(0, value);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find by property name failed", re);
+			LOG.error("find by property name failed", re);
 			throw re;
 		}
 	}
@@ -94,47 +94,47 @@ public class RightDAO extends BaseHibernateDAO {
 	}
 
 	public List findAll() {
-		log.debug("finding all Right instances");
+		LOG.debug("finding all Right instances");
 		try {
 			String queryString = "from Right as o order by o.rightId asc";
 			Query queryObject = getSession().createQuery(queryString);
 			return queryObject.list();
 		} catch (RuntimeException re) {
-			log.error("find all failed", re);
+			LOG.error("find all failed", re);
 			throw re;
 		}
 	}
 
 	public Right merge(Right detachedInstance) {
-		log.debug("merging Right instance");
+		LOG.debug("merging Right instance");
 		try {
 			Right result = (Right) getSession().merge(detachedInstance);
-			log.debug("merge successful");
+			LOG.debug("merge successful");
 			return result;
 		} catch (RuntimeException re) {
-			log.error("merge failed", re);
+			LOG.error("merge failed", re);
 			throw re;
 		}
 	}
 
 	public void attachDirty(Right instance) {
-		log.debug("attaching dirty Right instance");
+		LOG.debug("attaching dirty Right instance");
 		try {
 			getSession().saveOrUpdate(instance);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
 			throw re;
 		}
 	}
 
 	public void attachClean(Right instance) {
-		log.debug("attaching clean Right instance");
+		LOG.debug("attaching clean Right instance");
 		try {
 			getSession().lock(instance, LockMode.NONE);
-			log.debug("attach successful");
+			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
-			log.error("attach failed", re);
+			LOG.error("attach failed", re);
 			throw re;
 		}
 	}
