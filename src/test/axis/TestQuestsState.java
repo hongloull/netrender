@@ -8,13 +8,13 @@ import com.webrender.dao.Quest;
 import com.webrender.dao.QuestDAO;
 
 public class TestQuestsState {
-/*	@Test
+	@Test
 	public void testGetQuestStatus()
 	{
 		QuestsState qs = new QuestsState();
-		System.out.println( qs.getQuestStatus("70") );
+		System.out.println( qs.getQuestStatus("115") );
 	}
-*/	
+	
 	@Test
 	public void testGetQuestsStatus()
 	{

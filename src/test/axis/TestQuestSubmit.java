@@ -5,7 +5,7 @@ import org.junit.Test;
 import com.webrender.axis.ModelOperate;
 import com.webrender.axis.QuestOperate;
 
-public class TestAxis {
+public class TestQuestSubmit {
 	@Test
 	public void testGetCommandModel()
 	{
@@ -18,7 +18,7 @@ public class TestAxis {
 	public void testGetDetail()
 	{
 		QuestOperate qo  = new QuestOperate();
-		System.out.println( qo.getDetail("84"));
+		System.out.println( qo.getDetail("115"));
 	}
 	
 }

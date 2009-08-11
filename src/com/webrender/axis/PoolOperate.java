@@ -173,7 +173,12 @@ public class PoolOperate extends BaseAxis {
 			ReguserDAO regUserDAO = new ReguserDAO();
 			Reguser regUser = regUserDAO.findById(regUserId);
 			if(regUser==null) return RIGHTERROR;			
-			Iterator<Nodegroup> ite_Pools = regUser.getNodegroups().iterator();
+			Iterator<Nodegroup> ite_Pools = null;
+			if(canVisit(8)){
+				ite_Pools = ( new NodegroupDAO() ).findAll().iterator(); 
+			}else{
+				ite_Pools = regUser.getNodegroups().iterator();				
+			}
 			Element root = new Element("Pools");
 			Document doc = new Document(root);
 			while (ite_Pools.hasNext()) {

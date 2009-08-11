@@ -30,7 +30,7 @@ public class UserOperate extends BaseAxis {
 	
 	public String getUsersList()
 	{
-		LOG.debug("getUserConfig");
+		LOG.debug("getUsersList");
 		try {
 			this.closeSession();
 			String users = GenericConfig.getInstance().getFile("users");
@@ -42,8 +42,10 @@ public class UserOperate extends BaseAxis {
 			Iterator<Reguser> ite_Users = regUserDAO.findAll().iterator();
 			while (ite_Users.hasNext()) {
 				Reguser user = ite_Users.next();
+				String regName = user.getRegName();
+				if("admin".equalsIgnoreCase(regName)) continue;
 				Element ele = new Element("User");
-				ele.addAttribute("name", user.getRegName());
+				ele.addAttribute("name", regName);
 				root.addContent(ele);
 			}
 			LOG.debug("getUsersList success");
@@ -114,6 +116,7 @@ public class UserOperate extends BaseAxis {
 		LOG.debug("delUser: "+regName);
 		Transaction tx = null;
 		try{
+			if("admin".equalsIgnoreCase(regName) ) return "DelAdminError";
 			ReguserDAO regUserDAO = new ReguserDAO();
 			Reguser regUser = regUserDAO.findByRegName(regName);
 			if (regUser==null) return "UserNotExistError";

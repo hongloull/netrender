@@ -26,8 +26,13 @@ import com.webrender.dao.RightDAO;
 
 public class UserXMLConfig extends XMLConfig {
 	private static final Log LOG = LogFactory.getLog(UserXMLConfig.class);
-	private static List lisUsers = (new ReguserDAO()).findAll();
-
+	private static List lisUsers = null ;
+	static{
+		ReguserDAO regUserDAO = new ReguserDAO();
+		lisUsers = regUserDAO.findAll();
+		Reguser admin = regUserDAO.findByRegName("admin");
+		lisUsers.remove(admin);
+	}
 	@Override
 	public void loadFromXML(File file) throws JDOMException {
 		LOG.debug("loadFromXML");
@@ -35,6 +40,10 @@ public class UserXMLConfig extends XMLConfig {
 		Document doc = sb.build(file);
 		int index = file.getName().lastIndexOf(".xml");
 		String regName = file.getName().substring(0, index);
+		if(regName.equalsIgnoreCase("admin")){
+			file.delete();
+			return;
+		}
 		ReguserDAO regUserDAO = new ReguserDAO();
 		RightDAO rightDAO = new RightDAO();
 		CommandmodelDAO modelDAO = new CommandmodelDAO();

@@ -21,4 +21,9 @@ public class TestQuestOperate{
 		QuestOperate qo = new QuestOperate();
 		System.out.println(qo.getChunkDetail("33"));
 	}
+	@Test
+	public void testGetDetail(){
+		QuestOperate qo = new QuestOperate();
+		System.out.println(qo.getDetail("115"));
+	}
 }
