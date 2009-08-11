@@ -9,7 +9,7 @@ public class TestPoolOperate {
 	public void testGetPools()
 	{
 		PoolOperate po = new PoolOperate();
-		System.out.println( po.getAllPools());
+		System.out.println( po.getPools());
 	}
 	@Test
 	public void testAddPool()
@@ -28,16 +28,16 @@ public class TestPoolOperate {
 		System.out.println(po.modPool(name, questXML));
 	}
 	@Test
+	public void testGetPoolConfig(){
+		String name   = "NGroup3";
+		PoolOperate po = new PoolOperate();
+		System.out.println( po.getPoolConfig(name));
+	}
+	@Test
 	public void testDelPool(){
 		String name = "NGroup3";
 		PoolOperate po = new PoolOperate();
 		System.out.println(po.delPool(name));
-	}
-	@Test
-	public void testGetPoolConfig(){
-		String name   = "All";
-		PoolOperate po = new PoolOperate();
-		System.out.println( po.getPoolConfig(name));
 	}
 	
 }

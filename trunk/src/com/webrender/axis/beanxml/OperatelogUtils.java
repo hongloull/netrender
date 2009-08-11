@@ -14,7 +14,7 @@ public final class OperatelogUtils {
 		String logTime = dateFormat.format(opeLog.getLogTime());
 		root.addAttribute("time", logTime);
 		root.addAttribute("message",opeLog.getOperateInformation()+"");
-		root.addAttribute("user","Service");
+		root.addAttribute("user",opeLog.getReguser().getRegName());
 		root.addAttribute("ip","");
 		root.addAttribute("machine","");
 		String type = "";

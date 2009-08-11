@@ -36,16 +36,17 @@ public class QuestsState extends BaseAxis {
 		
 		try{
 			QuestDAO questDAO = new QuestDAO();
-			Element root = QuestUtils.bean2xmlWithState(questDAO.findById(Integer.parseInt(questId)));
-			Document doc = new Document(root);
-			LOG.debug("QuestID: "+questId + "  Progress: "+root.getAttributeValue("progress"));
-		
-			LOG.debug("getQuestStatus success: id = "+questId);
-			return XMLOut.outputToString(doc);
-		}
-		catch(NullPointerException e){
-			LOG.error("getQuestStatus failure: id = "+questId,e);
-			return "QuestNotExistError";
+			Quest quest = questDAO.findById(Integer.parseInt(questId));
+			if(quest!=null){
+				Element root = QuestUtils.bean2xmlWithState(questDAO.findById(Integer.parseInt(questId)));
+				Document doc = new Document(root);
+				LOG.debug("QuestID: "+questId + "  Progress: "+root.getAttributeValue("progress"));
+				
+				LOG.debug("getQuestStatus success: id = "+questId);
+				return XMLOut.outputToString(doc);
+			}else{
+				return "QuestNotExistError";				
+			}
 		}
 		catch(Exception e)
 		{
@@ -70,8 +71,8 @@ public class QuestsState extends BaseAxis {
 //			LOG.error("RightVisit error",e);
 //			return BaseAxis.RIGHTERROR;
 //		}
-		MessageContext mc = MessageContext.getCurrentContext();
-		String remoteAdd = ( (HttpServletRequest) mc.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST)).getRemoteAddr();
+//		MessageContext mc = MessageContext.getCurrentContext();
+//		String remoteAdd = ( (HttpServletRequest) mc.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST)).getRemoteAddr();
 		try{
 			getSession().flush();
 			
@@ -90,7 +91,7 @@ public class QuestsState extends BaseAxis {
 			}
 			String result = XMLOut.outputToString(doc);
 //			LOG.info(result);
-			LOG.debug(remoteAdd+" ThreadID:"+Thread.currentThread().getId()+" QuestsNum: "+ size);
+//			LOG.debug(remoteAdd+" ThreadID:"+Thread.currentThread().getId()+" QuestsNum: "+ size);
 			LOG.debug("getQuestsStatus success");
 			return result;			
 		}catch(Exception e)

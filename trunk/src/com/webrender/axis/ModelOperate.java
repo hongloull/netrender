@@ -8,6 +8,8 @@ import com.webrender.axis.beanxml.XMLOut;
 import com.webrender.dao.Commandmodel;
 import com.webrender.dao.CommandmodelDAO;
 import com.webrender.dao.Commandmodelarg;
+import com.webrender.dao.Reguser;
+import com.webrender.dao.ReguserDAO;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -75,13 +77,17 @@ public class ModelOperate extends BaseAxis {
 //			log.error("RightVisit error",e);
 //			return BaseAxis.RightError;
 //		}		
-		
 		try{
-			CommandmodelDAO cMDAO = new CommandmodelDAO();
+			
+			int regUserId = this.getLoginUserId();
+			ReguserDAO regUserDAO = new ReguserDAO();
+			Reguser regUser = regUserDAO.findById(regUserId);
+			if(regUser==null) return RIGHTERROR;
+			
 			Element root = new Element("Commandmodels");
 			Document doc = new Document(root);
 			
-			Iterator ite_CMS = cMDAO.findAll().iterator();
+			Iterator ite_CMS = regUser.getModels().iterator();
 			while(ite_CMS.hasNext())
 			{
 				Commandmodel cM = (Commandmodel)ite_CMS.next();

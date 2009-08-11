@@ -19,13 +19,13 @@
         <property name="nodeGroupName" type="string">
             <column name="NodeGroupName" length="50" not-null="true" unique="true" />
         </property>
-        <set name="nodes" table="nodegroupnode" inverse="false" cascade="save-update">
+        <set name="nodes" table="nodegroupnode" inverse="false">
             <key>
                 <column name="NodeGroupID" not-null="true" />
             </key>
             <many-to-many class="com.webrender.dao.Node" column="NodeID"/>
         </set>
-        <set name="regusers" table="regusernodegroup" inverse="true" cascade="save-update" >
+        <set name="regusers" table="regusernodegroup" inverse="true">
             <key>
                 <column name="NodeGroupID" not-null="true" />
             </key>

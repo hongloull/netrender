@@ -27,8 +27,6 @@ public class OperatelogDAO extends BaseHibernateDAO {
 	// property constants
 	public static final String OPERATE_INFORMATION = "operateInformation";
 	public static final String TYPE = "type";
-	public static final String TABLE = "table";
-	public static final String TABLE_ID = "tableId";
 
 	public void save(Operatelog transientInstance) {
 		LOG.debug("saving Operatelog instance");
@@ -102,14 +100,6 @@ public class OperatelogDAO extends BaseHibernateDAO {
 
 	public List findByType(Object type) {
 		return findByProperty(TYPE, type);
-	}
-
-	public List findByTable(Object table) {
-		return findByProperty(TABLE, table);
-	}
-
-	public List findByTableId(Object tableId) {
-		return findByProperty(TABLE_ID, tableId);
 	}
 
 	public List findAll() {
