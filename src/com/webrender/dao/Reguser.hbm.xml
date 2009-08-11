@@ -25,13 +25,13 @@
             </key>
             <one-to-many class="com.webrender.dao.Quest" />
         </set>
-        <set name="nodegroups" table="regusernodegroup" inverse="false" cascade="save-update">
+        <set name="nodegroups" table="regusernodegroup" inverse="false" >
             <key>
                 <column name="RegUserID" not-null="true" />
             </key>
             <many-to-many class="com.webrender.dao.Nodegroup" column="NodeGroupID" outer-join="auto" />
         </set>
-        <set name="rights" table="reguserright" inverse="false" cascade="save-update">
+        <set name="rights" table="reguserright" inverse="false">
             <key>
                 <column name="RegUserID" not-null="true" />
             </key>
@@ -43,7 +43,7 @@
             </key>
             <one-to-many class="com.webrender.dao.Operatelog" />
         </set>
-        <set name="models" table="regusermodel" inverse="false" cascade="save-update">
+        <set name="models" table="regusermodel" inverse="false">
             <key>
                 <column name="RegUserID" not-null="true" />
             </key>

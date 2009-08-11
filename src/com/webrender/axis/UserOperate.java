@@ -18,6 +18,7 @@ import org.jdom.input.SAXBuilder;
 import com.webrender.axis.beanxml.XMLOut;
 import com.webrender.config.GenericConfig;
 import com.webrender.config.UserXMLConfig;
+import com.webrender.dao.Operatelog;
 import com.webrender.dao.Reguser;
 import com.webrender.dao.ReguserDAO;
 import com.webrender.tool.FileCopy;
@@ -82,6 +83,7 @@ public class UserOperate extends BaseAxis {
 		File file = new File(userFile);
 		if(!file.exists()) return "UserNameNotExistError";
 		if(!file.canWrite()) return "UserConfigReadOnlyError";
+		Transaction tx = null;
 		try {
 			SAXBuilder builder = new SAXBuilder();
 			InputStream inputStream = new ByteArrayInputStream(questXML.getBytes());			
@@ -89,47 +91,59 @@ public class UserOperate extends BaseAxis {
 			XMLOut.outputToFile(doc, file);
 			UserXMLConfig loadConfig = new UserXMLConfig();
 			loadConfig.loadFromXML(file);
+			tx = getTransaction();
+			tx = getTransaction();
+			logOperate(getLoginUserId(),Operatelog.MOD,"ModUserConfig:"+userName);
+			tx.commit();
 			return BaseAxis.ACTIONSUCCESS;
 		} catch (JDOMException e) {
 			LOG.warn("moduserConfig fail:questXMLParseError userName:"+userName);
 			return "XMLParseError";
-		}finally{
+		}catch(Exception e){
+			if(tx!=null){
+				tx.rollback();
+			}
+			LOG.error("moduserConfig fail userName: "+userName,e);
+			return BaseAxis.ACTIONFAILURE;
+		}
+		finally{
 			this.closeSession();
 		}
 	}
 	public String delUser(String regName){
 		LOG.debug("delUser: "+regName);
-		ReguserDAO regUserDAO = new ReguserDAO();
-		Reguser regUser = regUserDAO.findByRegName(regName);
-		if (regUser==null) return "UserNotExistError";
-		String userFile = GenericConfig.getInstance().getFile("users/"+regName+".xml");
-		File file_User = new File(userFile);
-		boolean result = file_User.delete();
-		if(result == false){
-			this.closeSession();
-			return "Del"+regName+"FileError";
-		}
-		else{
-			Transaction tx = null;
-			try{
+		Transaction tx = null;
+		try{
+			ReguserDAO regUserDAO = new ReguserDAO();
+			Reguser regUser = regUserDAO.findByRegName(regName);
+			if (regUser==null) return "UserNotExistError";
+			String userFile = GenericConfig.getInstance().getFile("users/"+regName+".xml");
+			File file_User = new File(userFile);
+			boolean result = file_User.delete();
+			if(file_User.exists() && result == false){
+				return "Del"+regName+"FileError";
+			}
+			else{
 				tx = getTransaction();
 				regUserDAO.delete(regUser);
+				logOperate(getLoginUserId(),Operatelog.DEL,"DelUser:"+regName);
 				tx.commit();
 				LOG.debug("delUser success");
-				return BaseAxis.ACTIONSUCCESS;
-			}catch(Exception e){
-				if(tx!=null){
-					tx.rollback();
-				}
-				LOG.error("delUser from database fail",e);
-				return "Del"+regName+"FromDBError";
-			}finally{
-				this.closeSession();
+				return BaseAxis.ACTIONSUCCESS;				
+			}			
+		}catch(Exception e){
+			if(tx!=null){
+				tx.rollback();
 			}
+			LOG.error("delUser fail",e);
+			return "Del"+regName+"Error";
+		}finally{
+			this.closeSession();
 		}
 	}
 	public String addUser(String regName ,String passWord){
 		LOG.debug("addUser: "+regName);
+		Transaction tx = null;
 		try{
 			ReguserDAO regUserDAO = new ReguserDAO();
 			Reguser regUser = regUserDAO.findByRegName(regName);
@@ -149,6 +163,9 @@ public class UserOperate extends BaseAxis {
 					if( file_User.exists() ){
 						UserXMLConfig loadConfig = new UserXMLConfig();
 						loadConfig.loadFromXML(file_User);
+						tx = getTransaction();
+						logOperate(getLoginUserId(),Operatelog.ADD,"AddUser:"+regName);
+						tx.commit();
 					}
 				}catch (IOException e) {
 					LOG.error("addUser fail: DefaultFileCopyError", e);
@@ -163,6 +180,9 @@ public class UserOperate extends BaseAxis {
 				return "DefaultConfigNotExistError";
 			}
 		}catch(Exception e){
+			if(tx!=null){
+				tx.rollback();
+			}
 			LOG.error("addUser fail",e);
 			return BaseAxis.ACTIONFAILURE;
 		}finally{

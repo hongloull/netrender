@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.apache.axis.MessageContext;
 import org.apache.axis.session.Session;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Transaction;
 
 import com.webrender.dao.HibernateSessionFactory;
@@ -14,7 +16,7 @@ import com.webrender.dao.Reguser;
 import com.webrender.dao.ReguserDAO;
 
 public abstract class BaseAxis {
-	
+	private   static final Log LOG = LogFactory.getLog(BaseAxis.class);
 	protected static final String NOTLOGIN = "NotLogin";
 	protected static final String ACTIONSUCCESS = "Success";
 	protected static final String ACTIONFAILURE = "Failure";	
@@ -63,8 +65,8 @@ public abstract class BaseAxis {
 	protected void logOperate(int regUserId,Short type,String information){
 		ReguserDAO regUserDAO = new ReguserDAO();
 		Reguser regUser = regUserDAO.findById(regUserId);
+		LOG.info("ReguserID: "+regUserId+" Information: " + information);
 		if(regUser==null){
-			
 		}
 		else{
 			OperatelogDAO operateLogDAO = new OperatelogDAO();

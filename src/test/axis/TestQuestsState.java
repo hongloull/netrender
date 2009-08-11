@@ -21,7 +21,7 @@ public class TestQuestsState {
 		QuestsState qs = new QuestsState();
 	//	QuestDAO questDAO = new QuestDAO();
 		for(int i =0 ; i<10;i++){
-			qs.getQuestsStatus();
+			System.out.println( qs.getQuestsStatus() ); 
 			
 		}
 	}

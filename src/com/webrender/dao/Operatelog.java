@@ -20,8 +20,6 @@ public class Operatelog implements java.io.Serializable {
 	private Reguser reguser;
 	private String operateInformation;
 	private Short type;
-	private String table;
-	private Integer tableId;
 	private Date logTime;
 
 	// Constructors
@@ -43,12 +41,10 @@ public class Operatelog implements java.io.Serializable {
 
 	/** full constructor */
 	public Operatelog(Reguser reguser, String operateInformation, Short type,
-			String table, Integer tableId, Date logTime) {
+			 Date logTime) {
 		this.reguser = reguser;
 		this.operateInformation = operateInformation;
 		this.type = type;
-		this.table = table;
-		this.tableId = tableId;
 		this.logTime = logTime;
 	}
 
@@ -84,22 +80,6 @@ public class Operatelog implements java.io.Serializable {
 
 	public void setType(Short type) {
 		this.type = type;
-	}
-
-	public String getTable() {
-		return this.table;
-	}
-
-	public void setTable(String table) {
-		this.table = table;
-	}
-
-	public Integer getTableId() {
-		return this.tableId;
-	}
-
-	public void setTableId(Integer tableId) {
-		this.tableId = tableId;
 	}
 	
 	public Date getLogTime() {

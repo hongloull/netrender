@@ -44,7 +44,7 @@ public class UserLogin extends BaseAxis {
 				Transaction tx = null;
 				try{
 					tx = getTransaction();
-					logOperate(regUserId,Operatelog.LOGIN,null);
+					logOperate(regUserId,Operatelog.LOGIN,"login");
 					tx.commit();
 				}catch(Exception e){
 					if(tx!=null){
