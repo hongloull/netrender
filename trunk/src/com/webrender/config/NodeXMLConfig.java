@@ -38,13 +38,15 @@ public class NodeXMLConfig extends XMLConfig {
 		Document doc = sb.build(file);
 		int index = file.getName().lastIndexOf(".xml");
 		String nodeGroupName = file.getName().substring(0, index);
+		if(nodeGroupName.equalsIgnoreCase("All")){
+			file.delete();
+			return;
+		}
 		NodegroupDAO nodeGroupDAO = new NodegroupDAO();
 		Nodegroup nodeGroup = nodeGroupDAO.findByNodeGroupName(nodeGroupName);
 		NodeDAO nodeDAO 	= new NodeDAO();
 		TimegroupDAO tGroupDAO = new TimegroupDAO();
-		
 		Element root = doc.getRootElement();
-
 		Transaction tx = null;
 		try{
 			tx = getTransaction();

@@ -50,7 +50,10 @@ public abstract class BaseAxis {
 			MessageContext mc = MessageContext.getCurrentContext();
 			Session session = mc.getSession();
 			Set<Integer> rightValue = (Set<Integer>)session.get("RightValue");
-			return rightValue.contains(rightId)?true:false;
+			if(rightValue.contains(8)) return true;
+			else{
+				return rightValue.contains(rightId)?true:false;				
+			}
 			
 		}catch(Exception e){
 			return false;

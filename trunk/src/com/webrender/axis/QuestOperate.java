@@ -384,14 +384,14 @@ public class QuestOperate extends BaseAxis {
 	{
 		LOG.debug("getDetail");
 		
-		try{
-			if (!this.canVisit(7) ){
-				return BaseAxis.RIGHTERROR;
-			}			
-		}catch(Exception e){
-			LOG.error("RightVisit error",e);
-			return BaseAxis.RIGHTERROR;
-		}
+//		try{
+//			if (!this.canVisit(7) ){
+//				return BaseAxis.RIGHTERROR;
+//			}			
+//		}catch(Exception e){
+//			LOG.error("RightVisit error",e);
+//			return BaseAxis.RIGHTERROR;
+//		}
 		
 		try{
 			this.closeSession();
