@@ -37,6 +37,7 @@ public final class ControlThreadServer extends Thread {
 	{
 		super();
 		super.setName("ControlThread");
+		setDaemon(true);
 	}
 	
 	public static ControlThreadServer getInstance()
