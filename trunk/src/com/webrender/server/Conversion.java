@@ -27,6 +27,7 @@ public final class Conversion extends Thread {
 	{
 		InetAddress myIp;
 		try {
+			setDaemon(true);
 			myIp = InetAddress.getLocalHost();
 			LOG.info("local IP : "+myIp.getHostAddress());
 			if (myIp.getHostAddress().equals(mainServer)) flag = 1;
