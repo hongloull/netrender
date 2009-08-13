@@ -98,7 +98,37 @@ public class CommandOperate extends BaseAxis {
 			this.closeSession();
 		}
 	}
-
+	
+	public String finishCommand(String commandId){
+		LOG.debug("finishCommand");
+		
+		Transaction tx = null;
+		try{
+			tx = getTransaction();
+			CommandDAO commandDAO = new CommandDAO();
+			Command command = commandDAO.findById(Integer.parseInt(commandId));
+			commandDAO.finishCommand(command );
+			logOperate(this.getLoginUserId(),Operatelog.MOD,"Finish Command: "+commandDAO.getNote(command));
+			tx.commit();
+//			ControlThreadServer.getInstance().resume();
+			
+			LOG.debug("finishCommand success");
+			return BaseAxis.ACTIONSUCCESS;
+		}catch(Exception e){
+			LOG.error("finishCommand fail",e);
+			if (tx != null) 
+			{
+				tx.rollback();
+			}			
+			return BaseAxis.ACTIONFAILURE;
+		}
+		finally
+		{
+			this.closeSession();
+		}
+	}
+	
+	
 	@Override
 	protected boolean isSelf(int commandId) {
 		CommandDAO commandDAO = new CommandDAO();
