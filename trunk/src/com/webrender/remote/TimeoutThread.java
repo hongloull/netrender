@@ -31,6 +31,7 @@ public class TimeoutThread extends Thread {
 	
 	public void run(){
 		try{
+			if(timeOut==0) return;
 			while(true){
 				
 				if(isStop) break;

@@ -12,7 +12,7 @@ public class TestQuestsState {
 	public void testGetQuestStatus()
 	{
 		QuestsState qs = new QuestsState();
-		System.out.println( qs.getQuestStatus("115") );
+		System.out.println( qs.getQuestStatus("44") );
 	}
 	
 	@Test

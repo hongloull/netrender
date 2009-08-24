@@ -10,6 +10,7 @@ public class TestBaseAxis extends BaseAxis {
 	
 	@Test
 	public void testIsLogin(){
-//		System.out.println( this.getLoginUserId() );		
+//		System.out.println( this.getLoginUserId() );
+	
 	}
 }

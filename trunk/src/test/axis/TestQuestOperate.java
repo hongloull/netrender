@@ -24,6 +24,6 @@ public class TestQuestOperate{
 	@Test
 	public void testGetDetail(){
 		QuestOperate qo = new QuestOperate();
-		System.out.println(qo.getDetail("115"));
+		System.out.println(qo.getDetail("44"));
 	}
 }
