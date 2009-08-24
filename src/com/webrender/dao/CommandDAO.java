@@ -255,7 +255,7 @@ public class CommandDAO extends BaseHibernateDAO {
 		return note.toString();
 	}
 	private void reinitInProgressCommand(){
-		LOG.debug("getInProgress ");
+		LOG.debug("reinitInProgressCommand ");
 		try
 		{
 			StatusDAO statusDAO = new StatusDAO();
@@ -266,12 +266,27 @@ public class CommandDAO extends BaseHibernateDAO {
 				Command command = ite_Commands.next();
 				command.setStatus(status);
 			}
-			LOG.debug("getInProgress successful");
+			LOG.debug("reinitInProgressCommand successful");
 			
 		}catch(RuntimeException re){
-			LOG.error("getInProgress failed",re);
+			LOG.error("reinitInProgressCommand failed",re);
 			throw re;
 		}	
+	}
+
+	public void finishCommand(Command instance) {
+		LOG.debug("finishCommand ");
+		try
+		{
+			StatusDAO statusDAO = new StatusDAO();
+			instance.setStatus(statusDAO.findById(72));
+			this.attachDirty(instance);
+			LOG.debug("finishCommand successful");
+			
+		}catch(RuntimeException re){
+			LOG.error("finishCommand failed",re);
+			throw re;
+		}
 	}
 	
 }

@@ -117,7 +117,7 @@ public class NodeMachine implements TimeoutOperate {
 			status.setJobName(command.getQuest().getQuestName());
 			if (timeOutThread == null){
 				LOG.debug("timeOutThread == null startNew");
-				timeOutThread = new TimeoutThread(60000,command.getCommandId(),this);
+				timeOutThread = new TimeoutThread(0,command.getCommandId(),this);
 				timeOutThread.start();
 			}
 			return true ;
@@ -500,7 +500,7 @@ public class NodeMachine implements TimeoutOperate {
 		try{
 			if (timeOutThread == null){
 				LOG.info("timeOutThread == null startNew");
-				timeOutThread = new TimeoutThread(60000,commandId,this);
+				timeOutThread = new TimeoutThread(0,commandId,this);
 				timeOutThread.start();
 			}
 			realLog.append(message).append("\r\n");

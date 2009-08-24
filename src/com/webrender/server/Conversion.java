@@ -30,8 +30,8 @@ public final class Conversion extends Thread {
 			setDaemon(true);
 			myIp = InetAddress.getLocalHost();
 			LOG.info("local IP : "+myIp.getHostAddress());
-			if (myIp.getHostAddress().equals(mainServer)) flag = 1;
-			else if (myIp.getHostAddress().equals(subServer))  flag = 2;
+			if ("localhost".equals(mainServer) ||myIp.getHostAddress().equals(mainServer)) flag = 1;
+			else if ("localhost".equals(subServer) ||myIp.getHostAddress().equals(subServer))  flag = 2;
 		} catch (UnknownHostException e) {
 		}
 		

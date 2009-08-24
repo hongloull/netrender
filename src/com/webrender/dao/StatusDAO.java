@@ -151,6 +151,7 @@ public class StatusDAO extends BaseHibernateDAO {
 				status = new Status("System","0");
 			}
 			Long version = Long.parseLong( status.getValue() );
+			LOG.info("UpdateVersion: "+version);
 			version++;
 			status.setValue( version.toString() );
 			attachDirty(status);

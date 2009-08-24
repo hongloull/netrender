@@ -116,7 +116,7 @@ public class CommandOperate extends BaseAxis {
 			return BaseAxis.ACTIONSUCCESS;
 		}catch(Exception e){
 			LOG.error("finishCommand fail",e);
-			if (tx != null) 
+			if (tx != null)
 			{
 				tx.rollback();
 			}			
