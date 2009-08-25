@@ -11,7 +11,7 @@ public class TestNodeState {
 	@Test
 	public void testGetNodeStatus()
 	{
-		NodeMachine node = NodeMachineManager.getNodeMachine("192.168.10.129");
+		NodeMachine node = NodeMachineManager.getNodeMachine(11);
 		node.testConnect();
 		NodesState ns = new NodesState();
 		String result = ns.getNodeStatus("192.168.10.129");

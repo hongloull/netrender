@@ -61,10 +61,10 @@ public class NodesState extends BaseAxis{
 			Document doc = new Document(root);
 			NodeDAO nodeDAO = new NodeDAO();
 			Iterator ite_Nodes = nodeDAO.findAll().iterator();
-			Set<String> ips = NodeMachineManager.getNodeMachines();
+			Set<Integer> ids = NodeMachineManager.getNodeMachines();
 			while (ite_Nodes.hasNext()) {
 				Node node = (Node) ite_Nodes.next();
-				if(ips.contains(node.getNodeIp())){
+				if(ids.contains(node.getNodeId())){
 					Element ele_Node = NodeUtils.bean2xmlWithState(node);
 					if (ele_Node != null)
 						root.addContent(ele_Node);					

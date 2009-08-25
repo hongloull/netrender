@@ -207,7 +207,7 @@ public class PoolOperate extends BaseAxis {
 			Iterator ite_Nodes = nodeDAO.findAll().iterator();
 			while(ite_Nodes.hasNext()){
 				Node node = (Node) ite_Nodes.next();
-				NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(node.getNodeIp());
+				NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(node.getNodeId());
 				if ( nodeMachine.isConnect() ){
 					element = new Element("Node");
 					element.addAttribute("name", node.getNodeName());

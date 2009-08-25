@@ -12,14 +12,14 @@ public class TestNodeMachine {
 	{
 		CommandDAO commandDAO = new CommandDAO();
 		
-		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine("172.16.20.127");
+		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(2);
 		nodeMachine.setConnect(false);
 		System.out.println(nodeMachine.getCommand((commandDAO.findById(1))));
 	}
 	
 	@Test
 	public void testAddRealLog(){
-		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine("192.168.10.129");
+		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(3);
 		int commandId = 143;
 		nodeMachine.addCommandId(commandId);
 		for(int i = 0 ; i<5;i++){
@@ -35,7 +35,7 @@ public class TestNodeMachine {
 	
 	@Test
 	public void testGetStatus(){
-		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine("192.168.20.127");
+		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(11);
 		nodeMachine.testConnect();
 		for(int i = 0 ; i<20;i++){
 			System.out.println( nodeMachine.getStatus().toString() );	

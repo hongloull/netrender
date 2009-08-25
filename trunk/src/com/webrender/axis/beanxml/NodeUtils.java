@@ -53,7 +53,7 @@ public final class NodeUtils {
 	{
 		LOG.debug("bean2xml_State nodeIp: "+node.getNodeIp());
 		Element root = NodeUtils.bean2xml(node);
-		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(node.getNodeIp());
+		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(node.getNodeId());
 		if (nodeMachine.isConnect())
 		{
 			if (nodeMachine.isBusy())
@@ -75,11 +75,11 @@ public final class NodeUtils {
 			root.addAttribute("platform", nodeStatus.getPlatform()+"");
 			root.addAttribute("jobName",nodeStatus.getJobName()+"");
 			root.addAttribute("realTime",nodeMachine.isRealTime()?"Enable":"Disable");	
-			LOG.debug("bean2xml_State success nodeIp: "+node.getNodeIp());
+			LOG.debug("bean2xml_State success nodeId: "+node.getNodeId());
 			return root;
 		}
 		else{
-			LOG.debug("bean2xml_State disconnect nodeIp: "+node.getNodeIp());
+			LOG.debug("bean2xml_State disconnect nodeId: "+node.getNodeId());
 			return null;
 		}
 	}
