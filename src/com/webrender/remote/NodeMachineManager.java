@@ -12,18 +12,18 @@ import java.util.Set;
 public final  class  NodeMachineManager {
 	private NodeMachineManager(){}
 	
-	private static Map<String,NodeMachine> machines= new Hashtable<String,NodeMachine>();
+	private static Map<Integer,NodeMachine> machines= new Hashtable<Integer,NodeMachine>();
 	
 	public static Set<NodeMachine> idleMachines = Collections.synchronizedSet( new HashSet<NodeMachine>() ); 
 	
-	public static NodeMachine getNodeMachine(String ip){
-		if(machines.get(ip)==null){
-			NodeMachine nodeMachine =new NodeMachine(ip);
-			machines.put(ip,nodeMachine );
+	public static NodeMachine getNodeMachine(int nodeId){
+		if(machines.get(nodeId)==null){
+			NodeMachine nodeMachine =new NodeMachine(nodeId);
+			machines.put(nodeId,nodeMachine );
 		}
-		return machines.get(ip);
+		return machines.get(nodeId);
 	}
-	public static Set<String> getNodeMachines(){
+	public static Set<Integer> getNodeMachines(){
 		return machines.keySet();
 	}
 	

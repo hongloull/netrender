@@ -55,15 +55,16 @@ import com.webrender.dao.QuestDAO;
 import com.webrender.dao.Questarg;
 import com.webrender.dao.QuestargDAO;
 import com.webrender.dao.StatusDAO;
+import com.webrender.protocol.processor.IClientProcessor;
 import com.webrender.server.ControlThreadServer;
 import com.webrender.tool.StrOperate;
 
 /* 
  *  NodeMachine 控制节点机操作的类；不与数据库交互信息
  */
-public class NodeMachine implements TimeoutOperate {
+public class NodeMachine implements TimeoutOperate,IClientProcessor {
 //	String command ;
-	private String ip;
+	private int nodeId ;
 	private Set<Integer> currentCommands ;
 	private static final Log LOG = LogFactory.getLog(NodeMachine.class);
 	private StringBuffer realLog = new StringBuffer();
@@ -81,24 +82,11 @@ public class NodeMachine implements TimeoutOperate {
 	private NodeStatus status = null;
 	private TimeoutThread timeOutThread = null;
 	
-	private static final int COMMANDPORT = GenericConfig.getInstance().getCommandPort();
-//	public static final int DISCONNECT=0;
-//	public static final int FREE=1;
-//	public static final int BUSY=2;
-	private static final int CONNECT_TIMEOUT = 5;  
 	
 	
-	public NodeMachine(String ip)
+	public NodeMachine(Integer nodeId)
 	{
-		LOG.debug("new NodeMachine("+ip+")");
-		this.ip = ip;
-		connector = new SocketConnector();
-		cfg = new SocketConnectorConfig();
-		cfg.setConnectTimeout( CONNECT_TIMEOUT );
-	    cfg.getFilterChain().addLast( "codec", new ProtocolCodecFilter( new TextLineCodecFactory( Charset.forName( "UTF-8" ))));
-	    cfg.getSessionConfig().setReuseAddress(true);
-	    iNetSAddress = new InetSocketAddress( ip, COMMANDPORT );
-	    handle = new MinaNodeSessionHandler(this);
+		this.nodeId = nodeId;
 	    currentCommands = Collections.synchronizedSet(new HashSet<Integer>());;
 	    status = new NodeStatus();
 	    ConnectTest cTest = new ConnectTest(this);
@@ -108,7 +96,7 @@ public class NodeMachine implements TimeoutOperate {
 	
 	public boolean execute(Command command)
 	{
-		LOG.info("nodeIp: "+ip + " execute commandId: "+command.getCommandId());
+		LOG.info("nodeId: "+nodeId + " execute commandId: "+command.getCommandId());
 		String str_Command = this.getCommand(command);
 		str_Command = "***COMMAND***"+str_Command;
 		if( this.execute(str_Command))
@@ -216,14 +204,14 @@ public class NodeMachine implements TimeoutOperate {
 	public boolean execute(String command)
 	{
 		LOG.debug("execute");
-		LOG.debug(ip +": "+ command);
+		LOG.debug(nodeId +": "+ command);
 		if (this.testConnect()==false) return false;
 		session.write(command);
     	for (int i = 0 ; i<300 ; i++)
     	{
     		if (session.getAttribute("StartFlag")!=null)
     		{
-    			LOG.info(ip+" command is START");
+    			LOG.info(nodeId +" command is START");
     			session.setAttribute("StartFlag",null);
     			return true;	
     		}
@@ -241,14 +229,14 @@ public class NodeMachine implements TimeoutOperate {
 		LOG.debug("updateStatus");
 		try {
 			setStatusFromXML(status,message);
-			LOG.debug("updateStatus success nodeIp: "+this.ip);
+			LOG.debug("updateStatus success nodeId: "+this.nodeId);
 		} catch (Exception e){
-			LOG.error(ip+": XMLException:"+message,e);
+			LOG.error(nodeId +": XMLException:"+message,e);
 		}
 	}
 	public NodeStatus getStatus()
 	{
-		LOG.debug("getStatus nodeIp: "+this.ip);
+		LOG.debug("getStatus nodeId: "+this.nodeId);
 		
 //		LOG.info("status.JobName:"+status.getJobName());
 		return status;
@@ -358,35 +346,17 @@ public class NodeMachine implements TimeoutOperate {
 	
 
 	public boolean testConnect() {
-		if (isConnect==false)
-		{
-			if (session == null || session.isClosing()==true)
-			{
-				try{
-					LOG.info(ip +" try connect...");
-					
-					ConnectFuture future = connector.connect(iNetSAddress,handle, cfg );
-					future.join();
-					session = future.getSession();
-					LOG.info(ip + "connect success...");
-				//	this.setConnect(true);
-				}
-				catch (Exception e) {
-					LOG.info(ip + " fail to connect...");
-				}
-			}
-		}
 		selfCheck();
 		return isConnect;
 
 	}
 
 	public void setConnect(boolean isConnect) {
-		LOG.info(ip +":setConnect("+isConnect+")");
+		LOG.info(nodeId +":setConnect("+isConnect+")");
 		this.isConnect = isConnect;
 		if (isConnect==false)
 		{
-			cleanRunCommands(this.ip+" disconnect");
+			cleanRunCommands("NodeId:"+nodeId +" disconnect");
 		}
 		selfCheck();			
 	}
@@ -402,18 +372,10 @@ public class NodeMachine implements TimeoutOperate {
 
 	public void setBusy(boolean isBusy) {
 		
-		LOG.debug(ip +":setBusy("+isBusy+")");
+		LOG.debug(nodeId +":setBusy("+isBusy+")");
 		if (isBusy==false) status.setJobName("");
 		this.isBusy = isBusy;
 		selfCheck();
-	}
-
-	public String getIp() {
-		return ip;
-	}
-
-	public void setIp(String ip) {
-		this.ip = ip;
 	}
 
 	public boolean isRealTime() {
@@ -438,16 +400,16 @@ public class NodeMachine implements TimeoutOperate {
 		if (isConnect() && isBusy()==false && isPause()==false )
 		{
 			if(NodeMachineManager.idleMachines.contains(this)==false){
-				LOG.debug(this.ip+" Add to IdleMachines ");
+				LOG.debug(nodeId +" Add to IdleMachines ");
 				NodeMachineManager.idleMachines.add(this);
 			}
 			else{
-				LOG.debug(this.ip+" is in IdleMachines ");
+				LOG.debug(nodeId+" is in IdleMachines ");
 			}
 		}
 		else
 		{
-			LOG.debug(this.ip+" remove from IdleMachines ");
+			LOG.debug(nodeId+" remove from IdleMachines ");
 			NodeMachineManager.idleMachines.remove(this);
 		}
 	}
@@ -481,7 +443,7 @@ public class NodeMachine implements TimeoutOperate {
 				this.removeCommandId(commandId);
 				return true;
 			}catch(Exception e){
-				LOG.error(ip+": cleanCurrentCommand Error",e);
+				LOG.error(nodeId+": cleanCurrentCommand Error",e);
 				tx.rollback();
 				return false;
 			}
@@ -536,7 +498,7 @@ public class NodeMachine implements TimeoutOperate {
 		NodeDAO nodeDAO  = new NodeDAO();
 		Transaction tx = null;
 		try{
-			Node node  = nodeDAO.findByNodeIp(ip) ;
+			Node node  = nodeDAO.findById(nodeId) ;
 			
 			tx = HibernateSessionFactory.getSession().beginTransaction();
 			
@@ -559,7 +521,7 @@ public class NodeMachine implements TimeoutOperate {
 				command.setStatus(statusDAO.findById(72)); //72->Finish
 				command.setSendTime(new Date());
 				commandDAO.attachDirty(command);							
-				LOG.info(ip+" finish command");
+				LOG.info(nodeId+" finish command");
 			}
 //			else
 //			{
@@ -612,8 +574,8 @@ public class NodeMachine implements TimeoutOperate {
 				NodeDAO nodeDAO = new NodeDAO();
 				ExecutelogDAO exeDAO = new ExecutelogDAO();
 				
-				Executelog reallog = new Executelog(command,statusDAO.findById(realStatusId),nodeDAO.findByNodeIp(ip),realLog.toString(),new Date());
-				Executelog exelog  = new Executelog(command,statusDAO.findById(exeStatusId),nodeDAO.findByNodeIp(ip),commandDAO.getNote(command) + message,new Date());
+				Executelog reallog = new Executelog(command,statusDAO.findById(realStatusId),nodeDAO.findById(nodeId),realLog.toString(),new Date());
+				Executelog exelog  = new Executelog(command,statusDAO.findById(exeStatusId),nodeDAO.findById(nodeId),commandDAO.getNote(command) + message,new Date());
 				exeDAO.save(exelog);
 				exeDAO.save(reallog);		
 				tx.commit();
@@ -643,5 +605,29 @@ public class NodeMachine implements TimeoutOperate {
 		this.cleanRunCommand((Integer)obj,"Timeout");
 		if (this.currentCommands.size()==0) setBusy(false);
 		timeOutThread = null;
+	}
+
+
+	public void addFeedBack(int commandId, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void ready() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void run(int nodeId, String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public Integer getId() {
+		
+		return nodeId;
 	}
 }
