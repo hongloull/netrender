@@ -16,12 +16,26 @@ public class ServerMessages {
 		return buffer;
 	}
 	public static ByteBuffer createSystemPkt(ESYSCODE code){
-		return null;
+		byte[] bytes = new byte[2];
+		ByteBuffer buffer = ByteBuffer.wrap(bytes);
+		buffer.put((byte)EOPCODE.SYSTEM.ordinal());
+		buffer.put((byte)code.ordinal());
+		buffer.flip();
+		return buffer;
 	}
 	public static ByteBuffer createStatusPkt(){
-		return null;
+		byte[] bytes = new byte[1];
+		ByteBuffer buffer = ByteBuffer.wrap(bytes);
+		buffer.put((byte)EOPCODE.STATUS.ordinal());
+		buffer.flip();
+		return buffer;
 	}
 	public static ByteBuffer createConnectFlag(int nodeId){
-		return null;
+		byte[] bytes = new byte[1+4];
+		ByteBuffer buffer = ByteBuffer.wrap(bytes);
+		buffer.put((byte)EOPCODE.CONNECTFLAG.ordinal());
+		buffer.putInt(nodeId);
+		buffer.flip();
+		return buffer;
 	}
 }

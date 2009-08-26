@@ -25,7 +25,7 @@ public class TestNodeMachine {
 		for(int i = 0 ; i<5;i++){
 			try {
 				Thread.sleep(i*7000);
-				nodeMachine.addRealLog(commandId,i+":realLog" );
+				nodeMachine.addFeedBack(commandId,i+":realLog" );
 			} catch (InterruptedException e) {
 				//e.printStackTrace();
 			}
@@ -36,7 +36,7 @@ public class TestNodeMachine {
 	@Test
 	public void testGetStatus(){
 		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(11);
-		nodeMachine.testConnect();
+//		nodeMachine.testConnect();
 		for(int i = 0 ; i<20;i++){
 			System.out.println( nodeMachine.getStatus().toString() );	
 			try {

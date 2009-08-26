@@ -38,6 +38,8 @@ import com.webrender.dao.Reguser;
 import com.webrender.dao.ReguserDAO;
 import com.webrender.dao.StatusDAO;
 import com.webrender.logic.CalcFrame;
+import com.webrender.protocol.enumn.ESYSCODE;
+import com.webrender.protocol.messages.ServerMessages;
 import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
 import com.webrender.server.ControlThreadServer;
@@ -163,7 +165,7 @@ public class NodeOperate extends BaseAxis {
 			NodeDAO nodeDAO = new NodeDAO();
 			Node node = nodeDAO.findById(nodeId) ;
 			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(nodeId);
-			boolean flag = nodeMachine.execute("***KILL***");
+			boolean flag = nodeMachine.execute(ServerMessages.createSystemPkt(ESYSCODE.KILL));
 			//CommandDAO commandDAO = new CommandDAO();
 			logOperate(getLoginUserId(),Operatelog.MOD,"kill Commands in nodeId:"+nodeId );
 			StatusDAO statusDAO = new StatusDAO();
@@ -220,7 +222,7 @@ public class NodeOperate extends BaseAxis {
 			NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(nodeId);
 			if (Flag==0)  //shutdown
 			{
-				if( nodeMachine.execute("***SYSTEM***shutdown"))
+				if( nodeMachine.execute(ServerMessages.createSystemPkt(ESYSCODE.SHUTDOWN)))
 				{
 					exeFlag =true;
 					message = "shutdown "+nodeId;
@@ -231,7 +233,7 @@ public class NodeOperate extends BaseAxis {
 			}
 			else if (Flag==1) // reboot
 			{
-				if( nodeMachine.execute("***SYSTEM***reboot")){
+				if( nodeMachine.execute(ServerMessages.createSystemPkt(ESYSCODE.RESTART))){
 					exeFlag = true;
 					message = "reboot "+nodeId;
 				}
@@ -241,7 +243,7 @@ public class NodeOperate extends BaseAxis {
 			}
 			else if (Flag == 2 )// soft restart
 			{
-				if( nodeMachine.execute("***SYSTEM***softrestart")){
+				if( nodeMachine.execute(ServerMessages.createSystemPkt(ESYSCODE.SOFTRESTART))){
 					exeFlag = true;
 					message = "soft restart "+nodeId;
 				}else{

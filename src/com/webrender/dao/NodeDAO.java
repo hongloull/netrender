@@ -170,6 +170,22 @@ public class NodeDAO extends BaseHibernateDAO {
 			throw re;
 		}
 	}
+	
+	public Node runNode(int nodeId,String name){
+		LOG.debug("RunSaveNode nodeId:"+nodeId + " nodeName:"+name);
+		try{
+			Node node = findById(nodeId);
+			if(node==null){
+				node = new Node();
+			}
+			if(name!=null && "".equals(name)) node.setNodeName(name);
+			save(node);
+			return node;
+		}catch (RuntimeException re) {
+			LOG.error("RunSaveNode failed", re);
+			throw re;
+		}
+	}
 //	public List getIdleNodes(Command instance)
 //	{
 //		LOG.debug("getIdleNodes for instance");

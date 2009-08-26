@@ -14,10 +14,10 @@
             <column name="StatusID" />
         </many-to-one>
         <property name="nodeName" type="string">
-            <column name="NodeName" length="50" unique="true" />
+            <column name="NodeName" length="50"  />
         </property>
         <property name="nodeIp" type="string">
-            <column name="NodeIP" length="20" not-null="true" unique="true" />
+            <column name="NodeIP" length="20" />
         </property>
         <property name="os" type="string">
             <column name="OS" length="20" />

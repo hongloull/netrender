@@ -9,6 +9,7 @@ import java.io.StringBufferInputStream;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Date;
@@ -55,6 +56,7 @@ import com.webrender.dao.QuestDAO;
 import com.webrender.dao.Questarg;
 import com.webrender.dao.QuestargDAO;
 import com.webrender.dao.StatusDAO;
+import com.webrender.protocol.messages.ServerMessages;
 import com.webrender.protocol.processor.IClientProcessor;
 import com.webrender.server.ControlThreadServer;
 import com.webrender.tool.StrOperate;
@@ -70,11 +72,9 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	private StringBuffer realLog = new StringBuffer();
 //	IResultStore resultStore;
 
-	private SocketConnector connector = null;
-	private SocketConnectorConfig cfg = null;
+
 	private IoSession session = null;
-	private InetSocketAddress iNetSAddress = null;
-	private IoHandler  handle = null;
+
 	private boolean isConnect = false;
 	private boolean isBusy = false;
 	private boolean isRealTime = false;
@@ -97,9 +97,9 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	public boolean execute(Command command)
 	{
 		LOG.info("nodeId: "+nodeId + " execute commandId: "+command.getCommandId());
-		String str_Command = this.getCommand(command);
-		str_Command = "***COMMAND***"+str_Command;
-		if( this.execute(str_Command))
+		String cmdString = this.getCommand(command);
+		ByteBuffer cmdBuffer =ServerMessages.createCommandPkt(cmdString);
+		if( this.execute(cmdBuffer))
 		{
 			addCommandId(command.getCommandId());
 			status.setJobName(command.getQuest().getQuestName());
@@ -201,11 +201,11 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		org.jdom.Document doc = new org.jdom.Document(root);
 		return XMLOut.outputToString(doc);
 	}
-	public boolean execute(String command)
+	public boolean execute(ByteBuffer command)
 	{
 		LOG.debug("execute");
 		LOG.debug(nodeId +": "+ command);
-		if (this.testConnect()==false) return false;
+		if (this.isConnect==false) return false;
 		session.write(command);
     	for (int i = 0 ; i<300 ; i++)
     	{
@@ -342,14 +342,6 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	}
 	
 
-	
-	
-
-	public boolean testConnect() {
-		selfCheck();
-		return isConnect;
-
-	}
 
 	public void setConnect(boolean isConnect) {
 		LOG.info(nodeId +":setConnect("+isConnect+")");
@@ -452,38 +444,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	}
 	
 	
-	public synchronized void  addRealLog(int commandId , String message){
-		
-		LOG.debug("addRealLog");
-		if(message==null || ! this.currentCommands.contains(commandId) ){
-			LOG.error("addRealLog commandId error");
-			return;
-		}
-		try{
-			if (timeOutThread == null){
-				LOG.info("timeOutThread == null startNew");
-				timeOutThread = new TimeoutThread(0,commandId,this);
-				timeOutThread.start();
-			}
-			realLog.append(message).append("\r\n");
-			
-			if(message.startsWith("***GOODBYE***")){
-				LOG.info("addReadlog goodBye");
-				timeOutThread.cancel();
-				saveRealLog(commandId,true,"finish");
-				setFinish(commandId);
-				timeOutThread = null;
-			}
-			else{
-				// 重置超时时间
-				LOG.debug("timethread reset");
-				timeOutThread.reset();
-			}			
-		}catch(Exception e)
-		{
-			
-		}
-	}
+	
 	private void setFinish(int commandId){
 		/*
 		 * 接受到结束标记，根据IP地址获取节点机，查询该节点的CurrentCommands（表示该节点在执行Command的ID ，当前只有1个）
@@ -608,26 +569,56 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	}
 
 
-	public void addFeedBack(int commandId, String message) {
-		// TODO Auto-generated method stub
-		
+	public synchronized void addFeedBack(int commandId, String message) {
+		LOG.debug("addRealLog");
+		if(message==null || ! this.currentCommands.contains(commandId) ){
+			LOG.error("addRealLog commandId error");
+			return;
+		}
+		try{
+			if (timeOutThread == null){
+				LOG.info("timeOutThread == null startNew");
+				timeOutThread = new TimeoutThread(0,commandId,this);
+				timeOutThread.start();
+			}
+			realLog.append(message).append("\r\n");
+			
+			if(message.startsWith("***GOODBYE***")){
+				LOG.info("addReadlog goodBye");
+				timeOutThread.cancel();
+				saveRealLog(commandId,true,"finish");
+				setFinish(commandId);
+				timeOutThread = null;
+			}
+			else{
+				// 重置超时时间
+				LOG.debug("timethread reset");
+				timeOutThread.reset();
+			}			
+		}catch(Exception e)
+		{
+			
+		}
 	}
-
 
 	public void ready() {
-		// TODO Auto-generated method stub
-		
+		session.setAttribute("StartFlag","Success");		
 	}
-
-
-	public void run(int nodeId, String name) {
-		// TODO Auto-generated method stub
-		
-	}
-
 
 	public Integer getId() {
 		
 		return nodeId;
+	}
+
+
+	public void setSession(IoSession session2) {
+		this.session = session2;
+		if(session !=null && session.isClosing()==false){
+			setConnect(true);
+		}
+		else{
+			setConnect(false);
+		}
+		
 	}
 }
