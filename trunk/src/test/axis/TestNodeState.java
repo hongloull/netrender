@@ -12,7 +12,7 @@ public class TestNodeState {
 	public void testGetNodeStatus()
 	{
 		NodeMachine node = NodeMachineManager.getNodeMachine(11);
-		node.testConnect();
+//		node.testConnect();
 		NodesState ns = new NodesState();
 		String result = ns.getNodeStatus("192.168.10.129");
 		System.out.println(result);

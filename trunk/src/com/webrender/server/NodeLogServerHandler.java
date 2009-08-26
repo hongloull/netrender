@@ -1,28 +1,20 @@
 package com.webrender.server;
 
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.util.Date;
-import java.util.Iterator;
+
+import org.apache.mina.common.ByteBuffer;
+
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
-import org.hibernate.Transaction;
 
-import com.webrender.dao.Command;
-import com.webrender.dao.CommandDAO;
-import com.webrender.dao.Executelog;
-import com.webrender.dao.ExecutelogDAO;
 import com.webrender.dao.HibernateSessionFactory;
-import com.webrender.dao.Node;
-import com.webrender.dao.NodeDAO;
-import com.webrender.dao.StatusDAO;
+
+import com.webrender.protocol.enumn.EOPCODE;
 import com.webrender.protocol.handler.MessageHandler;
 import com.webrender.protocol.handler.MessageHandlerImpl;
-import com.webrender.protocol.processor.IClientProcessor;
-import com.webrender.remote.ConnectTest;
+import com.webrender.protocol.messages.ServerMessages;
 import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
 
@@ -39,13 +31,32 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 	  }
 	
 	public void messageReceived(IoSession session, Object message) {
-		MessageHandler handler = MessageHandlerImpl.getInstance();
-		Integer nodeId = (Integer)session.getAttribute("nodeId");
-		IClientProcessor processor = null;
-		if(nodeId !=null){
-			processor = NodeMachineManager.getNodeMachine(nodeId);
+		System.out.println(message.toString());
+		if (!(message instanceof ByteBuffer)) {
+			LOG.info(message + "'type isn't ByteBuffer!");
+            return;
+        }
+		try{
+			MessageHandler handler = MessageHandlerImpl.getInstance();
+			Integer nodeId = (Integer)session.getAttribute("nodeId");
+			LOG.info("message CODE: "+((ByteBuffer)message).get());
+			LOG.info("ServerMessage"+ServerMessages.createStatusPkt() );
+			if (EOPCODE.RUN == EOPCODE.values()[(ServerMessages.createStatusPkt()).get()]){
+				nodeId = handler.initialClient((ByteBuffer)message );
+				session.setAttribute("nodeId",nodeId);
+				NodeMachine processor = NodeMachineManager.getNodeMachine(nodeId);
+				processor.setSession(session);
+				session.write(ServerMessages.createConnectFlag(nodeId));
+			}
+			else if(nodeId !=null && nodeId !=0){
+				handler.parseClientPacket((ByteBuffer)message,NodeMachineManager.getNodeMachine(nodeId));
+			}
+			else{
+				LOG.error("nodeId is null or 0!  messageReceived:"+message);
+			}			
+		}catch(Exception e){
+			LOG.error("messageReceived fail",e);
 		}
-		handler.parseClientPacket((ByteBuffer)message, processor);
 //		String ip = ((InetSocketAddress)session.getRemoteAddress()).getAddress().getHostAddress();
 //		
 //		String theMessage = (String) message;
@@ -106,6 +117,11 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 	}
 	
 	public void sessionClosed(IoSession session) throws Exception {
+		LOG.info("Total " + session.getReadBytes() + " byte(s)");
+		Integer  nodeId = (Integer)session.getAttribute("nodeId");
+		if(nodeId!=null && nodeId!=null){
+			NodeMachineManager.getNodeMachine(nodeId).setSession(null);
+		}
 		HibernateSessionFactory.closeSession();
 	}
 }

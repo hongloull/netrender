@@ -17,6 +17,7 @@ public final  class  NodeMachineManager {
 	public static Set<NodeMachine> idleMachines = Collections.synchronizedSet( new HashSet<NodeMachine>() ); 
 	
 	public static NodeMachine getNodeMachine(int nodeId){
+		if(nodeId == 0 ) return null;
 		if(machines.get(nodeId)==null){
 			NodeMachine nodeMachine =new NodeMachine(nodeId);
 			machines.put(nodeId,nodeMachine );

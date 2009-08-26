@@ -1,10 +1,14 @@
 package com.webrender.protocol.handler;
 
-import java.nio.ByteBuffer;
+import org.apache.mina.common.ByteBuffer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Transaction;
 
+import com.webrender.dao.HibernateSessionFactory;
+import com.webrender.dao.Node;
+import com.webrender.dao.NodeDAO;
 import com.webrender.protocol.enumn.EOPCODE;
 import com.webrender.protocol.processor.IClientProcessor;
 
@@ -25,13 +29,6 @@ public class MessageHandlerImpl implements MessageHandler {
 	private void parseClientPacket(EOPCODE code, ByteBuffer packet,
 			IClientProcessor processor) {
 		switch(code){
-		case RUN:
-			int nodeId = packet.getInt();
-			byte[] name = new byte[ packet.getInt() ];
-			packet.get(name);
-			String mapName = new String(name);
-			processor.run(nodeId,mapName);
-			break;
 		case READY:
 			processor.ready();
 			break;
@@ -62,6 +59,30 @@ public class MessageHandlerImpl implements MessageHandler {
         EOPCODE code = EOPCODE.values()[opbyte];
         
         return code;
+	}
+	public int initialClient(ByteBuffer packet) {
+		EOPCODE code = this.getOpCode(packet);
+		if(code != EOPCODE.RUN){
+			LOG.error("initailClient EOPCODE Error pkt:"+packet);
+			return 0;
+		}
+		int nodeId = packet.getInt();
+		byte[] name = new byte[ packet.getInt() ];
+		packet.get(name);
+		String mapName = new String(name);
+		NodeDAO nodeDAO = new NodeDAO();
+		Transaction tx = null;
+		try{
+			tx = HibernateSessionFactory.getSession().beginTransaction();
+			Node node = nodeDAO.runNode(nodeId, mapName);
+			tx.commit();
+			int saveNodeId = node.getNodeId();
+			return saveNodeId;
+		}catch(Exception e){
+			LOG.error("RunSaveNode fail nodeId:"+nodeId, e);
+			return 0;
+		}
+		
 	}
 
 }

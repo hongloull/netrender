@@ -13,8 +13,6 @@ public class ConnectTest extends Thread {
 	
 	public void run()
 	{
-		nodeMachine.testConnect();
-		LOG.info("IdleMachines Size: "+NodeMachineManager.idleMachines.size());
 		while(true){
 			try {
 				nodeMachine.testStatus();
