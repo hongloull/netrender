@@ -1,18 +1,22 @@
 package com.webrender.protocol.messages;
 
 
+import java.io.UnsupportedEncodingException;
+
 import org.apache.mina.common.ByteBuffer;
 
 import com.webrender.protocol.enumn.EOPCODE;
 import com.webrender.protocol.enumn.ESYSCODE;
 
 public class ServerMessages {
-	public static ByteBuffer createCommandPkt(String cmdString){
-		byte[] bytes = new byte[1+4+cmdString.length()];
+	public static ByteBuffer createCommandPkt(int commandId, String cmdString) throws UnsupportedEncodingException{
+		byte[] bytesName = cmdString.getBytes("utf-8");
+		byte[] bytes = new byte[1+4+4+bytesName.length];
 		ByteBuffer buffer = ByteBuffer.wrap(bytes);
 		buffer.put((byte) EOPCODE.COMMAND.ordinal());
-		buffer.putInt(cmdString.length());
-		buffer.put(cmdString.getBytes());
+		buffer.putInt(commandId);
+		buffer.putInt(bytesName.length);
+		buffer.put(bytesName);
 		buffer.flip();
 		return buffer;
 	}
