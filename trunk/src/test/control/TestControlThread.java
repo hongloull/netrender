@@ -12,9 +12,9 @@ public class TestControlThread {
 	//	NodeThread.getInstance().run();
 	//	StatusReceiver.getInstance().run();
 		try {
-			RealLogServer.getInstance().run();
+//			RealLogServer.getInstance().run();
 			NodeLogServer.getInstance().run();
-			int i = 0; 
+			Thread.sleep(6000000);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

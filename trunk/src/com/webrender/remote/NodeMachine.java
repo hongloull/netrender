@@ -9,7 +9,6 @@ import java.io.StringBufferInputStream;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Date;
@@ -27,6 +26,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
@@ -248,7 +248,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		}
 		else{
 			status.setStatus("CONNECT");
-			session.write("***STATUS***");
+			session.write(ServerMessages.createStatusPkt());
 		}
 		LOG.debug("TestStatus success");
 	}

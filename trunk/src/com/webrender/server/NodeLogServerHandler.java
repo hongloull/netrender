@@ -14,6 +14,7 @@ import com.webrender.dao.HibernateSessionFactory;
 import com.webrender.protocol.enumn.EOPCODE;
 import com.webrender.protocol.handler.MessageHandler;
 import com.webrender.protocol.handler.MessageHandlerImpl;
+import com.webrender.protocol.messages.ClientMessages;
 import com.webrender.protocol.messages.ServerMessages;
 import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
@@ -22,7 +23,8 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 	private static final Log LOG = LogFactory.getLog(NodeLogServerHandler.class);
 	public void exceptionCaught(IoSession session, Throwable cause) {
 		  // Close connection when unexpected exception is caught.
-		  session.close();
+		cause.printStackTrace();
+		session.close();
 	  }
 	
 	public void sessionOpened(IoSession session) throws Exception{
@@ -32,17 +34,19 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 	
 	public void messageReceived(IoSession session, Object message) {
 		System.out.println(message.toString());
-		if (!(message instanceof ByteBuffer)) {
+		if (!(message instanceof ByteBuffer)){
 			LOG.info(message + "'type isn't ByteBuffer!");
             return;
         }
 		try{
 			MessageHandler handler = MessageHandlerImpl.getInstance();
 			Integer nodeId = (Integer)session.getAttribute("nodeId");
-			LOG.info("message CODE: "+((ByteBuffer)message).get());
-			LOG.info("ServerMessage"+ServerMessages.createStatusPkt() );
-			if (EOPCODE.RUN == EOPCODE.values()[(ServerMessages.createStatusPkt()).get()]){
-				nodeId = handler.initialClient((ByteBuffer)message );
+//			LOG.info("message CODE: "+((ByteBuffer)message).get());
+//			LOG.info("ClientMessage"+ClientMessages.createRunPkt(0, "ASP127") );
+			ByteBuffer buffer = (ByteBuffer) message ;//ClientMessages.createRunPkt(16, "中文");
+			
+			if (EOPCODE.RUN == EOPCODE.values()[buffer.get()]){
+				nodeId = handler.initialClient(buffer);
 				session.setAttribute("nodeId",nodeId);
 				NodeMachine processor = NodeMachineManager.getNodeMachine(nodeId);
 				processor.setSession(session);
