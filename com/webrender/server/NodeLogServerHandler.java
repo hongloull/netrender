@@ -45,7 +45,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 //			LOG.info("ClientMessage"+ClientMessages.createRunPkt(0, "ASP127") );
 			ByteBuffer buffer = (ByteBuffer) message ;//ClientMessages.createRunPkt(16, "中文");
 			
-			if (EOPCODE.RUN == EOPCODE.values()[buffer.get()]){
+			if(EOPCODE.RUN == EOPCODE.values()[buffer.get()]){
 				nodeId = handler.initialClient(buffer);
 				session.setAttribute("nodeId",nodeId);
 				NodeMachine processor = NodeMachineManager.getNodeMachine(nodeId);

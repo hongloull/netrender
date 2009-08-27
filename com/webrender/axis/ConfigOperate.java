@@ -70,5 +70,13 @@ public class ConfigOperate extends BaseAxis {
 		}
 	}
 	
+	public String getNodeConfig(String nodeIp){
+		
+		return nodeIp;
+	}
+	public String setNodeConfig(String nodeIp,String questXML){
+		
+		return BaseAxis.ACTIONFAILURE;
+	}
 	
 }

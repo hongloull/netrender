@@ -8,7 +8,7 @@ public enum EOPCODE {
     /* 
      * node to server opcodes
      */
-    RUN,READY,FEEDBACK,STATUSINFO
+    RUN,READY,FEEDBACK,STATUSINFO,CONFIG
     /* 
      * command opcodes
      */

@@ -1,11 +1,12 @@
 package com.webrender.remote;
 
-import java.io.File;
+
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.StringBufferInputStream;
+
+
+import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -27,22 +28,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.common.ConnectFuture;
-import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
-import org.apache.mina.transport.socket.nio.SocketConnector;
-import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 import org.hibernate.Transaction;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-//import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 import com.webrender.axis.beanxml.XMLOut;
-import com.webrender.config.GenericConfig;
 import com.webrender.dao.Command;
 import com.webrender.dao.CommandDAO;
 import com.webrender.dao.Commandarg;
@@ -52,15 +43,10 @@ import com.webrender.dao.ExecutelogDAO;
 import com.webrender.dao.HibernateSessionFactory;
 import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
-import com.webrender.dao.QuestDAO;
 import com.webrender.dao.Questarg;
-import com.webrender.dao.QuestargDAO;
 import com.webrender.dao.StatusDAO;
 import com.webrender.protocol.messages.ServerMessages;
 import com.webrender.protocol.processor.IClientProcessor;
-import com.webrender.server.ControlThreadServer;
-import com.webrender.tool.StrOperate;
-
 /* 
  *  NodeMachine 控制节点机操作的类；不与数据库交互信息
  */
@@ -98,7 +84,13 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	{
 		LOG.info("nodeId: "+nodeId + " execute commandId: "+command.getCommandId());
 		String cmdString = this.getCommand(command);
-		ByteBuffer cmdBuffer =ServerMessages.createCommandPkt(cmdString);
+		ByteBuffer cmdBuffer;
+		try {
+			cmdBuffer = ServerMessages.createCommandPkt(command.getCommandId(),cmdString);
+		} catch (UnsupportedEncodingException e) {
+			LOG.error("createCommandPkt fail",e);
+			return false;
+		}
 		if( this.execute(cmdBuffer))
 		{
 			addCommandId(command.getCommandId());
@@ -258,7 +250,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 //		File file=new File("WebRoot/WEB-INF/classes/status.xml");
 //		Document doc=db.parse(file);
 		LOG.debug("setStatusFromXML");
-		StringBufferInputStream is = new StringBufferInputStream(in); 
+		ByteArrayInputStream  is = new ByteArrayInputStream (in.getBytes("uft-8")); 
 		Document doc=db.parse(is);
 		Element root=doc.getDocumentElement();
 		status.setHostName(root.getAttribute("hostName"));
