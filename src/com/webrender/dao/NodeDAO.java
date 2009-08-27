@@ -171,14 +171,15 @@ public class NodeDAO extends BaseHibernateDAO {
 		}
 	}
 	
-	public Node runNode(int nodeId,String name){
+	public Node runNode(int nodeId,String ip,String name){
 		LOG.debug("RunSaveNode nodeId:"+nodeId + " nodeName:"+name);
 		try{
 			Node node = findById(nodeId);
 			if(node==null){
 				node = new Node();
 			}
-			if(name!=null && "".equals(name)) node.setNodeName(name);
+			if(name!=null && !("".equals(name)) ) node.setNodeName(name);
+			if(ip!=null && !("".equals(ip)) ) node.setNodeIp(ip);
 			save(node);
 			return node;
 		}catch (RuntimeException re) {

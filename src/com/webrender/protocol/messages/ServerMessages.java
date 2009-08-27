@@ -1,6 +1,7 @@
 package com.webrender.protocol.messages;
 
-import java.nio.ByteBuffer;
+
+import org.apache.mina.common.ByteBuffer;
 
 import com.webrender.protocol.enumn.EOPCODE;
 import com.webrender.protocol.enumn.ESYSCODE;

@@ -1,5 +1,7 @@
 package com.webrender.protocol.handler;
 
+import java.io.UnsupportedEncodingException;
+
 import org.apache.mina.common.ByteBuffer;
 
 import org.apache.commons.logging.Log;
@@ -61,20 +63,21 @@ public class MessageHandlerImpl implements MessageHandler {
         return code;
 	}
 	public int initialClient(ByteBuffer packet) {
-		EOPCODE code = this.getOpCode(packet);
-		if(code != EOPCODE.RUN){
-			LOG.error("initailClient EOPCODE Error pkt:"+packet);
-			return 0;
-		}
 		int nodeId = packet.getInt();
 		byte[] name = new byte[ packet.getInt() ];
 		packet.get(name);
-		String mapName = new String(name);
+		String mapName=null;
+		try {
+			mapName = new String(name,"UTF8");
+		} catch (UnsupportedEncodingException e){
+			mapName = new String(name);
+			e.printStackTrace();
+		}
 		NodeDAO nodeDAO = new NodeDAO();
 		Transaction tx = null;
 		try{
 			tx = HibernateSessionFactory.getSession().beginTransaction();
-			Node node = nodeDAO.runNode(nodeId, mapName);
+			Node node = nodeDAO.runNode(nodeId,"", mapName);
 			tx.commit();
 			int saveNodeId = node.getNodeId();
 			return saveNodeId;
@@ -82,7 +85,6 @@ public class MessageHandlerImpl implements MessageHandler {
 			LOG.error("RunSaveNode fail nodeId:"+nodeId, e);
 			return 0;
 		}
-		
 	}
 
 }
