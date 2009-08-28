@@ -1,7 +1,7 @@
 package com.webrender.remote;
 
 
-import java.io.ByteArrayInputStream;
+
 import java.io.IOException;
 import java.io.StringBufferInputStream;
 
@@ -55,7 +55,9 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	private int nodeId ;
 	private Set<Integer> currentCommands ;
 	private static final Log LOG = LogFactory.getLog(NodeMachine.class);
+	private String configInfo = null;
 	private StringBuffer realLog = new StringBuffer();
+	
 //	IResultStore resultStore;
 
 
@@ -193,11 +195,12 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		org.jdom.Document doc = new org.jdom.Document(root);
 		return XMLOut.outputToString(doc);
 	}
-	public boolean execute(ByteBuffer command)
+	public synchronized boolean execute(ByteBuffer command)
 	{
 		LOG.debug("execute");
 		LOG.debug(nodeId +": "+ command);
 		if (this.isConnect==false) return false;
+		session.setAttribute("StartFlag",null);
 		session.write(command);
     	for (int i = 0 ; i<300 ; i++)
     	{
@@ -250,7 +253,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 //		File file=new File("WebRoot/WEB-INF/classes/status.xml");
 //		Document doc=db.parse(file);
 		LOG.debug("setStatusFromXML");
-		ByteArrayInputStream  is = new ByteArrayInputStream (in.getBytes("uft-8")); 
+		StringBufferInputStream  is = new StringBufferInputStream (in); 
 		Document doc=db.parse(is);
 		Element root=doc.getDocumentElement();
 		status.setHostName(root.getAttribute("hostName"));
@@ -612,5 +615,20 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			setConnect(false);
 		}
 		
+	}
+
+
+	public void updateConfig(String configString) {
+		setConfigInfo(configString);
+	}
+
+
+	public String getConfigInfo() {
+		return configInfo;
+	}
+
+
+	public void setConfigInfo(String configInfo) {
+		this.configInfo = configInfo;
 	}
 }

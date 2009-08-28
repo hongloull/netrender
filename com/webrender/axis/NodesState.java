@@ -18,9 +18,9 @@ import com.webrender.remote.NodeMachineManager;
 
 public class NodesState extends BaseAxis{
 	private static final Log LOG = LogFactory.getLog(NodesState.class);
-	public String getNodeStatus(String nodeIp)
+	public String getNodeStatus(int nodeId)
 	{
-		LOG.debug("getNodeStatus nodeIp:"+nodeIp);
+		LOG.debug("getNodeStatus nodeId:"+nodeId);
 		try{
 			if ( ! this.canVisit(7)){
 				return BaseAxis.RIGHTERROR;
@@ -32,12 +32,12 @@ public class NodesState extends BaseAxis{
 		
 		try {
 			NodeDAO nodeDAO = new NodeDAO();
-			Element root = NodeUtils.bean2xmlWithState(nodeDAO.findByNodeIp(nodeIp) );
+			Element root = NodeUtils.bean2xmlWithState(nodeDAO.findById(nodeId) );
 			Document doc = new Document(root);
 			LOG.debug("getNodeStatus success");
 			return XMLOut.outputToString(doc);
 		} catch(Exception e){
-			LOG.error("getNodeStatus fail nodeIp: "+nodeIp );
+			LOG.error("getNodeStatus fail nodeId: "+nodeId );
 			return BaseAxis.ACTIONFAILURE;
 		}finally
 		{

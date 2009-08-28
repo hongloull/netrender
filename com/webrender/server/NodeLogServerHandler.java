@@ -33,7 +33,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 	  }
 	
 	public void messageReceived(IoSession session, Object message) {
-		System.out.println(message.toString());
+		LOG.info(message);
 		if (!(message instanceof ByteBuffer)){
 			LOG.info(message + "'type isn't ByteBuffer!");
             return;
@@ -44,19 +44,27 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 //			LOG.info("message CODE: "+((ByteBuffer)message).get());
 //			LOG.info("ClientMessage"+ClientMessages.createRunPkt(0, "ASP127") );
 			ByteBuffer buffer = (ByteBuffer) message ;//ClientMessages.createRunPkt(16, "中文");
-			
-			if(EOPCODE.RUN == EOPCODE.values()[buffer.get()]){
+			byte opCode = buffer.get();
+			if(EOPCODE.RUN == EOPCODE.values()[opCode]){
 				nodeId = handler.initialClient(buffer);
 				session.setAttribute("nodeId",nodeId);
 				NodeMachine processor = NodeMachineManager.getNodeMachine(nodeId);
 				processor.setSession(session);
-				session.write(ServerMessages.createConnectFlag(nodeId));
+				session.write(ServerMessages.createConnectFlagPkt(nodeId));
+			}
+			else if (EOPCODE.WANTSERVERSTATUS == EOPCODE.values()[opCode]){
+				session.write(ServerMessages.createServerStatusPkt());
 			}
 			else if(nodeId !=null && nodeId !=0){
-				handler.parseClientPacket((ByteBuffer)message,NodeMachineManager.getNodeMachine(nodeId));
+				handler.parseClientPacket(EOPCODE.values()[opCode],buffer,NodeMachineManager.getNodeMachine(nodeId));
 			}
 			else{
-				LOG.error("nodeId is null or 0!  messageReceived:"+message);
+				if ((opCode < 0) || (opCode > EOPCODE.values().length - 1)) {
+		            LOG.error("Unknown op value: " + opCode);
+		            session.write("Unknown op value: " + opCode);
+				}
+				LOG.error("nodeId error!  messageReceived:"+message);
+				session.write("nodeId error!  messageReceived:"+message);
 			}			
 		}catch(Exception e){
 			LOG.error("messageReceived fail",e);

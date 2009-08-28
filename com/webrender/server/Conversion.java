@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import com.webrender.config.GenericConfig;
 import com.webrender.config.XMLConfigManager;
+import com.webrender.protocol.enumn.ESERVERSTATUSCODE;
 
 public final class Conversion extends Thread {
 	private  String mainServer = GenericConfig.getInstance().getMainServer();
@@ -16,7 +17,7 @@ public final class Conversion extends Thread {
 	// 标记该服务器类型 flag = 0 无用，1为主机 2为副机
 	private  int flag = 0; 
 	// 标记该服务器状态 0 未启动过 ， 1 运行中 2 暂停
-	private int status = 0;
+	private ESERVERSTATUSCODE status = ESERVERSTATUSCODE.NOSTART;
 	
 	public static Conversion  getInstance()
 	{
@@ -59,7 +60,7 @@ public final class Conversion extends Thread {
 			{
 				if ( isRun(mainServer)==false)
 				{
-					if(this.status==1) {
+					if(this.status==ESERVERSTATUSCODE.RUN) {
 						i=0;
 						try {
 							sleep(60000);
@@ -100,12 +101,12 @@ public final class Conversion extends Thread {
 
 	private void runServer()
 	{
-		if (status == 1)
+		if (status == ESERVERSTATUSCODE.RUN)
 		{
 			return;
 		}
 		
-		if (status == 0){
+		if (status == ESERVERSTATUSCODE.NOSTART){
 			LOG.info("SocketServer Run");
 			try {
 				NodeLogServer.getInstance().run();
@@ -125,25 +126,25 @@ public final class Conversion extends Thread {
 			}
 			ControlThreadServer.getInstance().start();			
 		}
-		else if (status ==2)
+		else if (status ==ESERVERSTATUSCODE.PAUSE)
 		{
 			LOG.info("ControlThreadServer restart");
 			ControlThreadServer.getInstance().resume();
 //			NodeThreadServer.getInstance().resume();
 		}
-		status = 1;
+		status = ESERVERSTATUSCODE.RUN;
 	}
 	
 	private void pauseServer()
 	{
-		if ( status == 1)
+		if ( status == ESERVERSTATUSCODE.RUN)
 		{
 			ControlThreadServer.getInstance().threadSuspend("pauseServer");
 //			NodeThreadServer.getInstance().threadStop("NodeThreadServer stop");
-			status = 2;
+			status = ESERVERSTATUSCODE.PAUSE;
 		}
 	}
-	public int getStatus()
+	public ESERVERSTATUSCODE getStatus()
 	{
 		return status;
 	}

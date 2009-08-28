@@ -205,7 +205,7 @@ public class NodeOperate extends BaseAxis {
 	public String  shutdownNode(int nodeId ,int Flag)
 	{
 		// FLAG  0 shutdown  1 reboot 2 soft restart
-		LOG.debug("shutdownNode");
+		LOG.info("shutdownNode");
 		try{
 			if ( ! this.canVisit(5)){
 				return BaseAxis.RIGHTERROR;

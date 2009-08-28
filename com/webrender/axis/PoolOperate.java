@@ -211,7 +211,7 @@ public class PoolOperate extends BaseAxis {
 				if ( nodeMachine.isConnect() ){
 					element = new Element("Node");
 					element.addAttribute("name", node.getNodeName());
-					element.addAttribute("ip", node.getNodeIp());
+					element.addAttribute("ip", node.getNodeIp()+"");
 					root.addContent(element);
 				}
 			}
