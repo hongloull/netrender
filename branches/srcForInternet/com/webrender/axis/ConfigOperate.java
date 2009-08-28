@@ -3,6 +3,7 @@ package com.webrender.axis;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,9 +15,13 @@ import org.jdom.input.SAXBuilder;
 import com.webrender.axis.beanxml.XMLOut;
 import com.webrender.config.GenericConfig;
 import com.webrender.dao.Operatelog;
+import com.webrender.protocol.messages.ServerMessages;
+import com.webrender.remote.NodeMachine;
+import com.webrender.remote.NodeMachineManager;
 
 public class ConfigOperate extends BaseAxis {
 	private static final Log LOG = LogFactory.getLog(ConfigOperate.class);
+	
 	public String getPathConfig(){
 		LOG.debug("getPathConfig");
 		try{
@@ -70,12 +75,26 @@ public class ConfigOperate extends BaseAxis {
 		}
 	}
 	
-	public String getNodeConfig(String nodeIp){
-		
-		return nodeIp;
+	public String getNodeConfig(int nodeId){
+		NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(nodeId);
+		nodeMachine.updateConfig(null);
+		if (nodeMachine.execute(ServerMessages.createWantConfigPkt()) ){
+			String configInfo = nodeMachine.getConfigInfo();
+			nodeMachine.updateConfig(null);
+			return configInfo==null?BaseAxis.ACTIONFAILURE:configInfo;
+		}
+		return BaseAxis.ACTIONFAILURE;
 	}
-	public String setNodeConfig(String nodeIp,String questXML){
-		
+	
+	public String setNodeConfig(int nodeId,String config){
+		try {
+			NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(nodeId);
+			if( nodeMachine.execute(ServerMessages.createSetConfigPkt(config)) ){
+				return BaseAxis.ACTIONSUCCESS;
+			}
+		} catch (Exception e) {
+			LOG.error("setNodeConfig fail "+ config ,e);
+		}
 		return BaseAxis.ACTIONFAILURE;
 	}
 	

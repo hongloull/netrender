@@ -11,10 +11,10 @@ public class TestNodeState {
 	@Test
 	public void testGetNodeStatus()
 	{
-		NodeMachine node = NodeMachineManager.getNodeMachine(11);
+		NodeMachine node = NodeMachineManager.getNodeMachine(15);
 //		node.testConnect();
 		NodesState ns = new NodesState();
-		String result = ns.getNodeStatus("192.168.10.129");
+		String result = ns.getNodeStatus(15);
 		System.out.println(result);
 	}
 	

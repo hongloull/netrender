@@ -33,7 +33,7 @@ public final class ExecutelogUtils {
 		root.addAttribute("time", logTime);
 		root.addAttribute("message",exeLog.getNote()+"");
 		root.addAttribute("user","Service");
-		root.addAttribute("ip", exeLog.getNode().getNodeIp());
+		root.addAttribute("ip", exeLog.getNode().getNodeIp()+"");
 		root.addAttribute("machine",exeLog.getNode().getNodeName());
 		root.addAttribute("type",exeLog.getStatus().getValue());
 		return root;

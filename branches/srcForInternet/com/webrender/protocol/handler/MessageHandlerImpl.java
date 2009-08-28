@@ -24,11 +24,8 @@ public class MessageHandlerImpl implements MessageHandler {
         return instance;
     }
     protected final Log LOG = LogFactory.getLog(MessageHandlerImpl.class);
-	public void parseClientPacket(ByteBuffer packet, IClientProcessor processor) {
-		EOPCODE code = this.getOpCode(packet);
-		this.parseClientPacket(code,packet, processor);
-	}
-	private void parseClientPacket(EOPCODE code, ByteBuffer packet,
+	
+	public void parseClientPacket(EOPCODE code, ByteBuffer packet,
 			IClientProcessor processor) {
 		switch(code){
 		case READY:
@@ -47,6 +44,11 @@ public class MessageHandlerImpl implements MessageHandler {
 			String statusString = new String(status);
 			processor.updateStatus(statusString);
 			break;
+		case CONFIGINFO:
+			byte[] configInfo = new byte[packet.getInt()];
+			packet.get(configInfo);
+			String configString = new String(configInfo);
+			processor.updateConfig(configString);
 		default :
 			break;
 		}
