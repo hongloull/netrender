@@ -45,6 +45,8 @@ import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
 import com.webrender.dao.Questarg;
 import com.webrender.dao.StatusDAO;
+import com.webrender.protocol.enumn.EOPCODES;
+import com.webrender.protocol.enumn.EOPCODES.CODE;
 import com.webrender.protocol.messages.ServerMessages;
 import com.webrender.protocol.processor.IClientProcessor;
 /* 
@@ -89,7 +91,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		ByteBuffer cmdBuffer;
 		try {
 			cmdBuffer = ServerMessages.createCommandPkt(command.getCommandId(),cmdString);
-		} catch (UnsupportedEncodingException e) {
+		} catch (Exception e) {
 			LOG.error("createCommandPkt fail",e);
 			return false;
 		}
@@ -243,7 +245,11 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		}
 		else{
 			status.setStatus("CONNECT");
-			session.write(ServerMessages.createStatusPkt());
+			try {
+				session.write(ServerMessages.createStatusPkt());
+			} catch (Exception e) {
+				LOG.error("testStatus fail",e);
+			}
 		}
 		LOG.debug("TestStatus success");
 	}
@@ -630,5 +636,41 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 
 	public void setConfigInfo(String configInfo) {
 		this.configInfo = configInfo;
+	}
+
+
+	public void execute(CODE code, byte[] fmts, List<String> datas){
+		if( fmts.length!= datas.size() ){
+			if(isConnect()){
+				// send Error Message		
+			}
+		}
+		try{
+			
+			if(code.getId() == EOPCODES.getInstance().get("N_FEEDBACK").getId()){
+				int commandId =Integer.parseInt(datas.get(0));
+				String mesString = datas.get(1);
+				addFeedBack(commandId,mesString);
+			}
+			else if(code.getId() == EOPCODES.getInstance().get("N_STATUSINFO").getId()){
+				String statusString = datas.get(0);
+				updateStatus(statusString);
+			}
+			else if ( code.getId() == EOPCODES.getInstance().get("N_READY").getId() ){
+				ready();
+			}
+			else if(code.getId() == EOPCODES.getInstance().get("N_CONFIGINFO").getId()){
+				String configString = datas.get(0);
+				updateConfig(configString);
+			}
+			else{
+				// send not type 
+			
+			}
+						
+		}catch(Exception e){
+			LOG.error("execute message fail",e);
+			//send Error Message
+		}
 	}
 }

@@ -72,7 +72,7 @@ public class UserLogin extends BaseAxis {
 	}
 	public int isRun()
 	{
-		return Conversion.getInstance().getStatus().ordinal();
+		return Conversion.getInstance().getStatus().getId();
 	}
 }
  

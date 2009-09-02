@@ -1,48 +1,20 @@
 package com.webrender.axis;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Transaction;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
 
-import com.webrender.axis.beanxml.CommandmodelUtils;
-import com.webrender.axis.beanxml.NodeUtils;
-import com.webrender.axis.beanxml.QuestUtils;
-import com.webrender.axis.beanxml.QuestargUtils;
-import com.webrender.axis.beanxml.XMLOut;
-import com.webrender.dao.Command;
-import com.webrender.dao.CommandDAO;
-import com.webrender.dao.Commandmodel;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
 import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
 import com.webrender.dao.Operatelog;
-import com.webrender.dao.Quest;
-import com.webrender.dao.QuestDAO;
-import com.webrender.dao.Questarg;
-import com.webrender.dao.QuestargDAO;
-import com.webrender.dao.Reguser;
-import com.webrender.dao.ReguserDAO;
 import com.webrender.dao.StatusDAO;
-import com.webrender.logic.CalcFrame;
-import com.webrender.protocol.enumn.ESYSCODE;
+import com.webrender.protocol.enumn.EOPCODES;
 import com.webrender.protocol.messages.ServerMessages;
 import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
-import com.webrender.server.ControlThreadServer;
 
 public class NodeOperate extends BaseAxis {
 	
@@ -165,7 +137,7 @@ public class NodeOperate extends BaseAxis {
 			NodeDAO nodeDAO = new NodeDAO();
 			Node node = nodeDAO.findById(nodeId) ;
 			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(nodeId);
-			boolean flag = nodeMachine.execute(ServerMessages.createSystemPkt(ESYSCODE.KILL));
+			boolean flag = nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_KILL")));
 			//CommandDAO commandDAO = new CommandDAO();
 			logOperate(getLoginUserId(),Operatelog.MOD,"kill Commands in nodeId:"+nodeId );
 			StatusDAO statusDAO = new StatusDAO();
@@ -222,7 +194,7 @@ public class NodeOperate extends BaseAxis {
 			NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(nodeId);
 			if (Flag==0)  //shutdown
 			{
-				if( nodeMachine.execute(ServerMessages.createSystemPkt(ESYSCODE.SHUTDOWN)))
+				if( nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_SHUTDOWN"))))
 				{
 					exeFlag =true;
 					message = "shutdown "+nodeId;
@@ -233,7 +205,7 @@ public class NodeOperate extends BaseAxis {
 			}
 			else if (Flag==1) // reboot
 			{
-				if( nodeMachine.execute(ServerMessages.createSystemPkt(ESYSCODE.RESTART))){
+				if( nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_RESTART")))){
 					exeFlag = true;
 					message = "reboot "+nodeId;
 				}
@@ -243,7 +215,7 @@ public class NodeOperate extends BaseAxis {
 			}
 			else if (Flag == 2 )// soft restart
 			{
-				if( nodeMachine.execute(ServerMessages.createSystemPkt(ESYSCODE.SOFTRESTART))){
+				if( nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_SOFTRESTART")))){
 					exeFlag = true;
 					message = "soft restart "+nodeId;
 				}else{

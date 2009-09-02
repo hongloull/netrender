@@ -48,6 +48,10 @@ public class CommandModelXMLConfig extends XMLConfig {
 				element.getAttribute("commandModelName").setValue(commandModelName);
 			}
 			Commandmodel cM = CommandmodelUtils.xml2bean(element);
+			boolean newFlag = false;
+			if(cM.getCommandModelId() == null){
+				newFlag = true;
+			}
 			cMDAO.save(cM);
 //			if ( ! cM.getCommandModelId().toString().equals(  element.getAttributeValue("commandModelId") ) ){ // 保存后的CommandModelId 与XML内的Id不同。需要将数据库中ID存入XML中
 //				if (element.getAttribute("commandModelId")!=null )element.getAttribute("commandModelId").setValue(cM.getCommandModelId().toString());
@@ -59,7 +63,7 @@ public class CommandModelXMLConfig extends XMLConfig {
 			Set set_CMAs = cM.getCommandmodelargs();
 			for(int i =0;i<argsSize;i++)
 			{
-				Commandmodelarg cMArg = CommandmodelargUtils.xml2bean(lis_args.get(i));
+				Commandmodelarg cMArg = CommandmodelargUtils.xml2bean(lis_args.get(i),newFlag);
 				cMArg.setCommandmodel(cM);
 				cM.getCommandmodelargs().add(cMArg);
 				cMADAO.save(cMArg);

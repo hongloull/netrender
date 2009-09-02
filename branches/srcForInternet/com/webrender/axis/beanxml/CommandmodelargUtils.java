@@ -21,10 +21,12 @@ public final class CommandmodelargUtils {
 //		root.addAttribute("statusId",(arg.getStatus()!=null) ?arg.getStatus().getStatusId().toString() :"60");
 //		return root;
 //	}
-	public static  Commandmodelarg xml2bean(Element element){
+	public static  Commandmodelarg xml2bean(Element element,boolean newFlag){
 		Commandmodelarg instance =null;
 		CommandmodelargDAO dao = new CommandmodelargDAO();
-		String commandModelArgId = element.getAttributeValue("commandModelArgId");
+		String commandModelArgId = null;
+		// 新模板标志为false时，表示新建模板，其中的commandModelArg都为新建参数，不读取Id
+		if(newFlag==false) element.getAttributeValue("commandModelArgId"); 
 		String argName = element.getAttributeValue("argName");
 		String argInstruction = element.getAttributeValue("argInstruction");
 		String type = element.getAttributeValue("type");

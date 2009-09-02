@@ -78,10 +78,15 @@ public class ConfigOperate extends BaseAxis {
 	public String getNodeConfig(int nodeId){
 		NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(nodeId);
 		nodeMachine.updateConfig(null);
-		if (nodeMachine.execute(ServerMessages.createWantConfigPkt()) ){
-			String configInfo = nodeMachine.getConfigInfo();
-			nodeMachine.updateConfig(null);
-			return configInfo==null?BaseAxis.ACTIONFAILURE:configInfo;
+		try {
+			if (nodeMachine.execute(ServerMessages.createWantConfigPkt()) ){
+				String configInfo = nodeMachine.getConfigInfo();
+				nodeMachine.updateConfig(null);
+				return configInfo==null?BaseAxis.ACTIONFAILURE:configInfo;
+			}
+		} catch (Exception e) {
+			LOG.error("getNodeConfig fail",e);
+			e.printStackTrace();
 		}
 		return BaseAxis.ACTIONFAILURE;
 	}
