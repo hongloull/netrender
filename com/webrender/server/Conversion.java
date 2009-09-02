@@ -7,7 +7,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import com.webrender.config.GenericConfig;
 import com.webrender.config.XMLConfigManager;
-import com.webrender.protocol.enumn.ESERVERSTATUSCODE;
+import com.webrender.protocol.enumn.EOPCODES;
+import com.webrender.protocol.enumn.EOPCODES.CODE;
 
 public final class Conversion extends Thread {
 	private  String mainServer = GenericConfig.getInstance().getMainServer();
@@ -17,7 +18,7 @@ public final class Conversion extends Thread {
 	// 标记该服务器类型 flag = 0 无用，1为主机 2为副机
 	private  int flag = 0; 
 	// 标记该服务器状态 0 未启动过 ， 1 运行中 2 暂停
-	private ESERVERSTATUSCODE status = ESERVERSTATUSCODE.NOSTART;
+	private CODE status = EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_OFF");
 	
 	public static Conversion  getInstance()
 	{
@@ -60,7 +61,7 @@ public final class Conversion extends Thread {
 			{
 				if ( isRun(mainServer)==false)
 				{
-					if(this.status==ESERVERSTATUSCODE.RUN) {
+					if(this.status==EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_ON")) {
 						i=0;
 						try {
 							sleep(60000);
@@ -101,12 +102,12 @@ public final class Conversion extends Thread {
 
 	private void runServer()
 	{
-		if (status == ESERVERSTATUSCODE.RUN)
+		if (status.equals(EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_ON")))
 		{
 			return;
 		}
 		
-		if (status == ESERVERSTATUSCODE.NOSTART){
+		if (status.equals(EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_OFF"))){
 			LOG.info("SocketServer Run");
 			try {
 				NodeLogServer.getInstance().run();
@@ -126,25 +127,25 @@ public final class Conversion extends Thread {
 			}
 			ControlThreadServer.getInstance().start();			
 		}
-		else if (status ==ESERVERSTATUSCODE.PAUSE)
+		else if (status.equals(EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_PAUSE")))
 		{
 			LOG.info("ControlThreadServer restart");
 			ControlThreadServer.getInstance().resume();
 //			NodeThreadServer.getInstance().resume();
 		}
-		status = ESERVERSTATUSCODE.RUN;
+		status = EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_ON");
 	}
 	
 	private void pauseServer()
 	{
-		if ( status == ESERVERSTATUSCODE.RUN)
+		if ( status.equals(EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_ON")))
 		{
 			ControlThreadServer.getInstance().threadSuspend("pauseServer");
 //			NodeThreadServer.getInstance().threadStop("NodeThreadServer stop");
-			status = ESERVERSTATUSCODE.PAUSE;
+			status = EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_PAUSE");
 		}
 	}
-	public ESERVERSTATUSCODE getStatus()
+	public CODE getStatus()
 	{
 		return status;
 	}
@@ -159,7 +160,7 @@ public final class Conversion extends Thread {
 			call.setOperationName(new javax.xml.namespace.QName("http://www.animationsp.com","isRun"));
 			call.setTimeout(2000);
 			Object result=call.invoke(new Object[]{});
-			if ( result.equals(1) ){
+			if ( result.equals(EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_ON").getId()) ){
 				LOG.debug(mainServer2+" already run");
 				return true;
 			}

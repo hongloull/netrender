@@ -11,10 +11,9 @@ import org.apache.mina.common.IoSession;
 
 import com.webrender.dao.HibernateSessionFactory;
 
-import com.webrender.protocol.enumn.EOPCODE;
+import com.webrender.protocol.enumn.EOPCODES;
 import com.webrender.protocol.handler.MessageHandler;
 import com.webrender.protocol.handler.MessageHandlerImpl;
-import com.webrender.protocol.messages.ClientMessages;
 import com.webrender.protocol.messages.ServerMessages;
 import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
@@ -34,6 +33,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 	
 	public void messageReceived(IoSession session, Object message) {
 		LOG.info(message);
+		LOG.info(EOPCODES.getInstance().get("N_GETSERVERSTATUS").getId());
 		if (!(message instanceof ByteBuffer)){
 			LOG.info(message + "'type isn't ByteBuffer!");
             return;
@@ -45,21 +45,22 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 //			LOG.info("ClientMessage"+ClientMessages.createRunPkt(0, "ASP127") );
 			ByteBuffer buffer = (ByteBuffer) message ;//ClientMessages.createRunPkt(16, "中文");
 			byte opCode = buffer.get();
-			if(EOPCODE.RUN == EOPCODE.values()[opCode]){
+			if(EOPCODES.getInstance().get("N_RUN").getId() == opCode){
 				nodeId = handler.initialClient(buffer);
 				session.setAttribute("nodeId",nodeId);
 				NodeMachine processor = NodeMachineManager.getNodeMachine(nodeId);
 				processor.setSession(session);
 				session.write(ServerMessages.createConnectFlagPkt(nodeId));
 			}
-			else if (EOPCODE.WANTSERVERSTATUS == EOPCODE.values()[opCode]){
+			else if (EOPCODES.getInstance().get("N_GETSERVERSTATUS").getId()== opCode){
+				LOG.info(ServerMessages.createServerStatusPkt());
 				session.write(ServerMessages.createServerStatusPkt());
 			}
 			else if(nodeId !=null && nodeId !=0){
-				handler.parseClientPacket(EOPCODE.values()[opCode],buffer,NodeMachineManager.getNodeMachine(nodeId));
+				handler.parseClientPacket(EOPCODES.getInstance().get(opCode),buffer,NodeMachineManager.getNodeMachine(nodeId));
 			}
 			else{
-				if ((opCode < 0) || (opCode > EOPCODE.values().length - 1)) {
+				if ((opCode < 0) || (opCode > EOPCODES.getInstance().size() - 1)) {
 		            LOG.error("Unknown op value: " + opCode);
 		            session.write("Unknown op value: " + opCode);
 				}

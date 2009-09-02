@@ -29,15 +29,14 @@ public class XMLConfigFactory {
 				XMLConfig instance = new RightXMLConfig();				
 				return instance;
 			}
-//			else if(fileName.equalsIgnoreCase("usergroup.xml")){
-//				XMLConfig instance = new UserGroupXMLConfig();				
-//				return instance;
-//			}
-//			else if(fileName.equalsIgnoreCase("users.xml")){
-//				XMLConfig instance = new UserXMLConfig();				
-//				return instance;
-//			}
 		}
+//		if(pojoName.equalsIgnoreCase("protocol")){
+//			if(fileName.equalsIgnoreCase("head.xml")){
+//				XMLConfig instance = new HeadXMLConfig();
+//				return instance;
+//			}
+//		}
+		
 		return null;
 	}
 	
