@@ -20,7 +20,7 @@ public final class NodeUtils {
 		Element root = new Element("Node");
 		root.addAttribute("nodeId",node.getNodeId().toString());
 		if(node.getNodeName()!=null) root.addAttribute("nodeName",node.getNodeName());
-		root.addAttribute("nodeIp",node.getNodeIp());
+		root.addAttribute("nodeIp",node.getNodeIp()+"");
 		if (node.getCoreNum()!=null) root.addAttribute("coreNum",node.getCoreNum().toString());
 	//	if (node.getStatus()!=null) root.addAttribute("status",node.getStatus().getValue() );
 	//	if (node.getOs()!=null)root.addAttribute("plantform",node.getOs());
@@ -40,6 +40,7 @@ public final class NodeUtils {
 		}
 		if (node==null)
 		{
+			//TODO change nodeIp
 			node = dao.findByNodeIp(nodeIp);
 			if ( node==null) node = new Node();
 			
@@ -51,7 +52,7 @@ public final class NodeUtils {
 	
 	public static Element bean2xmlWithState(Node node)
 	{
-		LOG.debug("bean2xml_State nodeIp: "+node.getNodeIp());
+		LOG.debug("bean2xml_State nodeId: "+node.getNodeId());
 		Element root = NodeUtils.bean2xml(node);
 		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(node.getNodeId());
 		if (nodeMachine.isConnect())
@@ -70,7 +71,7 @@ public final class NodeUtils {
 			NodeStatus nodeStatus = nodeMachine.getStatus();
 			root.addAttribute("cpu",nodeStatus.getCpuUsage()+"");
 			root.addAttribute("ramUsage", nodeStatus.getRamUsage()+"");
-			root.addAttribute("questName","null" );
+			root.addAttribute("questName","" );
 			root.addAttribute("frames", "null");
 			root.addAttribute("platform", nodeStatus.getPlatform()+"");
 			root.addAttribute("jobName",nodeStatus.getJobName()+"");

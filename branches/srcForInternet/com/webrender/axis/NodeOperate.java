@@ -20,7 +20,7 @@ public class NodeOperate extends BaseAxis {
 	
 	private static final Log LOG = LogFactory.getLog(NodeOperate.class);
 	
-	public String pauseNode(int nodeId)
+	public String pauseNode(String nodeId)
 	{
 		LOG.debug("pauseNode");
 		try{
@@ -33,7 +33,7 @@ public class NodeOperate extends BaseAxis {
 		}
 		Transaction tx = null;
 		try{
-			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(nodeId);
+			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
 			String result = this.killCommand(nodeId);
 			nodeMachine.setPause(true);
 			tx = getTransaction();
@@ -58,7 +58,7 @@ public class NodeOperate extends BaseAxis {
 			this.closeSession();
 		}
 	}
-	public String resumeNode(int nodeId)
+	public String resumeNode(String nodeId)
 	{
 		LOG.debug("resumeNode");
 		try{
@@ -71,7 +71,7 @@ public class NodeOperate extends BaseAxis {
 		}
 		Transaction tx = null;
 		try{
-			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(nodeId);
+			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
 			nodeMachine.setPause(false);
 			LOG.debug("resumeNode success");
 			tx = getTransaction();
@@ -88,7 +88,7 @@ public class NodeOperate extends BaseAxis {
 			this.closeSession();
 		}
 	}
-	public String setRealLog(int nodeId,int isOpen){
+	public String setRealLog(String nodeId,String isOpen){
 		LOG.debug("setRealLog");
 		try{
 			if ( ! this.canVisit(7)){
@@ -100,11 +100,11 @@ public class NodeOperate extends BaseAxis {
 		}
 		Transaction tx = null;
 		try{
-			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(nodeId);
-			nodeMachine.setRealTime(isOpen==1?true:false);
+			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
+			nodeMachine.setRealTime(Integer.parseInt(isOpen)==1?true:false);
 			LOG.debug("setRealLog success");
 			tx = getTransaction();
-			logOperate(getLoginUserId(),Operatelog.MOD,"SetRealTime "+(isOpen==1?"open":"close") );
+			logOperate(getLoginUserId(),Operatelog.MOD,"SetRealTime "+(Integer.parseInt(isOpen)==1?"open":"close") );
 			tx.commit();
 			return BaseAxis.ACTIONSUCCESS;
 		}catch(Exception e)
@@ -118,7 +118,7 @@ public class NodeOperate extends BaseAxis {
 			this.closeSession();
 		}
 	}
-	public String killCommand(int nodeId)
+	public String killCommand(String nodeId)
 	{
 		LOG.debug("killCommand");
 		try{
@@ -135,8 +135,8 @@ public class NodeOperate extends BaseAxis {
 		{
 			tx = getTransaction();
 			NodeDAO nodeDAO = new NodeDAO();
-			Node node = nodeDAO.findById(nodeId) ;
-			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(nodeId);
+			Node node = nodeDAO.findById(Integer.parseInt(nodeId)) ;
+			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
 			boolean flag = nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_KILL")));
 			//CommandDAO commandDAO = new CommandDAO();
 			logOperate(getLoginUserId(),Operatelog.MOD,"kill Commands in nodeId:"+nodeId );
@@ -174,7 +174,7 @@ public class NodeOperate extends BaseAxis {
 			this.closeSession();
 		}
 	}
-	public String  shutdownNode(int nodeId ,int Flag)
+	public String  shutdownNode(String nodeId ,String Flag)
 	{
 		// FLAG  0 shutdown  1 reboot 2 soft restart
 		LOG.info("shutdownNode");
@@ -191,8 +191,8 @@ public class NodeOperate extends BaseAxis {
 		String message = "";
 		try{
 			tx = getTransaction();
-			NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(nodeId);
-			if (Flag==0)  //shutdown
+			NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
+			if (Integer.parseInt(Flag)==0)  //shutdown
 			{
 				if( nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_SHUTDOWN"))))
 				{
@@ -203,7 +203,7 @@ public class NodeOperate extends BaseAxis {
 					message = "shutdown "+nodeId+" fail!";
 				}
 			}
-			else if (Flag==1) // reboot
+			else if (Integer.parseInt(Flag)==1) // reboot
 			{
 				if( nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_RESTART")))){
 					exeFlag = true;
@@ -213,7 +213,7 @@ public class NodeOperate extends BaseAxis {
 					message = "reboot "+nodeId+" fail!";
 				}
 			}
-			else if (Flag == 2 )// soft restart
+			else if (Integer.parseInt(Flag) == 2 )// soft restart
 			{
 				if( nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_SOFTRESTART")))){
 					exeFlag = true;
