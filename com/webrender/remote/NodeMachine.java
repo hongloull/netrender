@@ -199,7 +199,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	}
 	public synchronized boolean execute(ByteBuffer command)
 	{
-		LOG.debug("execute");
+		LOG.debug("execute bytebuffer");
 		LOG.debug(nodeId +": "+ command);
 		if (this.isConnect==false) return false;
 		session.setAttribute("StartFlag",null);
@@ -656,7 +656,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				String statusString = datas.get(0);
 				updateStatus(statusString);
 			}
-			else if ( code.getId() == EOPCODES.getInstance().get("N_READY").getId() ){
+			else if ( code.getId() == EOPCODES.getInstance().get("N_SUCCESS").getId() ){
 				ready();
 			}
 			else if(code.getId() == EOPCODES.getInstance().get("N_CONFIGINFO").getId()){

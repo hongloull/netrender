@@ -167,7 +167,7 @@ public final class ControlThreadServer extends Thread {
 									
 									tx.commit();
 									
-									LOG.debug(node.getNodeIp()+" :executeOperate Success save to database");
+									LOG.debug(node.getNodeId()+" :executeOperate Success save to database");
 									//	HibernateSessionFactory.closeSession();
 									//	System.out.println ("发送成功：closeSession : " + nodeDAO.getIdleNodes(command).size() );
 									
@@ -203,7 +203,7 @@ public final class ControlThreadServer extends Thread {
 									ExecutelogDAO exeDAO = new ExecutelogDAO();
 									exeDAO.save(executelog);
 									tx.commit();
-									LOG.debug(node.getNodeIp()+" :executeOperate fail  save to database");
+									LOG.debug(node.getNodeId()+" :executeOperate fail  save to database");
 									//		HibernateSessionFactory.closeSession();
 									//	System.out.println (" 发送错误 : closeSession : " + nodeDAO.getIdleNodes(command).size() );
 									

@@ -12,7 +12,7 @@ public class ServerMessages {
 		return createPkt(EOPCODES.getInstance().get("S_COMMAND"),fmt,datas);
 	}
 	public static ByteBuffer createSystemPkt(CODE code) throws Exception{
-		char[] fmt = {'c'};
+		char[] fmt = {'b'};
 		String[] datas = {(char)code.getId()+""};
 		return createPkt(EOPCODES.getInstance().get("S_SYSTEM"),fmt,datas);
 	}
@@ -33,7 +33,7 @@ public class ServerMessages {
 		return createPkt(EOPCODES.getInstance().get("S_SETCONFIG"),fmt,datas);
 	}
 	public static ByteBuffer createServerStatusPkt() throws Exception {
-		char[] fmt = {'c'};
+		char[] fmt = {'b'};
 		String[] datas = {(char)Conversion.getInstance().getStatus().getId()+""};
 		return createPkt(EOPCODES.getInstance().get("S_SERVERSTATUS"),fmt,datas);
 	}
@@ -94,9 +94,9 @@ public class ServerMessages {
 				totalLength+=(5+sLength);
 				headLength+=5;
 				break;
-			case 'c':
-			case 'C':
-				headBuffer.put((byte)'c');
+			case 'b':
+			case 'B':
+				headBuffer.put((byte)'b');
 				totalLength+=(1+1);
 				headLength++;
 			default: break;
@@ -118,8 +118,8 @@ public class ServerMessages {
 				byte[] bytesData = data[i].getBytes("utf-8");
 				buffer.put(bytesData);
 				break;
-			case 'c':
-			case 'C':
+			case 'b':
+			case 'B':
 				if(data[i].getBytes().length==1){
 					byte subCode = (byte) data[i].charAt(0); 
 					buffer.put(subCode);				

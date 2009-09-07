@@ -103,11 +103,18 @@ public class MessageHandlerImpl implements MessageHandler {
 		ByteBuffer headBuffer = ByteBuffer.wrap(head);
 		if ( (char)headBuffer.get()== 'i' && (char)headBuffer.get()== 's' ){
 			int nameLength = headBuffer.getInt();
-			
+			if ( headBuffer.get()!='s'){
+				LOG.error("initialClientPkt fmt error ");
+				return 0;
+			}
+			int ipLength = headBuffer.getInt();
 			int nodeId = packet.getInt();
 			byte[] name = new byte[ nameLength ];
 			packet.get(name);
+			byte[] ip = new byte[ipLength];
+			packet.get(ip);
 			String mapName=null;
+			String strIp = new String(ip);
 			try {
 				mapName = new String(name,"UTF8");
 			} catch (UnsupportedEncodingException e){
@@ -118,7 +125,8 @@ public class MessageHandlerImpl implements MessageHandler {
 			Transaction tx = null;
 			try{
 				tx = HibernateSessionFactory.getSession().beginTransaction();
-				Node node = nodeDAO.runNode(nodeId,"", mapName);
+				LOG.info(nodeId+"------- "+strIp+"---------"+mapName);
+				Node node = nodeDAO.runNode(nodeId,strIp, mapName);
 				tx.commit();
 				int saveNodeId = node.getNodeId();
 				return saveNodeId;

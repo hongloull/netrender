@@ -32,8 +32,6 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 	  }
 	
 	public void messageReceived(IoSession session, Object message) {
-		LOG.info(message);
-		LOG.info(EOPCODES.getInstance().get("N_GETSERVERSTATUS").getId());
 		if (!(message instanceof ByteBuffer)){
 			LOG.info(message + "'type isn't ByteBuffer!");
             return;
@@ -48,12 +46,12 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 			if(EOPCODES.getInstance().get("N_RUN").getId() == opCode){
 				nodeId = handler.initialClient(buffer);
 				session.setAttribute("nodeId",nodeId);
+				LOG.info("nodeId:"+nodeId + " run success.");
 				NodeMachine processor = NodeMachineManager.getNodeMachine(nodeId);
 				processor.setSession(session);
 				session.write(ServerMessages.createConnectFlagPkt(nodeId));
 			}
 			else if (EOPCODES.getInstance().get("N_GETSERVERSTATUS").getId()== opCode){
-				LOG.info(ServerMessages.createServerStatusPkt());
 				session.write(ServerMessages.createServerStatusPkt());
 			}
 			else if(nodeId !=null && nodeId !=0){
@@ -62,13 +60,18 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 			else{
 				if ((opCode < 0) || (opCode > EOPCODES.getInstance().size() - 1)) {
 		            LOG.error("Unknown op value: " + opCode);
-		            session.write("Unknown op value: " + opCode);
+//		            session.write("Unknown op value: " + opCode);
 				}
-				LOG.error("nodeId error!  messageReceived:"+message);
-				session.write("nodeId error!  messageReceived:"+message);
+				ByteBuffer result = (ByteBuffer) message;
+				
+				LOG.error("messageReceived:");
+				
+//				session.write("nodeId error!  messageReceived:"+message);
 			}			
 		}catch(Exception e){
-			LOG.error("messageReceived fail",e);
+			LOG.error("messageReceived:"+message);
+			LOG.error(message.toString());
+			LOG.error("messageReceived fail");
 		}
 //		String ip = ((InetSocketAddress)session.getRemoteAddress()).getAddress().getHostAddress();
 //		
