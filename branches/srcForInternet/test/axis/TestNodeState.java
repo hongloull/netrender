@@ -14,7 +14,7 @@ public class TestNodeState {
 		NodeMachine node = NodeMachineManager.getNodeMachine(15);
 //		node.testConnect();
 		NodesState ns = new NodesState();
-		String result = ns.getNodeStatus(15);
+		String result = ns.getNodeStatus("15");
 		System.out.println(result);
 	}
 	

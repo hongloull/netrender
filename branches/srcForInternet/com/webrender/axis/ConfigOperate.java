@@ -35,11 +35,11 @@ public class ConfigOperate extends BaseAxis {
 		return XMLOut.outputToString(doc);
 		}catch(JDOMException e){
 			LOG.error("getPathConfig ParsError", e);
-			return "XMLParseError";
+			return "XMLParseError"+e.getMessage();
 		}
 		catch(Exception e){
 			LOG.error("getPathConfig fail",e);
-			return BaseAxis.ACTIONFAILURE;
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
 		}finally{
 			this.closeSession();
 		}
@@ -63,42 +63,45 @@ public class ConfigOperate extends BaseAxis {
 			return BaseAxis.ACTIONSUCCESS;
 		} catch (JDOMException e) {
 			LOG.error("setPathConfig ParseError",e);
-			return "XMLParseError";
+			return "XMLParseError"+e.getMessage();
 		}catch(Exception e){
 			if(tx!=null){
 				tx.rollback();
 			}
 			LOG.error("setPathConfig fail",e);
-			return BaseAxis.ACTIONFAILURE;
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
 		}finally{
 			this.closeSession();
 		}
 	}
 	
-	public String getNodeConfig(int nodeId){
-		NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(nodeId);
+	public String getNodeConfig(String nodeId){
+		NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
 		nodeMachine.updateConfig(null);
 		try {
 			if (nodeMachine.execute(ServerMessages.createWantConfigPkt()) ){
 				String configInfo = nodeMachine.getConfigInfo();
 				nodeMachine.updateConfig(null);
-				return configInfo==null?BaseAxis.ACTIONFAILURE:configInfo;
+				return configInfo==null?BaseAxis.ACTIONFAILURE+" configInfo=null":configInfo;
+			}
+			else{
+				return BaseAxis.ACTIONFAILURE+" getNodeConfig fail";
 			}
 		} catch (Exception e) {
 			LOG.error("getNodeConfig fail",e);
-			e.printStackTrace();
+			return BaseAxis.ACTIONFAILURE+e.getMessage();			
 		}
-		return BaseAxis.ACTIONFAILURE;
 	}
 	
-	public String setNodeConfig(int nodeId,String config){
+	public String setNodeConfig(String nodeId,String config){
 		try {
-			NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(nodeId);
-			if( nodeMachine.execute(ServerMessages.createSetConfigPkt(config)) ){
+			NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
+			if( nodeMachine.execute( ServerMessages.createSetConfigPkt(config)) ){
 				return BaseAxis.ACTIONSUCCESS;
 			}
 		} catch (Exception e) {
 			LOG.error("setNodeConfig fail "+ config ,e);
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
 		}
 		return BaseAxis.ACTIONFAILURE;
 	}

@@ -1,6 +1,6 @@
 package com.webrender.axis;
 
-import java.io.File;
+
 import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
@@ -16,7 +16,6 @@ import com.webrender.dao.CommandDAO;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
 import com.webrender.dao.Operatelog;
-import com.webrender.server.ControlThreadServer;
 
 public class CommandOperate extends BaseAxis {
 	private static final Log LOG = LogFactory.getLog(CommandOperate.class);
@@ -53,7 +52,7 @@ public class CommandOperate extends BaseAxis {
 		{
 			LOG.error("getRealLog fail",e);
 						
-			return BaseAxis.ACTIONFAILURE;
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
 		}
 		finally
 		{
@@ -91,7 +90,7 @@ public class CommandOperate extends BaseAxis {
 			{
 				tx.rollback();
 			}			
-			return BaseAxis.ACTIONFAILURE;
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
 		}
 		finally
 		{
@@ -120,7 +119,7 @@ public class CommandOperate extends BaseAxis {
 			{
 				tx.rollback();
 			}			
-			return BaseAxis.ACTIONFAILURE;
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
 		}
 		finally
 		{

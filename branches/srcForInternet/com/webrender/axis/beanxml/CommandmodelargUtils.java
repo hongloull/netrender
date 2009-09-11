@@ -26,7 +26,7 @@ public final class CommandmodelargUtils {
 		CommandmodelargDAO dao = new CommandmodelargDAO();
 		String commandModelArgId = null;
 		// 新模板标志为false时，表示新建模板，其中的commandModelArg都为新建参数，不读取Id
-		if(newFlag==false) element.getAttributeValue("commandModelArgId"); 
+		if(newFlag==false) commandModelArgId = element.getAttributeValue("commandModelArgId"); 
 		String argName = element.getAttributeValue("argName");
 		String argInstruction = element.getAttributeValue("argInstruction");
 		String type = element.getAttributeValue("type");

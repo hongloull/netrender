@@ -49,6 +49,7 @@ import com.webrender.protocol.enumn.EOPCODES;
 import com.webrender.protocol.enumn.EOPCODES.CODE;
 import com.webrender.protocol.messages.ServerMessages;
 import com.webrender.protocol.processor.IClientProcessor;
+import com.webrender.server.RealLogServer;
 /* 
  *  NodeMachine 控制节点机操作的类；不与数据库交互信息
  */
@@ -208,7 +209,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
     	{
     		if (session.getAttribute("StartFlag")!=null)
     		{
-    			LOG.info(nodeId +" command is START");
+    			LOG.info(nodeId +" exe Success");
     			session.setAttribute("StartFlag",null);
     			return true;	
     		}
@@ -570,11 +571,20 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	}
 
 
-	public synchronized void addFeedBack(int commandId, String message) {
-		LOG.debug("addRealLog");
+	public synchronized void addFeedBack(Integer commandId, String message) {
+//		LOG.info("addFeedBack"+message);
+		if (  this.isRealTime() )
+		{
+			RealLogServer.getInstance().broadCast(nodeId+"***"+message);
+		}
 		if(message==null || ! this.currentCommands.contains(commandId) ){
-			LOG.error("addRealLog commandId error");
-			return;
+			if(currentCommands.iterator().hasNext()){
+				commandId = this.currentCommands.iterator().next();				
+			}
+			if (commandId == null || commandId == 0){
+				LOG.error("addRealLog error commandId :"+commandId);
+				return;
+			}
 		}
 		try{
 			if (timeOutThread == null){
@@ -642,12 +652,16 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	public void execute(CODE code, byte[] fmts, List<String> datas){
 		if( fmts.length!= datas.size() ){
 			if(isConnect()){
-				// send Error Message		
+				// send Error Message	
+				return ;
 			}
 		}
 		try{
-			
-			if(code.getId() == EOPCODES.getInstance().get("N_FEEDBACK").getId()){
+			if(code == null){
+				LOG.error("code is null");
+				return ;
+			}
+			else if(code.getId() == EOPCODES.getInstance().get("N_FEEDBACK").getId()){
 				int commandId =Integer.parseInt(datas.get(0));
 				String mesString = datas.get(1);
 				addFeedBack(commandId,mesString);
@@ -669,7 +683,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			}
 						
 		}catch(Exception e){
-			LOG.error("execute message fail",e);
+			LOG.error("execute buffer fail",e);
 			//send Error Message
 		}
 	}

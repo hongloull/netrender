@@ -12,6 +12,7 @@ import com.webrender.dao.NodeDAO;
 import com.webrender.dao.Operatelog;
 import com.webrender.dao.StatusDAO;
 import com.webrender.protocol.enumn.EOPCODES;
+import com.webrender.protocol.enumn.EOPCODES.CODE;
 import com.webrender.protocol.messages.ServerMessages;
 import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
@@ -29,7 +30,7 @@ public class NodeOperate extends BaseAxis {
 			}			
 		}catch(Exception e){
 			LOG.error("RightVisit error",e);
-			return BaseAxis.RIGHTERROR;
+			return BaseAxis.RIGHTERROR+e.getMessage();
 		}
 		Transaction tx = null;
 		try{
@@ -53,7 +54,7 @@ public class NodeOperate extends BaseAxis {
 			if(tx!=null){
 				tx.rollback();
 			}
-			return BaseAxis.ACTIONFAILURE;
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
 		}finally{
 			this.closeSession();
 		}
@@ -67,7 +68,7 @@ public class NodeOperate extends BaseAxis {
 			}			
 		}catch(Exception e){
 			LOG.error("RightVisit error",e);
-			return BaseAxis.RIGHTERROR;
+			return BaseAxis.RIGHTERROR+e.getMessage();
 		}
 		Transaction tx = null;
 		try{
@@ -83,7 +84,7 @@ public class NodeOperate extends BaseAxis {
 			if(tx!=null){
 				tx.rollback();
 			}
-			return BaseAxis.ACTIONFAILURE;
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
 		}finally{
 			this.closeSession();
 		}
@@ -96,7 +97,7 @@ public class NodeOperate extends BaseAxis {
 			}			
 		}catch(Exception e){
 			LOG.error("RightVisit error",e);
-			return BaseAxis.RIGHTERROR;
+			return BaseAxis.RIGHTERROR+e.getMessage();
 		}
 		Transaction tx = null;
 		try{
@@ -113,21 +114,21 @@ public class NodeOperate extends BaseAxis {
 			if(tx!=null){
 				tx.rollback();
 			}
-			return BaseAxis.ACTIONFAILURE;
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
 		}finally{
 			this.closeSession();
 		}
 	}
 	public String killCommand(String nodeId)
 	{
-		LOG.debug("killCommand");
+		LOG.info("killCommand");
 		try{
 			if ( ! this.canVisit(5)){
 				return BaseAxis.RIGHTERROR;
 			}			
 		}catch(Exception e){
 			LOG.error("RightVisit error",e);
-			return BaseAxis.RIGHTERROR;
+			return BaseAxis.RIGHTERROR+e.getMessage();
 		}
 		
 		Transaction tx = null;
@@ -167,16 +168,16 @@ public class NodeOperate extends BaseAxis {
 			{
 				tx.rollback();
 			}			
-			return BaseAxis.ACTIONFAILURE;
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
 		}
 		finally
 		{
 			this.closeSession();
 		}
 	}
-	public String  shutdownNode(String nodeId ,String Flag)
+	public String  shutdownNode(String nodeId ,String isReboot)
 	{
-		// FLAG  0 shutdown  1 reboot 2 soft restart
+		// isReboot  0 shutdown  1 reboot 
 		LOG.info("shutdownNode");
 		try{
 			if ( ! this.canVisit(5)){
@@ -184,7 +185,7 @@ public class NodeOperate extends BaseAxis {
 			}			
 		}catch(Exception e){
 			LOG.error("RightVisit error",e);
-			return BaseAxis.RIGHTERROR;
+			return BaseAxis.RIGHTERROR+e.getMessage();
 		}
 		Transaction tx =null;
 		boolean exeFlag = false;
@@ -192,48 +193,128 @@ public class NodeOperate extends BaseAxis {
 		try{
 			tx = getTransaction();
 			NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
-			if (Integer.parseInt(Flag)==0)  //shutdown
+			if (Integer.parseInt(isReboot)==0)  //shutdown
 			{
-				if( nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_SHUTDOWN"))))
-				{
-					exeFlag =true;
-					message = "shutdown "+nodeId;
-				}
-				else{
-					message = "shutdown "+nodeId+" fail!";
-				}
+//				if( nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_SHUTDOWN"))))
+//				{
+//					exeFlag =true;
+//					message = "shutdown "+nodeId;
+//				}
+//				else{
+//					message = "shutdown "+nodeId+" fail!";
+//				}
 			}
-			else if (Integer.parseInt(Flag)==1) // reboot
+			else if (Integer.parseInt(isReboot)==1) // reboot
 			{
-				if( nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_RESTART")))){
-					exeFlag = true;
-					message = "reboot "+nodeId;
-				}
-				else{
-					message = "reboot "+nodeId+" fail!";
-				}
+//				if( nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_RESTART")))){
+//					exeFlag = true;
+//					message = "reboot "+nodeId;
+//				}
+//				else{
+//					message = "reboot "+nodeId+" fail!";
+//				}
 			}
-			else if (Integer.parseInt(Flag) == 2 )// soft restart
-			{
+			logOperate(getLoginUserId(),exeFlag?Operatelog.MOD:Operatelog.ERROR,message);
+			tx.commit();
+			return exeFlag?ACTIONSUCCESS:ACTIONFAILURE;
+		}catch(Exception e){
+			
+			return ACTIONFAILURE+e.getMessage();
+		}finally{
+			closeSession();
+		}
+	}
+	public String  softRestart(String nodeId){
+		try{
+			if ( ! this.canVisit(5)){
+				return BaseAxis.RIGHTERROR;
+			}			
+		}catch(Exception e){
+			LOG.error("RightVisit error",e);
+			return BaseAxis.RIGHTERROR+e.getMessage();
+		}
+		Transaction tx =null;
+		boolean exeFlag = false;
+		String message = "";
+		try{
+			tx = getTransaction();
+			NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
+			try{
 				if( nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_SOFTRESTART")))){
 					exeFlag = true;
 					message = "soft restart "+nodeId;
 				}else{
 					message = "soft restart "+nodeId+" fail!";
-				}
+				}				
+			}catch(NullPointerException e1)
+			{
+				exeFlag = true;
+				message = "soft restart "+nodeId;
 			}
-			logOperate(getLoginUserId(),exeFlag?Operatelog.MOD:Operatelog.DEL,message);
+			
+			logOperate(getLoginUserId(),exeFlag?Operatelog.MOD:Operatelog.ERROR,message);
 			tx.commit();
 			return exeFlag?ACTIONSUCCESS:ACTIONFAILURE;
-		}catch(Exception e){
-			
-			return ACTIONFAILURE;
+		}
+		catch(Exception e){
+			LOG.error("softRestart fail nodeId:"+ nodeId,e);
+			return ACTIONFAILURE+e.getMessage();
 		}finally{
 			closeSession();
 		}
 	}
 	
-	
+	/**
+	 * 
+	 * @param nodeId 
+	 * @param FLAG   SYSTEMCODE
+	 * @param needFeedBack  0 notNeed  1 need
+	 * @return
+	 */
+	public String exeSystemCommand(String nodeId,String FLAG,String needFeedBack)
+	{
+		Transaction tx =null;
+		boolean exeFlag = false;
+		boolean feedBackFlag = true;
+		if("0".endsWith(needFeedBack)){
+			feedBackFlag = false;
+		}
+		String message = "";
+		try{
+			tx = getTransaction();
+			NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
+			try{
+				CODE code = EOPCODES.getInstance().get("S_SYSTEM").getSubCode(FLAG);
+				if (code == null){
+					return BaseAxis.ACTIONFAILURE+": "+FLAG+" doesn't exist in head.xml" ;
+				}
+				else if( nodeMachine.execute(ServerMessages.createSystemPkt(code)) || !feedBackFlag ){
+					exeFlag = true;
+					message = FLAG + " "+nodeId;
+				}else{
+					message = FLAG + " "+nodeId+" fail!";
+				}				
+			}catch(NullPointerException e)
+			{
+				if(feedBackFlag == false){
+					exeFlag = true;
+					message = FLAG + " "+nodeId;					
+				}
+				else{
+					message = FLAG + " "+nodeId+" fail !";
+				}				
+			}
+			
+			logOperate(getLoginUserId(),exeFlag?Operatelog.MOD:Operatelog.ERROR,message);
+			tx.commit();
+			return exeFlag?ACTIONSUCCESS:ACTIONFAILURE;
+		}
+		catch(Exception e){
+			LOG.error("softRestart fail nodeId:"+ nodeId,e);
+			return ACTIONFAILURE+e.getMessage();
+		}
+		
+	}
 	
 	
 }

@@ -464,7 +464,7 @@ public class QuestOperate extends BaseAxis {
 		{
 			LOG.error("getChunkDetail fail",e);
 			
-			return BaseAxis.ACTIONFAILURE;
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
 		}finally
 		{
 			this.closeSession();

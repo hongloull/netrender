@@ -103,11 +103,11 @@ public class NodeDAO extends BaseHibernateDAO {
 		return findByProperty(NODE_NAME, nodeName);
 	}
 	
-	public Node findByNodeIp(Object nodeIp) {
-		List lis_IPs =  findByProperty(NODE_IP, nodeIp);
-		if ( lis_IPs.size()==1 ) return (Node)lis_IPs.get(0);
-		else return null;
-	}
+//	public Node findByNodeIp(Object nodeIp) {
+//		List lis_IPs =  findByProperty(NODE_IP, nodeIp);
+//		if ( lis_IPs.size()==1 ) return (Node)lis_IPs.get(0);
+//		else return null;
+//	}
 
 	public List findByOs(Object os) {
 		return findByProperty(OS, os);
