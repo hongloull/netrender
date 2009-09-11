@@ -13,7 +13,7 @@ public final class XMLOut {
 	public static String outputToString(Document document)
 	{
 //	  ByteArrayOutputStream byteRep=new ByteArrayOutputStream();
-	  XMLOutputter docWriter=new XMLOutputter(null,true,"UTF8");
+	  XMLOutputter docWriter=new XMLOutputter(null,false,"UTF8");
 	  docWriter.setEncoding("UTF8");
 	  try
 	  {
@@ -29,7 +29,7 @@ public final class XMLOut {
  	}
 	
 	public static void outputToFile(Document doc ,File file){
-		XMLOutputter docWriter=new XMLOutputter(null,true,"UTF8");
+		XMLOutputter docWriter=new XMLOutputter(null,false,"UTF8");
 		  docWriter.setEncoding("UTF8");
 		  try
 		  {

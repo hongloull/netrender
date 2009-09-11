@@ -3,6 +3,10 @@ package com.webrender.test;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import org.apache.mina.common.ByteBuffer;
+
+import com.webrender.protocol.messages.ServerMessages;
+
 public class BetweenTime {
 
 	/**
@@ -22,9 +26,16 @@ public class BetweenTime {
 //		   System.out.println(""+day1+"天"+hour1+"小时"+minute1+"分"+second1+"秒");
 		
 		
-		Object obj = null;
-		int i = (Integer)obj;
-		System.out.println(i);
+		try {
+			ByteBuffer buffer = ServerMessages.createSetConfigPkt("==================");
+			System.out.println(buffer);
+			buffer.setAutoExpand(true);
+			buffer.put((byte)16);
+			System.out.println(buffer);
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
 		
 		
 	}

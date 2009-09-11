@@ -57,7 +57,7 @@ public final class ControlThreadServer extends Thread {
 		StatusDAO statusDAO = new StatusDAO();
 		while(true)
 		{
-			LOG.info("ControlThreadServerRun");
+//			LOG.info("ControlThreadServerRun");
 //				获取未完成的Quest ，得到相关命令，交给空闲的节点
 			if (!threadStop)
 			{
@@ -71,8 +71,8 @@ public final class ControlThreadServer extends Thread {
 					for(int i=0;i<waitingCommandsSize;i++){
 						commandsInfo.append(waitingCommands.get(i).getCommandId()).append(" ");
 					}
-					LOG.info("WaitingCommands size: "+ waitingCommandsSize);
-					LOG.info(commandsInfo);
+					LOG.info("WaitingCommands size: "+ waitingCommandsSize+":commandsInfo:"+commandsInfo);
+					
 					
 				//	System.out.println("CommandsSize : " + .size());
 					Iterator ite_Commands =waitingCommands.iterator();
@@ -276,7 +276,7 @@ public final class ControlThreadServer extends Thread {
 	
 	private void sleepUpdateVersion(String message,long millis) throws InterruptedException
 	{
-		LOG.info(message);
+//		LOG.info(message);
 		HibernateSessionFactory.closeSession();	
 		Thread.sleep(millis);
 		StatusDAO statusDAO = new StatusDAO();

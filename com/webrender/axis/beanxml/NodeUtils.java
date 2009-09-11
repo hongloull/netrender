@@ -40,8 +40,8 @@ public final class NodeUtils {
 		}
 		if (node==null)
 		{
-			//TODO change nodeIp
-			node = dao.findByNodeIp(nodeIp);
+			
+//			node = dao.findByNodeIp(nodeIp);
 			if ( node==null) node = new Node();
 			
 		}

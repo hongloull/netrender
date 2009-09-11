@@ -14,10 +14,12 @@ import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
 import com.webrender.protocol.enumn.EOPCODES.CODE;
 import com.webrender.protocol.processor.IClientProcessor;
+import com.webrender.remote.NodeMachine;
+import com.webrender.remote.NodeMachineManager;
 
 public class MessageHandlerImpl implements MessageHandler {
 	private static MessageHandler instance;
-    protected MessageHandlerImpl() {}
+    protected MessageHandlerImpl() {Runtime.getRuntime().traceMethodCalls(true);}
     public static MessageHandler getInstance() {
         if(instance == null) {
             MessageHandlerImpl.instance = new MessageHandlerImpl();
@@ -29,13 +31,14 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void parseClientPacket(CODE code, ByteBuffer packet,
 			IClientProcessor processor) {
 		ArrayList<String> datas = new ArrayList<String>();
-		if(packet.hasRemaining()==false){ // 无参数
+		int headLength = (int)packet.get();
+		if(packet.hasRemaining()==false || headLength==0){ // 无参数
 			
 			processor.execute(code, new byte[0], datas);
 			return ;
 		}
+		
 		// 有参数时
-		int headLength = (int)packet.get();
 		
 		byte[] head = new byte[headLength];
 		packet.get(head);
@@ -53,14 +56,19 @@ public class MessageHandlerImpl implements MessageHandler {
 			case 'S':
 				fmts.put((byte)'s');
 				int length = headBuffer.getInt(); 
-				byte[] bytes = new byte[length];
-				packet.get(bytes);
 				try {
-						String data = new String(bytes,"UTF-8");
-						datas.add(data);
-					} catch (UnsupportedEncodingException e) {
-						LOG.error("UTF-8 decode fail",e);
-					}
+//					LOG.info("length:"+ length);
+					byte[] bytes = new byte[length];
+					packet.get(bytes);
+//					LOG.info(new String(bytes));
+//					LOG.info(new String(bytes,"GBK"));
+//					LOG.info(new String(bytes,"UTF-16"));
+					String data = new String(bytes);
+					datas.add(data);
+				} catch (Exception e) {
+					LOG.error("parse string fail",e);
+				}
+					
 				break;
 			}	
 		}
@@ -120,6 +128,11 @@ public class MessageHandlerImpl implements MessageHandler {
 			} catch (UnsupportedEncodingException e){
 				mapName = new String(name);
 				e.printStackTrace();
+			}
+			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(nodeId);
+			if( nodeMachine != null && nodeMachine.isConnect()==true){
+//				已经有nodeId节点连接到服务器上了。需要重新分配
+				nodeId=0;
 			}
 			NodeDAO nodeDAO = new NodeDAO();
 			Transaction tx = null;

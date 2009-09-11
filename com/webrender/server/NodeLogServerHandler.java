@@ -1,6 +1,7 @@
 package com.webrender.server;
 
 
+
 import org.apache.mina.common.ByteBuffer;
 
 
@@ -36,42 +37,95 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 			LOG.info(message + "'type isn't ByteBuffer!");
             return;
         }
+//		LOG.info( message );
+		
+		byte opCode = -1 ;
 		try{
 			MessageHandler handler = MessageHandlerImpl.getInstance();
 			Integer nodeId = (Integer)session.getAttribute("nodeId");
 //			LOG.info("message CODE: "+((ByteBuffer)message).get());
 //			LOG.info("ClientMessage"+ClientMessages.createRunPkt(0, "ASP127") );
-			ByteBuffer buffer = (ByteBuffer) message ;//ClientMessages.createRunPkt(16, "中文");
-			byte opCode = buffer.get();
-			if(EOPCODES.getInstance().get("N_RUN").getId() == opCode){
-				nodeId = handler.initialClient(buffer);
-				session.setAttribute("nodeId",nodeId);
-				LOG.info("nodeId:"+nodeId + " run success.");
-				NodeMachine processor = NodeMachineManager.getNodeMachine(nodeId);
-				processor.setSession(session);
-				session.write(ServerMessages.createConnectFlagPkt(nodeId));
-			}
-			else if (EOPCODES.getInstance().get("N_GETSERVERSTATUS").getId()== opCode){
-				session.write(ServerMessages.createServerStatusPkt());
-			}
-			else if(nodeId !=null && nodeId !=0){
-				handler.parseClientPacket(EOPCODES.getInstance().get(opCode),buffer,NodeMachineManager.getNodeMachine(nodeId));
-			}
-			else{
-				if ((opCode < 0) || (opCode > EOPCODES.getInstance().size() - 1)) {
-		            LOG.error("Unknown op value: " + opCode);
-//		            session.write("Unknown op value: " + opCode);
+			ByteBuffer buffer = (ByteBuffer) message ;
+			if (buffer.limit() >= buffer.capacity())
+			{
+//				LOG.info(buffer);
+				ByteBuffer lastBuffer = (ByteBuffer) session.getAttribute("HalfPacket");
+				
+				if ( lastBuffer == null ) {
+					LOG.debug("first add HalfPkt to session attribute");
+					lastBuffer = ByteBuffer.allocate(buffer.limit());
+					lastBuffer.put(buffer);
+					session.setAttribute("HalfPacket",lastBuffer);
+					buffer = null;
+					
+				}else {
+					LOG.debug("append HalfPkt to session attribute");
+					lastBuffer.expand(buffer.limit());
+					lastBuffer.put(buffer);
+					session.setAttribute("HalfPacket",lastBuffer);
 				}
-				ByteBuffer result = (ByteBuffer) message;
-				
-				LOG.error("messageReceived:");
-				
-//				session.write("nodeId error!  messageReceived:"+message);
-			}			
+			}
+			else  // 没有不完整的包
+			{
+				ByteBuffer lastBuffer = (ByteBuffer) session.getAttribute("HalfPacket");
+				if ( lastBuffer != null ) {
+//					LOG.info(buffer);
+					LOG.debug("get LastBuffer parse");
+					lastBuffer.expand(buffer.limit());
+					lastBuffer.put(buffer);
+					session.setAttribute("HalfPacket",null);
+					buffer = null;
+					lastBuffer.flip();
+					LOG.debug(lastBuffer);
+				}
+				else{
+					lastBuffer = buffer;
+					buffer = null;
+				}
+				while(lastBuffer.hasRemaining()){
+					opCode = lastBuffer.get();
+//					LOG.info("CODEID:"+ opCode + "NodeId :" +nodeId);
+					if( EOPCODES.getInstance().get("N_RUN").getId() == opCode){
+						if (nodeId != null){ 
+							// run more than one time
+							return ;
+						}
+						nodeId = handler.initialClient(lastBuffer);
+						if(nodeId == 0){
+							LOG.warn("N_RUN initialClient fail nodeId=0");
+						}else{
+							session.setAttribute("nodeId",nodeId);
+							LOG.info("nodeId:"+nodeId + " run success.");
+							NodeMachine processor = NodeMachineManager.getNodeMachine(nodeId);
+							processor.setSession(session);
+							session.write(ServerMessages.createConnectFlagPkt(nodeId));					
+						}
+					}
+					else if (EOPCODES.getInstance().get("N_GETSERVERSTATUS").getId()== opCode){
+						
+						session.write(ServerMessages.createServerStatusPkt());
+					}
+					else if(nodeId !=null && nodeId !=0){
+						handler.parseClientPacket(EOPCODES.getInstance().get(opCode),lastBuffer,NodeMachineManager.getNodeMachine(nodeId));
+					}
+					else{
+						
+						LOG.error("messageReceived nodeId error:"+nodeId);
+					}	
+					
+				}
+			} // end if( buffer.limit() >= buffer.capacity() ) else
+			
 		}catch(Exception e){
-			LOG.error("messageReceived:"+message);
-			LOG.error(message.toString());
-			LOG.error("messageReceived fail");
+			LOG.info("Error CODEID:"+ opCode);
+			ByteBuffer result = (ByteBuffer) message;
+			int remaining = result.remaining();
+			byte[] bytes = new byte[remaining];
+			result.get(bytes);
+			String data = new String(bytes);
+			LOG.info("remaining: " +data);			
+			LOG.error("messageReceived:"+message,e);
+//			LOG.error(message.toString());
 		}
 //		String ip = ((InetSocketAddress)session.getRemoteAddress()).getAddress().getHostAddress();
 //		
@@ -135,7 +189,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 	public void sessionClosed(IoSession session) throws Exception {
 		LOG.info("Total " + session.getReadBytes() + " byte(s)");
 		Integer  nodeId = (Integer)session.getAttribute("nodeId");
-		if(nodeId!=null && nodeId!=null){
+		if(nodeId!=null){
 			NodeMachineManager.getNodeMachine(nodeId).setSession(null);
 		}
 		HibernateSessionFactory.closeSession();
