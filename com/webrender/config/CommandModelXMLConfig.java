@@ -27,9 +27,12 @@ public class CommandModelXMLConfig extends XMLConfig {
 	
 	public void loadFromXML(File file) throws JDOMException {
 		LOG.debug("loadFromXML");
+		int index = file.getName().lastIndexOf(".xml");
+		if (index == -1){
+			return;
+		}
 		SAXBuilder sb =  new SAXBuilder();
 		Document doc = sb.build(file);
-		int index = file.getName().lastIndexOf(".xml");
 		String commandModelName = file.getName().substring(0, index);
 		if(file.canWrite()) LOG.info(file.getAbsoluteFile()+": canWrite");
 		else  LOG.error(file.getAbsoluteFile()+": cannot Write");

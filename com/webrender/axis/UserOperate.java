@@ -21,6 +21,7 @@ import com.webrender.config.UserXMLConfig;
 import com.webrender.dao.Operatelog;
 import com.webrender.dao.Reguser;
 import com.webrender.dao.ReguserDAO;
+import com.webrender.test.ClassForAxis;
 import com.webrender.tool.FileCopy;
 
 
@@ -43,7 +44,7 @@ public class UserOperate extends BaseAxis {
 			while (ite_Users.hasNext()) {
 				Reguser user = ite_Users.next();
 				String regName = user.getRegName();
-				if("admin".equalsIgnoreCase(regName)) continue;
+//				if("admin".equalsIgnoreCase(regName)) continue;
 				Element ele = new Element("User");
 				ele.addAttribute("name", regName);
 				root.addContent(ele);
@@ -56,6 +57,10 @@ public class UserOperate extends BaseAxis {
 		}finally{
 			this.closeSession();
 		}
+	}
+	public ClassForAxis testGetUsers()
+	{
+		return new ClassForAxis();
 	}
 	
 	public String getUserConfig(String regName){

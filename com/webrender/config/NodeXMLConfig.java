@@ -15,6 +15,7 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 import com.webrender.axis.beanxml.NodeUtils;
+import com.webrender.axis.beanxml.XMLOut;
 import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
 import com.webrender.dao.Nodegroup;
@@ -34,9 +35,12 @@ public class NodeXMLConfig extends XMLConfig {
 	@Override
 	public void loadFromXML(File file) throws JDOMException {
 		LOG.debug("loadFromXML");
+		int index = file.getName().lastIndexOf(".xml");
+		if (index == -1){
+			return;
+		}
 		SAXBuilder sb =  new SAXBuilder();
 		Document doc = sb.build(file);
-		int index = file.getName().lastIndexOf(".xml");
 		String nodeGroupName = file.getName().substring(0, index);
 		if(nodeGroupName.equalsIgnoreCase("All")){
 			file.delete();
@@ -73,10 +77,9 @@ public class NodeXMLConfig extends XMLConfig {
 				Node node = NodeUtils.xml2bean(element);
 				nodeDAO.save(node);
 				set_RetainNodes.add(node);
-				if(set_Nodes.contains(node)){
-//					System.out.println("set_Nodes  contains node");
-				}
-				else{
+				root.removeChild(element);
+				root.addContent(NodeUtils.bean2xml(node));
+				if( !(set_Nodes.contains(node))){
 				//	System.out.println("set_Nodes containsnot node");
 					set_Nodes.add(node);
 					node.getNodegroups().add(nodeGroup);
@@ -86,6 +89,7 @@ public class NodeXMLConfig extends XMLConfig {
 			
 			tx.commit();
 			lisNGs.remove(nodeGroup);
+			XMLOut.outputToFile(doc,file);
 			LOG.debug("loadFromXML success");
 		}
 		catch(Exception e)

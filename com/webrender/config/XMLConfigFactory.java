@@ -5,12 +5,12 @@ import java.io.IOException;
 
 public class XMLConfigFactory {
 
-	public static XMLConfig getXMLConfig(File file) throws IOException, ClassNotFoundException {
+	public static XMLConfig getXMLConfig(File file) throws ClassNotFoundException {
 		String fileName = file.getName();
-		int index = fileName.lastIndexOf(".xml");
-		if (index == -1){
-			throw new java.io.IOException("Not XML");
-		}
+//		int index = fileName.lastIndexOf(".xml");
+//		if (index == -1){
+//			throw new java.io.IOException("Not XML");
+//		}
 		String pojoName = file.getParentFile().getName();
 		if(pojoName.equalsIgnoreCase("templates")){
 			XMLConfig instance=new CommandModelXMLConfig();

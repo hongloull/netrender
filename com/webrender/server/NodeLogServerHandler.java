@@ -24,7 +24,8 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 	public void exceptionCaught(IoSession session, Throwable cause) {
 		  // Close connection when unexpected exception is caught.
 		cause.printStackTrace();
-		session.close();
+//		session.write(cause.getMessage());
+//		session.close();
 	  }
 	
 	public void sessionOpened(IoSession session) throws Exception{
@@ -43,8 +44,6 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 		try{
 			MessageHandler handler = MessageHandlerImpl.getInstance();
 			Integer nodeId = (Integer)session.getAttribute("nodeId");
-//			LOG.info("message CODE: "+((ByteBuffer)message).get());
-//			LOG.info("ClientMessage"+ClientMessages.createRunPkt(0, "ASP127") );
 			ByteBuffer buffer = (ByteBuffer) message ;
 			if (buffer.limit() >= buffer.capacity())
 			{
@@ -102,7 +101,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 						}
 					}
 					else if (EOPCODES.getInstance().get("N_GETSERVERSTATUS").getId()== opCode){
-						
+						lastBuffer.get(); // 后面跟了00 需要读取
 						session.write(ServerMessages.createServerStatusPkt());
 					}
 					else if(nodeId !=null && nodeId !=0){
