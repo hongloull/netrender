@@ -28,12 +28,9 @@ public class XMLConfigManager {
 					XMLConfig load = null;
 					for(int j=0;j<filesNum;j++){
 						if (files[j].isFile()){
-							try {
+							
 								load = XMLConfigFactory.getXMLConfig(files[j]);
-								load.loadFromXML(files[j]);
-							} catch(IOException e){
-								//忽视读取到非XML文件抛的异常
-							}		
+								load.loadFromXML(files[j]);	
 						}
 					}
 					// 删除文件夹内不包含的数据 etc: NodeGroup

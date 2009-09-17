@@ -20,7 +20,7 @@ public final class NodeUtils {
 		Element root = new Element("Node");
 		root.addAttribute("nodeId",node.getNodeId().toString());
 		if(node.getNodeName()!=null) root.addAttribute("nodeName",node.getNodeName());
-		root.addAttribute("nodeIp",node.getNodeIp()+"");
+		if(node.getNodeIp()!=null) root.addAttribute("nodeIp",node.getNodeIp()+"");
 		if (node.getCoreNum()!=null) root.addAttribute("coreNum",node.getCoreNum().toString());
 	//	if (node.getStatus()!=null) root.addAttribute("status",node.getStatus().getValue() );
 	//	if (node.getOs()!=null)root.addAttribute("plantform",node.getOs());
@@ -40,10 +40,7 @@ public final class NodeUtils {
 		}
 		if (node==null)
 		{
-			
-//			node = dao.findByNodeIp(nodeIp);
-			if ( node==null) node = new Node();
-			
+			node = new Node();			
 		}
 		if (nodeName!=null)node.setNodeName(nodeName);
 		if (nodeIp!=null)  node.setNodeIp(nodeIp);
@@ -71,8 +68,9 @@ public final class NodeUtils {
 			NodeStatus nodeStatus = nodeMachine.getStatus();
 			root.addAttribute("cpu",nodeStatus.getCpuUsage()+"");
 			root.addAttribute("ramUsage", nodeStatus.getRamUsage()+"");
-			root.addAttribute("questName","" );
 			root.addAttribute("frames", "null");
+			root.addAttribute("priority","1");
+			root.addAttribute("procNum","1");
 			root.addAttribute("platform", nodeStatus.getPlatform()+"");
 			root.addAttribute("jobName",nodeStatus.getJobName()+"");
 			root.addAttribute("realTime",nodeMachine.isRealTime()?"Enable":"Disable");	

@@ -15,6 +15,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
+import com.webrender.axis.beanxml.NodeUtils;
 import com.webrender.axis.beanxml.XMLOut;
 import com.webrender.config.GenericConfig;
 import com.webrender.config.NodeXMLConfig;
@@ -209,10 +210,7 @@ public class PoolOperate extends BaseAxis {
 				Node node = (Node) ite_Nodes.next();
 				NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(node.getNodeId());
 				if ( nodeMachine.isConnect() ){
-					element = new Element("Node");
-					element.addAttribute("name", node.getNodeName());
-					element.addAttribute("ip", node.getNodeIp()+"");
-					root.addContent(element);
+					root.addContent(NodeUtils.bean2xml(node));
 				}
 			}
 			String result = XMLOut.outputToString(doc);

@@ -36,9 +36,12 @@ public class UserXMLConfig extends XMLConfig {
 	@Override
 	public void loadFromXML(File file) throws JDOMException {
 		LOG.debug("loadFromXML");
+		int index = file.getName().lastIndexOf(".xml");
+		if (index == -1){
+			return;
+		}
 		SAXBuilder sb =  new SAXBuilder();
 		Document doc = sb.build(file);
-		int index = file.getName().lastIndexOf(".xml");
 		String regName = file.getName().substring(0, index);
 		if(regName.equalsIgnoreCase("admin")){
 			file.delete();

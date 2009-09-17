@@ -35,20 +35,20 @@ public class NodeOperate extends BaseAxis {
 		Transaction tx = null;
 		try{
 			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
-			String result = this.killCommand(nodeId);
+//			String result = this.killCommand(nodeId);
 			nodeMachine.setPause(true);
 			tx = getTransaction();
 			logOperate(getLoginUserId(),Operatelog.MOD,"Pause nodeId:"+nodeId);
 			tx.commit();
-			if(BaseAxis.ACTIONSUCCESS.equals(result)){
+//			if(BaseAxis.ACTIONSUCCESS.equals(result)){
 				LOG.debug("pauseNode success");
 				return BaseAxis.ACTIONSUCCESS;							
-			}
-			else{
-				LOG.error("pauseNode fail killCommandError");
-				nodeMachine.setPause(true);
-				return "KillCommandError";
-			}
+//			}
+//			else{
+//				LOG.error("pauseNode fail killCommandError");
+//				nodeMachine.setPause(true);
+//				return "KillCommandError";
+//			}
 		}catch(Exception e){
 			LOG.error("pauseNode fail", e);
 			if(tx!=null){
@@ -122,39 +122,45 @@ public class NodeOperate extends BaseAxis {
 	public String killCommand(String nodeId)
 	{
 		LOG.info("killCommand");
-		try{
-			if ( ! this.canVisit(5)){
-				return BaseAxis.RIGHTERROR;
-			}			
-		}catch(Exception e){
-			LOG.error("RightVisit error",e);
-			return BaseAxis.RIGHTERROR+e.getMessage();
-		}
+//		try{
+//			if ( ! this.canVisit(5)){
+//				return BaseAxis.RIGHTERROR;
+//			}			
+//		}catch(Exception e){
+//			LOG.error("RightVisit error",e);
+//			return BaseAxis.RIGHTERROR+e.getMessage();
+//		}
 		
 		Transaction tx = null;
 		try
 		{
-			tx = getTransaction();
+			
 			NodeDAO nodeDAO = new NodeDAO();
 			Node node = nodeDAO.findById(Integer.parseInt(nodeId)) ;
 			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
 			boolean flag = nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_KILL")));
 			//CommandDAO commandDAO = new CommandDAO();
-			logOperate(getLoginUserId(),Operatelog.MOD,"kill Commands in nodeId:"+nodeId );
+			
 			StatusDAO statusDAO = new StatusDAO();
 			if (flag)
 			{
 				nodeMachine.cleanRunCommands("Service kill "+nodeId+"'s Commands");
+				tx = getTransaction();
+				logOperate(getLoginUserId(),Operatelog.MOD,"kill Commands in nodeId:"+nodeId );
+				tx.commit();
 			}
+			
 			else
 			{
+				tx = getTransaction();
 				Executelog executelog = new  Executelog(null,statusDAO.findById(99),node,"killError",new Date());
 				ExecutelogDAO exeDAO = new ExecutelogDAO();
 				exeDAO.save(executelog);
+				tx.commit();
 				nodeMachine.setPause(true);
 				return BaseAxis.ACTIONFAILURE;
 			}
-			tx.commit();
+			
 			nodeMachine.setBusy(false);
 //			ControlThreadServer.getInstance().resume();
 			LOG.debug("killCommand success");
