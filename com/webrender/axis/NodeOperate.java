@@ -1,10 +1,13 @@
 package com.webrender.axis;
 
 import java.util.Date;
+import java.util.Iterator;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Transaction;
 
+import com.webrender.axis.beanxml.NodeUtils;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
 import com.webrender.dao.Node;
@@ -23,15 +26,15 @@ public class NodeOperate extends BaseAxis {
 	
 	public String pauseNode(String nodeId)
 	{
-		LOG.debug("pauseNode");
-		try{
-			if ( ! this.canVisit(5)){
-				return BaseAxis.RIGHTERROR;
-			}			
-		}catch(Exception e){
-			LOG.error("RightVisit error",e);
-			return BaseAxis.RIGHTERROR+e.getMessage();
-		}
+		LOG.debug("pauseNode nodeId:"+nodeId);
+//		try{
+//			if ( ! this.canVisit(5)){
+//				return BaseAxis.RIGHTERROR;
+//			}			
+//		}catch(Exception e){
+//			LOG.error("RightVisit error",e);
+//			return BaseAxis.RIGHTERROR+e.getMessage();
+//		}
 		Transaction tx = null;
 		try{
 			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
@@ -61,15 +64,15 @@ public class NodeOperate extends BaseAxis {
 	}
 	public String resumeNode(String nodeId)
 	{
-		LOG.debug("resumeNode");
-		try{
-			if ( ! this.canVisit(5)){
-				return BaseAxis.RIGHTERROR;
-			}			
-		}catch(Exception e){
-			LOG.error("RightVisit error",e);
-			return BaseAxis.RIGHTERROR+e.getMessage();
-		}
+		LOG.debug("resumeNode nodeId:"+nodeId);
+//		try{
+//			if ( ! this.canVisit(5)){
+//				return BaseAxis.RIGHTERROR;
+//			}			
+//		}catch(Exception e){
+//			LOG.error("RightVisit error",e);
+//			return BaseAxis.RIGHTERROR+e.getMessage();
+//		}
 		Transaction tx = null;
 		try{
 			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
@@ -90,15 +93,15 @@ public class NodeOperate extends BaseAxis {
 		}
 	}
 	public String setRealLog(String nodeId,String isOpen){
-		LOG.debug("setRealLog");
-		try{
-			if ( ! this.canVisit(7)){
-				return BaseAxis.RIGHTERROR;
-			}			
-		}catch(Exception e){
-			LOG.error("RightVisit error",e);
-			return BaseAxis.RIGHTERROR+e.getMessage();
-		}
+		LOG.debug("setRealLog nodeId:"+nodeId+" isOpen:"+isOpen);
+//		try{
+//			if ( ! this.canVisit(7)){
+//				return BaseAxis.RIGHTERROR;
+//			}			
+//		}catch(Exception e){
+//			LOG.error("RightVisit error",e);
+//			return BaseAxis.RIGHTERROR+e.getMessage();
+//		}
 		Transaction tx = null;
 		try{
 			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
@@ -121,7 +124,7 @@ public class NodeOperate extends BaseAxis {
 	}
 	public String killCommand(String nodeId)
 	{
-		LOG.info("killCommand");
+		LOG.info("killCommand nodeId:"+nodeId);
 //		try{
 //			if ( ! this.canVisit(5)){
 //				return BaseAxis.RIGHTERROR;
@@ -184,15 +187,15 @@ public class NodeOperate extends BaseAxis {
 	public String  shutdownNode(String nodeId ,String isReboot)
 	{
 		// isReboot  0 shutdown  1 reboot 
-		LOG.info("shutdownNode");
-		try{
-			if ( ! this.canVisit(5)){
-				return BaseAxis.RIGHTERROR;
-			}			
-		}catch(Exception e){
-			LOG.error("RightVisit error",e);
-			return BaseAxis.RIGHTERROR+e.getMessage();
-		}
+		LOG.info("shutdownNode nodeId:"+nodeId +" isReboot:"+isReboot);
+//		try{
+//			if ( ! this.canVisit(5)){
+//				return BaseAxis.RIGHTERROR;
+//			}			
+//		}catch(Exception e){
+//			LOG.error("RightVisit error",e);
+//			return BaseAxis.RIGHTERROR+e.getMessage();
+//		}
 		Transaction tx =null;
 		boolean exeFlag = false;
 		String message = "";
@@ -201,24 +204,24 @@ public class NodeOperate extends BaseAxis {
 			NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
 			if (Integer.parseInt(isReboot)==0)  //shutdown
 			{
-//				if( nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_SHUTDOWN"))))
-//				{
-//					exeFlag =true;
-//					message = "shutdown "+nodeId;
-//				}
-//				else{
-//					message = "shutdown "+nodeId+" fail!";
-//				}
+				if( nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_SHUTDOWN"))))
+				{
+					exeFlag =true;
+					message = "shutdown "+nodeId;
+				}
+				else{
+					message = "shutdown "+nodeId+" fail!";
+				}
 			}
 			else if (Integer.parseInt(isReboot)==1) // reboot
 			{
-//				if( nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_RESTART")))){
-//					exeFlag = true;
-//					message = "reboot "+nodeId;
-//				}
-//				else{
-//					message = "reboot "+nodeId+" fail!";
-//				}
+				if( nodeMachine.execute(ServerMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_RESTART")))){
+					exeFlag = true;
+					message = "reboot "+nodeId;
+				}
+				else{
+					message = "reboot "+nodeId+" fail!";
+				}
 			}
 			logOperate(getLoginUserId(),exeFlag?Operatelog.MOD:Operatelog.ERROR,message);
 			tx.commit();
@@ -231,14 +234,15 @@ public class NodeOperate extends BaseAxis {
 		}
 	}
 	public String  softRestart(String nodeId){
-		try{
-			if ( ! this.canVisit(5)){
-				return BaseAxis.RIGHTERROR;
-			}			
-		}catch(Exception e){
-			LOG.error("RightVisit error",e);
-			return BaseAxis.RIGHTERROR+e.getMessage();
-		}
+//		try{
+//			if ( ! this.canVisit(5)){
+//				return BaseAxis.RIGHTERROR;
+//			}			
+//		}catch(Exception e){
+//			LOG.error("RightVisit error",e);
+//			return BaseAxis.RIGHTERROR+e.getMessage();
+//		}
+		LOG.debug("softRestart nodeId: "+nodeId);
 		Transaction tx =null;
 		boolean exeFlag = false;
 		String message = "";
@@ -320,6 +324,29 @@ public class NodeOperate extends BaseAxis {
 			return ACTIONFAILURE+e.getMessage();
 		}
 		
+	}
+	
+	public String delNode(String nodeId){
+		LOG.debug("delete node id:"+nodeId);
+		Transaction tx = null;
+		try{
+			tx = getTransaction();
+			NodeDAO nodeDAO = new NodeDAO();
+			Node node = nodeDAO.findById(Integer.parseInt(nodeId));
+			nodeDAO.delete(node);
+			logOperate(getLoginUserId(),Operatelog.MOD,"delete nodeId:"+nodeId +" name:"+node.getNodeName()+" ip:"+node.getNodeIp());
+			tx.commit();
+			LOG.debug("delNode success nodeId:"+nodeId);
+			return BaseAxis.ACTIONSUCCESS;
+		}catch(Exception e){
+			LOG.error("delNode fail nodeId:"+nodeId);
+			if(tx!=null){
+				tx.rollback();
+			}
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
+		}finally{
+			this.closeSession();
+		}
 	}
 	
 	

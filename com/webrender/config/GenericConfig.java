@@ -22,9 +22,9 @@ import org.jdom.input.SAXBuilder;
 
 public final class GenericConfig {
 	// For animationsp.com
-//	private String  configPath = GenericConfig.class.getResource("/").getPath();
+	private String  configPath = GenericConfig.class.getResource("/").getPath();
 	// For Lan
-	private static String configPath = "Y:/NetRender/Server";
+//	private static String configPath = "Y:/NetRender/Server";
 	private static GenericConfig instance = new GenericConfig();
 	private static final String CONF_FILE = "config.properties";
 	private static final Log LOG = LogFactory.getLog(GenericConfig.class);
@@ -50,6 +50,7 @@ public final class GenericConfig {
 		else{
 			configPath = configPath+"config/";
 		}
+//		LOG.info("ConfigPath :" + configPath);
 	}
 
 	/**

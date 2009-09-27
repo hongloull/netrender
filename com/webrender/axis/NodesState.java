@@ -21,14 +21,14 @@ public class NodesState extends BaseAxis{
 	public String getNodeStatus(String nodeId)
 	{
 		LOG.debug("getNodeStatus nodeId:"+nodeId);
-		try{
-			if ( ! this.canVisit(7)){
-				return BaseAxis.RIGHTERROR;
-			}			
-		}catch(Exception e){
-			LOG.error("RightVisit error",e);
-			return BaseAxis.RIGHTERROR;
-		}
+//		try{
+//			if ( ! this.canVisit(7)){
+//				return BaseAxis.RIGHTERROR;
+//			}			
+//		}catch(Exception e){
+//			LOG.error("RightVisit error",e);
+//			return BaseAxis.RIGHTERROR;
+//		}
 		
 		try {
 			NodeDAO nodeDAO = new NodeDAO();
@@ -46,15 +46,15 @@ public class NodesState extends BaseAxis{
 	}
 	public String getNodesStatus()
 	{
-		LOG.debug("get AllNodes Status begin");
-		try{
-			if ( ! this.canVisit(7)){
-				return BaseAxis.RIGHTERROR;
-			}			
-		}catch(Exception e){
-			LOG.error("RightVisit error",e);
-			return BaseAxis.RIGHTERROR;
-		}
+		LOG.debug("getNodesStatus");
+//		try{
+//			if ( ! this.canVisit(7)){
+//				return BaseAxis.RIGHTERROR;
+//			}			
+//		}catch(Exception e){
+//			LOG.error("RightVisit error",e);
+//			return BaseAxis.RIGHTERROR;
+//		}
 		
 		try{
 			Element root = new Element("Nodes");
@@ -71,12 +71,36 @@ public class NodesState extends BaseAxis{
 				}
 			}
 			String result = XMLOut.outputToString(doc);
-			LOG.debug("get Nodes Status success "+result);
+			LOG.debug("getNodesStatus success ");
 			return result;
 		}catch(Exception e)
 		{
-			LOG.error("get all nodes status fail",e);
-			return BaseAxis.ACTIONFAILURE;
+			LOG.error("getNodesStatus fail",e);
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
+		}finally
+		{
+			this.closeSession();
+		}
+	}
+	
+	public String getAllNodes(){
+		try{
+			LOG.debug("getAllNodes");
+			Element root = new Element("Nodes");
+			Document doc = new Document(root);
+			NodeDAO nodeDAO = new NodeDAO();
+			Iterator ite_AllNodes = nodeDAO.findAll().iterator();
+			while(ite_AllNodes.hasNext()){
+				Node node = (Node)ite_AllNodes.next();
+				root.addContent(NodeUtils.bean2xml(node));
+			}
+			String result = XMLOut.outputToString(doc);
+			LOG.debug("getAllNodes success");
+			return result;
+		}catch(Exception e)
+		{
+			LOG.error("getAllNodes fail",e);
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
 		}finally
 		{
 			this.closeSession();

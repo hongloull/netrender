@@ -65,7 +65,7 @@ public class CommandOperate extends BaseAxis {
 			
 		LOG.debug("reinitCommand");
 		try{
-			if (!this.canVisit(3) && ( !this.canVisit(2) || !this.isSelf(Integer.parseInt(commandId)) ) ){
+			if (!this.canVisit(0) || !this.canVisit(11) && ( !this.canVisit(10) || !this.isSelf(Integer.parseInt(commandId)) ) ){
 				return BaseAxis.RIGHTERROR;
 			}			
 		}catch(Exception e){
@@ -98,7 +98,7 @@ public class CommandOperate extends BaseAxis {
 		}
 	}
 	
-	public String finishCommand(String commandId){
+	public String setFinish(String commandId){
 		LOG.debug("finishCommand");
 		
 		Transaction tx = null;
@@ -106,8 +106,8 @@ public class CommandOperate extends BaseAxis {
 			tx = getTransaction();
 			CommandDAO commandDAO = new CommandDAO();
 			Command command = commandDAO.findById(Integer.parseInt(commandId));
-			commandDAO.finishCommand(command );
-			logOperate(this.getLoginUserId(),Operatelog.MOD,"Finish Command: "+commandDAO.getNote(command));
+			commandDAO.setFinish(command );
+			logOperate(this.getLoginUserId(),Operatelog.MOD,"setFinish Command: "+commandDAO.getNote(command));
 			tx.commit();
 //			ControlThreadServer.getInstance().resume();
 			

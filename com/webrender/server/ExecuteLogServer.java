@@ -34,7 +34,7 @@ public final class ExecuteLogServer {
     			new TextLineCodecFactory()));
     	acceptor.bind(new InetSocketAddress(PORT), ioHandler,
     			config);
-    	LOG.debug("ExecuteLogServer Listening on port " + PORT);
+    	LOG.info("EventServer Listening on port " + PORT);
     }
     public void broadCast(String message)
     {

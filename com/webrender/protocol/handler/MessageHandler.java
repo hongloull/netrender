@@ -7,6 +7,6 @@ import com.webrender.protocol.processor.IClientProcessor;
 
 
 public interface MessageHandler {
-	public void parseClientPacket(CODE code,ByteBuffer packet,IClientProcessor processor);
+	public ByteBuffer parseClientPacket(CODE code,ByteBuffer packet,IClientProcessor processor);
 	public int initialClient(ByteBuffer packet);
 }

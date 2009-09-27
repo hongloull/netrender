@@ -38,7 +38,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 			LOG.info(message + "'type isn't ByteBuffer!");
             return;
         }
-//		LOG.info( message );
+//		LOG.info( "getnewmessage:: " + message );
 		
 		byte opCode = -1 ;
 		try{
@@ -82,8 +82,10 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 					buffer = null;
 				}
 				while(lastBuffer.hasRemaining()){
+					
 					opCode = lastBuffer.get();
 //					LOG.info("CODEID:"+ opCode + "NodeId :" +nodeId);
+//					LOG.info("parse LastBuffer position:"+lastBuffer.position() +" limit:" + lastBuffer.limit()+" capacity:"+ lastBuffer.capacity());
 					if( EOPCODES.getInstance().get("N_RUN").getId() == opCode){
 						if (nodeId != null){ 
 							// run more than one time
@@ -105,7 +107,10 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 						session.write(ServerMessages.createServerStatusPkt());
 					}
 					else if(nodeId !=null && nodeId !=0){
-						handler.parseClientPacket(EOPCODES.getInstance().get(opCode),lastBuffer,NodeMachineManager.getNodeMachine(nodeId));
+						ByteBuffer remainBuffer = handler.parseClientPacket(EOPCODES.getInstance().get(opCode),lastBuffer,NodeMachineManager.getNodeMachine(nodeId));
+						if(remainBuffer !=null){ // 还有未结束的数据包
+							session.setAttribute("HalfPacket",remainBuffer);
+						}
 					}
 					else{
 						
@@ -186,9 +191,10 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 	}
 	
 	public void sessionClosed(IoSession session) throws Exception {
-		LOG.info("Total " + session.getReadBytes() + " byte(s)");
+//		LOG.info("Total " + session.getReadBytes() + " byte(s)");
 		Integer  nodeId = (Integer)session.getAttribute("nodeId");
 		if(nodeId!=null){
+			LOG.info("NodeId:"+nodeId+" connect close.");
 			NodeMachineManager.getNodeMachine(nodeId).setSession(null);
 		}
 		HibernateSessionFactory.closeSession();

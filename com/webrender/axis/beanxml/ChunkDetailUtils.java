@@ -3,6 +3,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jdom.Element;
 
 import com.webrender.dao.Command;
@@ -11,13 +13,15 @@ import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
 
 public final class ChunkDetailUtils {
+	private   static final Log LOG = LogFactory.getLog(ChunkDetailUtils.class);
 	public static Element getElement(Command command)
 	{
-		Element root = new Element("Detail");
-		ExecutelogDAO executeLogDAO = new ExecutelogDAO();
 		int statusId = command.getStatus().getStatusId(); 
 		if ( statusId ==72 || statusId ==71)
 		{
+			LOG.debug("getCommandChunkDetail commandId:"+command.getCommandId());
+			Element root = new Element("Detail");
+			ExecutelogDAO executeLogDAO = new ExecutelogDAO();
 			Date startTime = null;
 			Date endTime = null;
 			String start = "";
@@ -53,7 +57,6 @@ public final class ChunkDetailUtils {
 			try{
 				nodeIp = command.getNode().getNodeIp();
 				nodeName = command.getNode().getNodeName();
-				
 			}catch (NullPointerException e) {
 			}
 			try{
@@ -73,6 +76,7 @@ public final class ChunkDetailUtils {
 				root.addAttribute("endingTime", end);
 				root.addAttribute("timeSpan",timeSpan);				
 			}
+			LOG.debug("getCommandChunkDetailFinish commandId:"+command.getCommandId());
 			return root;
 		}
 		return null;

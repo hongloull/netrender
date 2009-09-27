@@ -35,12 +35,12 @@ public class UserLogin extends BaseAxis {
 				HttpServletRequest request = (HttpServletRequest) mc.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);   
 				session.set( "RemoteIp",request.getRemoteAddr() );
 				Iterator<Integer> ite_Rights = rightValue.iterator();
-				StringBuilder result = new StringBuilder("[");
+				StringBuilder result = new StringBuilder();
 				while(ite_Rights.hasNext()){
 					result.append( ite_Rights.next() );
 					if (ite_Rights.hasNext()) result.append(",");
 				}
-				result.append("]");
+				
 				Transaction tx = null;
 				try{
 					tx = getTransaction();

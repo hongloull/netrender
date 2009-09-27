@@ -26,21 +26,24 @@ public class CommandModelXMLConfig extends XMLConfig {
 	private static final Log LOG = LogFactory.getLog(CommandModelXMLConfig.class);
 	
 	public void loadFromXML(File file) throws JDOMException {
-		LOG.debug("loadFromXML");
+		LOG.debug("loadFromXML "+file.getName());
 		int index = file.getName().lastIndexOf(".xml");
 		if (index == -1){
+			LOG.debug("not xml return");
 			return;
 		}
-		SAXBuilder sb =  new SAXBuilder();
-		Document doc = sb.build(file);
-		String commandModelName = file.getName().substring(0, index);
-		if(file.canWrite()) LOG.info(file.getAbsoluteFile()+": canWrite");
-		else  LOG.error(file.getAbsoluteFile()+": cannot Write");
-	
 		Transaction tx = null;
-		CommandmodelDAO cMDAO = new CommandmodelDAO();
-		CommandmodelargDAO cMADAO = new CommandmodelargDAO();
 		try{
+			SAXBuilder sb =  new SAXBuilder();
+			Document doc = sb.build(file);
+			String commandModelName = file.getName().substring(0, index);
+			if(file.canWrite()) LOG.debug(file.getAbsoluteFile()+": canWrite");
+			else{
+				LOG.error(file.getAbsoluteFile()+": cannot Write");
+			}
+			
+			CommandmodelDAO cMDAO = new CommandmodelDAO();
+			CommandmodelargDAO cMADAO = new CommandmodelargDAO();
 			
 			tx = getTransaction();
 			Element element = doc.getRootElement();
@@ -83,17 +86,16 @@ public class CommandModelXMLConfig extends XMLConfig {
 			tx.commit();
 			XMLOut.outputToFile(doc,file);
 			lisCMs.remove(cM);
-			
-			
 		}
 		catch(Exception e)
 		{
-			LOG.error("",e);
+			LOG.error("loadFromXML fail "+file.getName(),e);
 			if (tx != null) 
 			{
 				tx.rollback();
 			}
-		}					
+		}			
+		LOG.debug("loadFromXML "+file.getName()+ "success");
 		return;
 	}
 	
@@ -105,7 +107,9 @@ public class CommandModelXMLConfig extends XMLConfig {
 			Iterator ite_CMs = lisCMs.iterator();
 			CommandmodelDAO cmDAO = new CommandmodelDAO();
 			while(ite_CMs.hasNext()){
-				cmDAO.delete( (Commandmodel)ite_CMs.next() );
+				Commandmodel model = (Commandmodel)ite_CMs.next();
+				LOG.info("delete commandmodel: "+model.getCommandModelName());
+				cmDAO.delete( model );
 			}
 			tx.commit();
 			LOG.debug("deleteExtraModel success");

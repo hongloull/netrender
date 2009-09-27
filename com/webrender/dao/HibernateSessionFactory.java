@@ -32,7 +32,7 @@ public final class HibernateSessionFactory {
 
 	static {
     	try {
-    		
+    		LOG.info("read database config file");
 			configuration.configure(configFile);
 			String databaseServer = GenericConfig.getInstance().getDatabaseServer();
 			configuration.setProperty("hibernate.connection.url", "jdbc:mysql://"+databaseServer+":3306/distributedmanagement?useUnicode=true&characterEncoding=UTF-8");

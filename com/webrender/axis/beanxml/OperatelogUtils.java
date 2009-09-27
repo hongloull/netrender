@@ -1,6 +1,9 @@
 package com.webrender.axis.beanxml;
 
 import java.text.SimpleDateFormat;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 
@@ -8,7 +11,9 @@ import com.webrender.dao.Operatelog;
 
 
 public final class OperatelogUtils {
+	private static final Log LOG = LogFactory.getLog(OperatelogUtils.class);
 	public static Element bean2xml(Operatelog opeLog){
+		LOG.debug("bean2xml For Event operateLogId:"+ opeLog.getOperateLogId());
 		Element root = new Element("Event");
 		SimpleDateFormat dateFormat =new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String logTime = dateFormat.format(opeLog.getLogTime());
@@ -27,11 +32,13 @@ public final class OperatelogUtils {
 		}
 		
 		root.addAttribute("type",type);
+		LOG.debug("bean2xml For Event success operateLogId:"+ opeLog.getOperateLogId());
 		return root;
 	}
 	public static String bean2XMLString(Operatelog opeLog){
 		Element element = bean2xml(opeLog);
 		Document doc = new Document(element);
+		LOG.debug("bean2XMLString success");
 		return XMLOut.outputToString(doc);
 	}
 }

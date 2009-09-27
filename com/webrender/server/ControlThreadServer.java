@@ -71,7 +71,7 @@ public final class ControlThreadServer extends Thread {
 					for(int i=0;i<waitingCommandsSize;i++){
 						commandsInfo.append(waitingCommands.get(i).getCommandId()).append(" ");
 					}
-					LOG.info("WaitingCommands size: "+ waitingCommandsSize+":commandsInfo:"+commandsInfo);
+//					LOG.info("WaitingCommands size: "+ waitingCommandsSize+":commandsInfo:"+commandsInfo);
 					
 					
 				//	System.out.println("CommandsSize : " + .size());

@@ -88,12 +88,9 @@ public class ModelOperate extends BaseAxis {
 			Element root = new Element("Commandmodels");
 			Document doc = new Document(root);
 			
-			Iterator ite_CMS = null;
-			if(canVisit(8)){	
-				ite_CMS = (new CommandmodelDAO()).findAll().iterator(); 
-			}else{
-				ite_CMS = regUser.getModels().iterator();				
-			}
+			Iterator ite_CMS = (new CommandmodelDAO()).findAll().iterator(); 
+				
+			
 			while(ite_CMS.hasNext())
 			{
 				Commandmodel cM = (Commandmodel)ite_CMS.next();

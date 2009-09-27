@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import com.webrender.dao.HibernateSessionFactory;
 
 public class XMLConfigManager {
-	private static String[] xmls = {"templates","nodes","right","users"};
+	private static String[] xmls = {"templates","nodes","users"};
 //	private static boolean[] pathExist = {false,false};
 //	private static String basePath = XMLConfigManager.class.getResource("/").getPath();
 	private static final Log LOG = LogFactory.getLog(XMLConfigManager.class);
@@ -24,7 +24,7 @@ public class XMLConfigManager {
 				if( dir.isDirectory() ){
 					File[] files = dir.listFiles();
 					int filesNum = files.length;
-					LOG.info("Read ConfigDir : "+ dir.getAbsolutePath() +" filesNum "+filesNum);
+					LOG.info("Read ConfigDir : "+ dir.getAbsolutePath() +" filesNum:"+filesNum);
 					XMLConfig load = null;
 					for(int j=0;j<filesNum;j++){
 						if (files[j].isFile()){
@@ -41,7 +41,7 @@ public class XMLConfigManager {
 				LOG.error(xmls[i] +" not exist! ",e);
 			}
 			catch(Exception e){
-				LOG.error("",e);
+				LOG.error("loadConfig fail",e);
 			}finally{
 				HibernateSessionFactory.closeSession();
 			}

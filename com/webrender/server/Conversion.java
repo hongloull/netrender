@@ -31,7 +31,7 @@ public final class Conversion extends Thread {
 		try {
 			setDaemon(true);
 			myIp = InetAddress.getLocalHost();
-			LOG.info("local IP : "+myIp.getHostAddress());
+			LOG.info("local IP : "+myIp.getHostAddress()+ "MainServer:"+mainServer+" SubServer:"+subServer);
 			if ("localhost".equals(mainServer) ||myIp.getHostAddress().equals(mainServer)) flag = 1;
 			else if ("localhost".equals(subServer) ||myIp.getHostAddress().equals(subServer))  flag = 2;
 		} catch (UnknownHostException e) {
@@ -110,12 +110,14 @@ public final class Conversion extends Thread {
 		if (status.equals(EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_OFF"))){
 			LOG.info("SocketServer Run");
 			try {
+				
 				NodeLogServer.getInstance().run();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 //			NodeThreadServer.getInstance().start();
 			try {
+				
 				RealLogServer.getInstance().run();
 			} catch (Exception e) {
 				e.printStackTrace();
