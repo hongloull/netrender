@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Transaction;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.Attribute;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
@@ -34,28 +35,31 @@ public class NodeXMLConfig extends XMLConfig {
 	}
 	@Override
 	public void loadFromXML(File file) throws JDOMException {
-		LOG.debug("loadFromXML");
+		LOG.debug("loadFromXML: "+file.getName());
 		int index = file.getName().lastIndexOf(".xml");
 		if (index == -1){
+			LOG.debug("not xml return");
 			return;
 		}
-		SAXBuilder sb =  new SAXBuilder();
-		Document doc = sb.build(file);
-		String nodeGroupName = file.getName().substring(0, index);
-		if(nodeGroupName.equalsIgnoreCase("All")){
-			file.delete();
-			return;
-		}
-		NodegroupDAO nodeGroupDAO = new NodegroupDAO();
-		Nodegroup nodeGroup = nodeGroupDAO.findByNodeGroupName(nodeGroupName);
-		NodeDAO nodeDAO 	= new NodeDAO();
-		TimegroupDAO tGroupDAO = new TimegroupDAO();
-		Element root = doc.getRootElement();
 		Transaction tx = null;
 		try{
+			SAXBuilder sb =  new SAXBuilder();
+			Document doc = sb.build(file);
+			String nodeGroupName = file.getName().substring(0, index);
+			if(nodeGroupName.equalsIgnoreCase("All")){
+				file.delete();
+				LOG.info("delete all.xml file.");
+				return;
+			}
+			NodegroupDAO nodeGroupDAO = new NodegroupDAO();
+			Nodegroup nodeGroup = nodeGroupDAO.findByNodeGroupName(nodeGroupName);
+			NodeDAO nodeDAO 	= new NodeDAO();
+			TimegroupDAO tGroupDAO = new TimegroupDAO();
+			Element root = doc.getRootElement();
 			tx = getTransaction();
 			
 			if(nodeGroup==null){
+				LOG.info("create new nodegroup :"+ nodeGroupName);
 				nodeGroup = new Nodegroup();
 				nodeGroup.setNodeGroupName(nodeGroupName);
 			}
@@ -75,10 +79,20 @@ public class NodeXMLConfig extends XMLConfig {
 			{
 				Element element = (Element)ite_Nodes.next();
 				Node node = NodeUtils.xml2bean(element);
+				if(node==null){
+					root.getMixedContent().remove(element);
+					continue;
+				}
 				nodeDAO.save(node);
+				
+				element.removeAttribute("nodeName");
+				element.addAttribute("nodeName",node.getNodeName());
+				element.removeAttribute("nodeIp");
+				element.addAttribute("nodeIp",node.getNodeIp());
+				
 				set_RetainNodes.add(node);
-				root.removeChild(element);
-				root.addContent(NodeUtils.bean2xml(node));
+				
+//				root.addContent(NodeUtils.bean2xml(node));
 				if( !(set_Nodes.contains(node))){
 				//	System.out.println("set_Nodes containsnot node");
 					set_Nodes.add(node);
@@ -90,11 +104,11 @@ public class NodeXMLConfig extends XMLConfig {
 			tx.commit();
 			lisNGs.remove(nodeGroup);
 			XMLOut.outputToFile(doc,file);
-			LOG.debug("loadFromXML success");
+			LOG.debug("loadFromXML success "+file.getName());
 		}
 		catch(Exception e)
 		{
-			LOG.error("loadFromXML fail",e);
+			LOG.error("loadFromXML fail fileName: "+file.getName(),e);
 			if (tx != null) 
 			{
 				tx.rollback();
@@ -110,7 +124,9 @@ public class NodeXMLConfig extends XMLConfig {
 			Iterator ite_NGs = lisNGs.iterator();
 			NodegroupDAO nGDAO = new NodegroupDAO();
 			while(ite_NGs.hasNext()){
-				nGDAO.delete( (Nodegroup)ite_NGs.next() );
+				Nodegroup ng = (Nodegroup)ite_NGs.next();
+				LOG.info("delete Nodegroup name: "+ng.getNodeGroupName());
+				nGDAO.delete( ng );
 			}
 			tx.commit();
 			LOG.debug("deleteExtraNodeGroup success");

@@ -31,9 +31,11 @@ public abstract class BaseAxis {
 			MessageContext mc = MessageContext.getCurrentContext();
 			Session session = mc.getSession();
 			int regUserId = (Integer)session.get("RegUserId");
+			LOG.debug("getLoginUserId : " + regUserId);
 			return regUserId;	
 		}catch(Exception e)
 		{
+			LOG.debug("getLoginUserId error return 0 ");
 			return 0;
 		}
 	}
@@ -45,7 +47,7 @@ public abstract class BaseAxis {
 	 */
 	@SuppressWarnings("unchecked")
 	protected boolean canVisit(int rightId)
-	{		
+	{
 		try{
 			MessageContext mc = MessageContext.getCurrentContext();
 			Session session = mc.getSession();

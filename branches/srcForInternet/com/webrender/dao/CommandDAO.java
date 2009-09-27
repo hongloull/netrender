@@ -175,52 +175,65 @@ public class CommandDAO extends BaseHibernateDAO {
 	
 	
 	public void reinitCommand(Command instance) {
-		LOG.debug("reinitCommand ");
+		LOG.debug("reinitCommand commandId:"+instance.getCommandId());
 		try
 		{
 			StatusDAO statusDAO = new StatusDAO();
 			instance.setStatus(statusDAO.findById(70));
 			this.attachDirty(instance);
-			LOG.debug("reinitCommand successful");
+			LOG.debug("reinitCommand successful commandId:"+instance.getCommandId());
 			
 		}catch(RuntimeException re){
-			LOG.error("reinitCommand failed",re);
+			LOG.error("reinitCommand failed commandId:"+instance.getCommandId(),re);
 			throw re;
 		}	
 	}
-
+	public void setFinish(Command instance) {
+		LOG.debug("setFinish");
+		try
+		{
+			StatusDAO statusDAO = new StatusDAO();
+			instance.setStatus(statusDAO.findById(72));
+			this.attachDirty(instance);
+			LOG.debug("setFinish successful");
+			
+		}catch(RuntimeException re){
+			LOG.error("setFinish failed",re);
+			throw re;
+		}	
+	}
 	private List getInProgress(Quest quest) {
-		LOG.debug("getInProgress ");
+		LOG.debug("getInProgress  questId:"+quest.getQuestId());
 		try
 		{
 			Query query = getSession().createQuery("from Command as command where command.status.statusId=71 and command.quest.questId=? ");
 			query.setParameter(0,quest.getQuestId());
-			LOG.debug("getInProgress successful");
+			LOG.debug("getInProgress successful questId:"+quest.getQuestId());
 			return  query.list();
 			
 		}catch(RuntimeException re){
-			LOG.error("getInProgress failed",re);
+			LOG.error("getInProgress failed questId:"+quest.getQuestId(),re);
 			throw re;
 		}	
 	}
 
 	public List getFinish(Quest quest) {
-		LOG.debug("getFinish");
+		LOG.debug("getFinish questId:"+quest.getQuestId());
 		try
 		{
 			Query query = getSession().createQuery("from Command as command where command.status.statusId=72 and command.quest.questId=? order by command.sendTime desc");
 			query.setParameter(0,quest.getQuestId());
-			LOG.debug("getFinish successful");
+			LOG.debug("getFinish successful questId:"+quest.getQuestId());
 			return  query.list();
 			
 			
 		}catch(RuntimeException re){
-			LOG.error("getFinish failed",re);
+			LOG.error("getFinish failed questId:"+quest.getQuestId(),re);
 			throw re;
 		}	
 	}
 	public boolean isInProgress(Quest quest){
-		LOG.debug("isProgress");
+		LOG.debug("isInProgress questId:"+quest.getQuestId());
 		try{
 			if( this.getInProgress(quest).size()>0) return true;
 			else{
@@ -240,18 +253,20 @@ public class CommandDAO extends BaseHibernateDAO {
 				}
 			}
 		}catch(RuntimeException re){
-			LOG.error("getFinish failed",re);
+			LOG.error("isInProgress failed questId:"+quest.getQuestId(),re);
 			throw re;
 		}
 	}
 	
 	public String getNote(Command command){
+		LOG.debug("getNote commandId: "+command.getCommandId());
 		Iterator<Commandarg> ite_Args = command.getCommandargs().iterator();
 		StringBuffer note = new StringBuffer(command.getQuest().getQuestName()+":");
 		while(ite_Args.hasNext()){
 			Commandarg arg = ite_Args.next();
 			note.append(" ").append(arg.getCommandmodelarg().getArgName()).append(" ").append(arg.getValue()).append(" ");
 		}
+		LOG.debug("getNote success commandId: "+command.getCommandId()+" note:"+note.toString());
 		return note.toString();
 	}
 	private void reinitInProgressCommand(){
@@ -274,19 +289,5 @@ public class CommandDAO extends BaseHibernateDAO {
 		}	
 	}
 
-	public void finishCommand(Command instance) {
-		LOG.debug("finishCommand ");
-		try
-		{
-			StatusDAO statusDAO = new StatusDAO();
-			instance.setStatus(statusDAO.findById(72));
-			this.attachDirty(instance);
-			LOG.debug("finishCommand successful");
-			
-		}catch(RuntimeException re){
-			LOG.error("finishCommand failed",re);
-			throw re;
-		}
-	}
 	
 }

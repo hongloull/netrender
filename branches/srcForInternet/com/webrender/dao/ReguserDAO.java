@@ -149,7 +149,7 @@ public class ReguserDAO extends BaseHibernateDAO {
 	}
 	
 	public Set<Integer> getRightValue(Reguser instance){
-		LOG.debug("getRightValue");
+		LOG.debug("getRightValue reguserName:"+instance.getRegName());
 		Set<Integer> rightValue = new HashSet<Integer>();
 		try{
 			Iterator ite_Rights = instance.getRights().iterator();
@@ -157,9 +157,9 @@ public class ReguserDAO extends BaseHibernateDAO {
 				Right right = (Right) ite_Rights.next();
 				rightValue.add(right.getRightId());
 			}			
-			LOG.debug("getRightValue success");
+			LOG.debug("getRightValue success reguserName:"+instance.getRegName());
 		}catch(Exception e){
-			LOG.error("getRightValue fail",e);
+			LOG.error("getRightValue fail reguserName:"+instance.getRegName(),e);
 		}
 		return rightValue;
 	}

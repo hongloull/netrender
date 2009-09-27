@@ -17,6 +17,7 @@ public final class NodeUtils {
 	
 	public static Element bean2xml(Node node)
 	{
+		LOG.debug("bean2xml nodeId:"+node.getNodeId()+ " nodeName: "+node.getNodeName()+" nodeIp:"+node.getNodeIp());
 		Element root = new Element("Node");
 		root.addAttribute("nodeId",node.getNodeId().toString());
 		if(node.getNodeName()!=null) root.addAttribute("nodeName",node.getNodeName());
@@ -24,15 +25,16 @@ public final class NodeUtils {
 		if (node.getCoreNum()!=null) root.addAttribute("coreNum",node.getCoreNum().toString());
 	//	if (node.getStatus()!=null) root.addAttribute("status",node.getStatus().getValue() );
 	//	if (node.getOs()!=null)root.addAttribute("plantform",node.getOs());
-		
+		LOG.debug("bean2xml success nodeId:"+node.getNodeId() );
 		return root;
 	}
 
 	public static Node xml2bean(Element element) {
+		LOG.debug("xml2bean");
 		Node node = null;
 		String nodeId = element.getAttributeValue("nodeId");
-		String nodeName = element.getAttributeValue("nodeName");
-		String nodeIp = element.getAttributeValue("nodeIp");
+//		String nodeName = element.getAttributeValue("nodeName");
+//		String nodeIp = element.getAttributeValue("nodeIp");
 		NodeDAO dao = new NodeDAO();
 		if (nodeId != null)
 		{
@@ -40,10 +42,13 @@ public final class NodeUtils {
 		}
 		if (node==null)
 		{
-			node = new Node();			
+			// 不在XML读取中，新建节点。
+			LOG.error("xml can't get node from database. nodeId: "+ nodeId);
+			return null;
 		}
-		if (nodeName!=null)node.setNodeName(nodeName);
-		if (nodeIp!=null)  node.setNodeIp(nodeIp);
+//		if (nodeName!=null)node.setNodeName(nodeName);
+//		if (nodeIp!=null)  node.setNodeIp(nodeIp);
+		LOG.debug("xml2bean success nodeId:"+nodeId );
 		return node;
 	}
 	

@@ -135,6 +135,10 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	{
 		org.jdom.Element root = new org.jdom.Element("Cmd");
 		root.addAttribute("cmdModelName",command.getQuest().getCommandmodel().getCommandModelName());
+		root.addAttribute("cmdId",command.getCommandId()+"");
+		root.addAttribute("questId",command.getQuest().getQuestId()+"");
+		root.addAttribute("questName",command.getQuest().getQuestName()+"");
+		
 		HashSet<Integer> set_ids = new HashSet<Integer>();
 		
 		Iterator ite_CommandArgs = command.getCommandargs().iterator();

@@ -7,14 +7,14 @@ import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
 
 public class TestNodeMachine {
-	
+	@Test
 	public void testGetCommand()
 	{
 		CommandDAO commandDAO = new CommandDAO();
 		
 		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(2);
 		nodeMachine.setConnect(false);
-		System.out.println(nodeMachine.getCommand((commandDAO.findById(1))));
+		System.out.println(nodeMachine.getCommand((commandDAO.findById(1172))));
 	}
 	
 	@Test

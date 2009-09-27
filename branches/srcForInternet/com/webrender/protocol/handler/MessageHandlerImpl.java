@@ -28,35 +28,39 @@ public class MessageHandlerImpl implements MessageHandler {
     }
     protected final Log LOG = LogFactory.getLog(MessageHandlerImpl.class);
 	
-	public void parseClientPacket(CODE code, ByteBuffer packet,
+	public ByteBuffer parseClientPacket(CODE code, ByteBuffer packet,
 			IClientProcessor processor) {
-		ArrayList<String> datas = new ArrayList<String>();
-		int headLength = (int)packet.get();
-		if(packet.hasRemaining()==false || headLength==0){ // 无参数
-			
-			processor.execute(code, new byte[0], datas);
-			return ;
-		}
 		
+		int initialPositon = packet.position();
+		try {
+			
+			ArrayList<String> datas = new ArrayList<String>();
+			
+			int headLength = (int)packet.get();
+			if(headLength==0 ){ // 无参数
+				
+				processor.execute(code, new byte[0], datas);
+				return null;
+			}
 		// 有参数时
 		
-		byte[] head = new byte[headLength];
-		packet.get(head);
-		ByteBuffer headBuffer = ByteBuffer.wrap(head);
-		ByteBuffer fmts = ByteBuffer.allocate(headLength);
-		while(headBuffer.hasRemaining()){
-			char fmt = (char)headBuffer.get();
-			switch(fmt){
-			case 'i':
-			case 'I':
-				fmts.put((byte)'i');
-				datas.add( (new Integer(packet.getInt())).toString() ) ;
-				break;
-			case 's':
-			case 'S':
-				fmts.put((byte)'s');
-				int length = headBuffer.getInt(); 
-				try {
+
+			byte[] head = new byte[headLength];
+			packet.get(head);
+			ByteBuffer headBuffer = ByteBuffer.wrap(head);
+			ByteBuffer fmts = ByteBuffer.allocate(headLength);
+			while(headBuffer.hasRemaining()){
+				char fmt = (char)headBuffer.get();
+				switch(fmt){
+				case 'i':
+				case 'I':
+					fmts.put((byte)'i');
+					datas.add( (new Integer(packet.getInt())).toString() ) ;
+					break;
+				case 's':
+				case 'S':
+					fmts.put((byte)'s');
+					int length = headBuffer.getInt(); 
 //					LOG.info("length:"+ length);
 					byte[] bytes = new byte[length];
 					packet.get(bytes);
@@ -65,17 +69,25 @@ public class MessageHandlerImpl implements MessageHandler {
 //					LOG.info(new String(bytes,"UTF-16"));
 					String data = new String(bytes);
 					datas.add(data);
-				} catch (Exception e) {
-					LOG.error("parse string fail",e);
-				}
 					
-				break;
-			}	
+					break;
+				}	
+			}
+			fmts.flip();
+			byte[] byteFmts = new byte[fmts.limit()];
+			fmts.get(byteFmts);				
+			processor.execute(code, byteFmts, datas);
+			return null;
+		} catch (java.nio.BufferUnderflowException e) {
+			
+			packet.position( (initialPositon-1) );
+			int remaining = packet.remaining();
+			byte[] bytes = new byte[remaining];
+			packet.get(bytes);
+			ByteBuffer remainBuffer = ByteBuffer.allocate(remaining);
+			remainBuffer.put(bytes);
+			return remainBuffer;
 		}
-		fmts.flip();
-		byte[] byteFmts = new byte[fmts.limit()];
-		fmts.get(byteFmts);				
-		processor.execute(code, byteFmts, datas);
 //		switch(code){
 //		case READY:
 //			processor.ready();

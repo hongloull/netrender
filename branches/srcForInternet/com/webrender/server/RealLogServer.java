@@ -34,7 +34,7 @@ public final class RealLogServer {
     			new TextLineCodecFactory()));
     	acceptor.bind(new InetSocketAddress(PORT), ioHandler,
     			config);
-    	LOG.debug("RealLogServer Listening on port " + PORT);
+    	LOG.info("RealLogServer Listening on port " + PORT);
     }
     public void broadCast(String message)
     {

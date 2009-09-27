@@ -158,7 +158,7 @@ public class ExecutelogDAO extends BaseHibernateDAO {
 			queryObject.setParameter(0, command.getCommandId());
 			return queryObject.list();
 		}catch(RuntimeException re){
-			LOG.error("getRealLog",re);
+			LOG.error("getRealLog fail",re);
 			throw re;
 		}
 	}
@@ -176,6 +176,7 @@ public class ExecutelogDAO extends BaseHibernateDAO {
 	}
 	
 	public Executelog findStartLog(Command command) {
+		LOG.debug("findStartLog commandId:"+ command.getCommandId());
 		try{
 			Iterator  logs =  command.getExecutelogs().iterator();
 			Executelog exeLog = null;
@@ -184,16 +185,20 @@ public class ExecutelogDAO extends BaseHibernateDAO {
 				exeLog = (Executelog) logs.next();
 				if (exeLog!=null && exeLog.getStatus().getStatusId()==90)
 				{
+					LOG.debug("findStartLog success commandId:"+ command.getCommandId());
 					return exeLog;
 				}
 			}
+			LOG.debug("not find StartLog commandId:"+ command.getCommandId());
 			return null;
 		}catch(Exception e){
-			return null;			
+			LOG.error("find StartLog fail commandId:"+command.getCommandId());
+			return null;
 		}
 	}
 	
 	public Executelog findEndLog(Command command) {
+		LOG.debug("findEndLog commandId:"+ command.getCommandId());
 		try{
 			Iterator  logs = command.getExecutelogs().iterator();
 			Executelog exeLog = null;
@@ -202,13 +207,16 @@ public class ExecutelogDAO extends BaseHibernateDAO {
 				exeLog = (Executelog) logs.next();
 				if (exeLog!=null && exeLog.getStatus().getStatusId()==91)
 				{
+					LOG.debug("findStartLog success commandId:"+ command.getCommandId());
 					return exeLog;
 				}
 			}
+			LOG.debug("not find EndLog commandId:"+ command.getCommandId());
 			return null;
 		}catch(Exception e){
+			LOG.error("find EndLog fail commandId:"+command.getCommandId());
 			return null;
 		}
 	}
-	
+
 }

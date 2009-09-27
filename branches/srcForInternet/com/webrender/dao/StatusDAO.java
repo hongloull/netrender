@@ -144,18 +144,16 @@ public class StatusDAO extends BaseHibernateDAO {
 		}
 	}
 	public void updateSystemVersion(){
-		LOG.debug("updateSystemVersion");
 		try {
 			Status status = findById(100);
 			if(status == null){
 				status = new Status("System","0");
 			}
 			Long version = Long.parseLong( status.getValue() );
-			LOG.info("UpdateVersion: "+version);
+//			LOG.info("UpdateVersion: "+version);
 			version++;
 			status.setValue( version.toString() );
 			attachDirty(status);
-			LOG.debug("attach successful");
 		} catch (RuntimeException re) {
 		//	LOG.error("attach failed", re);
 			throw re;

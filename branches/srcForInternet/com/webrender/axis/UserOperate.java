@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Transaction;
@@ -21,7 +19,6 @@ import com.webrender.config.UserXMLConfig;
 import com.webrender.dao.Operatelog;
 import com.webrender.dao.Reguser;
 import com.webrender.dao.ReguserDAO;
-import com.webrender.test.ClassForAxis;
 import com.webrender.tool.FileCopy;
 
 
@@ -36,7 +33,10 @@ public class UserOperate extends BaseAxis {
 			this.closeSession();
 			String users = GenericConfig.getInstance().getFile("users");
 			File path = new File(users);
-			if(!path.exists()) return "UserConfigNotExistError";
+			if(!path.exists()){
+				LOG.error("All UserConfig Not Exist Error");
+				return BaseAxis.ACTIONFAILURE+" UserConfigNotExistError";
+			}
 			Element root = new Element("Users");
 			Document doc = new Document(root);
 			ReguserDAO regUserDAO = new ReguserDAO();
@@ -52,44 +52,51 @@ public class UserOperate extends BaseAxis {
 			LOG.debug("getUsersList success");
 			return XMLOut.outputToString(doc);
 		} catch (Exception e) {
-			LOG.error("getUsersList ",e);
-			return BaseAxis.ACTIONFAILURE;
+			LOG.error("getUsersList fail ",e);
+			return BaseAxis.ACTIONFAILURE + e.getMessage();
 		}finally{
 			this.closeSession();
 		}
 	}
-	public ClassForAxis testGetUsers()
-	{
-		return new ClassForAxis();
-	}
+
 	
 	public String getUserConfig(String regName){
-		LOG.debug("getUserConfig");
+		LOG.debug("getUserConfig regName: "+regName);
 		
 		String userFile = GenericConfig.getInstance().getFile("users/"+regName+".xml");
 		
 
 //		if (!file.canWrite()) throw new Exception("UsersXML ReadOnly");
 		File file = new File(userFile);
-		if(!file.exists()) return "UserNotExistError";
+		if(!file.exists()){
+			LOG.error("getUserCOnfig not exist regName:"+ regName);
+			return BaseAxis.ACTIONFAILURE+" UserNotExistError";
+		}
 		SAXBuilder sb =  new SAXBuilder();
 		Document document = null;
 		try {
 			document = sb.build(file);
+			LOG.debug("getUserConfig success regName: "+regName);
 			return XMLOut.outputToString(document);
 		} catch (Exception e) {
-			LOG.error("getUserConfig fail userName: "+regName, e);
-			return BaseAxis.ACTIONFAILURE;
+			LOG.error("getUserConfig fail regName: "+regName, e);
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
 		}finally{
 			this.closeSession();
 		}
 	}
 	public String modUserConfig(String userName,String questXML){
-		LOG.debug("modUserConfig");
+		LOG.debug("modUserConfig regName: "+ userName);
 		String userFile = GenericConfig.getInstance().getFile("users/"+userName+".xml");
 		File file = new File(userFile);
-		if(!file.exists()) return "UserNameNotExistError";
-		if(!file.canWrite()) return "UserConfigReadOnlyError";
+		if(!file.exists()){
+			LOG.error(userName+".xml not exist in config!");
+			return BaseAxis.ACTIONFAILURE+" UserNameNotExistError";
+		}
+		if(!file.canWrite()){
+			LOG.error(userName+".xml cannot write ");
+			return BaseAxis.ACTIONFAILURE+" UserConfigCannotWrite";
+		}
 		Transaction tx = null;
 		try {
 			SAXBuilder builder = new SAXBuilder();
@@ -99,19 +106,18 @@ public class UserOperate extends BaseAxis {
 			UserXMLConfig loadConfig = new UserXMLConfig();
 			loadConfig.loadFromXML(file);
 			tx = getTransaction();
-			tx = getTransaction();
-			logOperate(getLoginUserId(),Operatelog.MOD,"ModUserConfig:"+userName);
+			logOperate(getLoginUserId(),Operatelog.MOD,"mod UserConfig:"+userName);
 			tx.commit();
 			return BaseAxis.ACTIONSUCCESS;
 		} catch (JDOMException e) {
-			LOG.warn("moduserConfig fail:questXMLParseError userName:"+userName);
-			return "XMLParseError";
+			LOG.error("moduserConfig fail : questXMLParseError userName:"+userName);
+			return BaseAxis.ACTIONFAILURE+" :"+userName+".xml parse error";
 		}catch(Exception e){
 			if(tx!=null){
 				tx.rollback();
 			}
 			LOG.error("moduserConfig fail userName: "+userName,e);
-			return BaseAxis.ACTIONFAILURE;
+			return BaseAxis.ACTIONFAILURE +"moduserConfig fail userName: "+userName+" "+e.getMessage();
 		}
 		finally{
 			this.closeSession();
@@ -121,30 +127,37 @@ public class UserOperate extends BaseAxis {
 		LOG.debug("delUser: "+regName);
 		Transaction tx = null;
 		try{
-			if("admin".equalsIgnoreCase(regName) ) return "DelAdminError";
+			if("admin".equalsIgnoreCase(regName) ){
+				LOG.error("cannot delete admin!");
+				return BaseAxis.ACTIONFAILURE+" DelAdminError";
+			}
 			ReguserDAO regUserDAO = new ReguserDAO();
 			Reguser regUser = regUserDAO.findByRegName(regName);
-			if (regUser==null) return "UserNotExistError";
+			if (regUser==null){
+				LOG.warn(regName+" issn't exist in database");
+				return BaseAxis.ACTIONFAILURE +" UserNotExistInDatabase";
+			}
 			String userFile = GenericConfig.getInstance().getFile("users/"+regName+".xml");
 			File file_User = new File(userFile);
 			boolean result = file_User.delete();
 			if(file_User.exists() && result == false){
-				return "Del"+regName+"FileError";
+				LOG.error("del "+file_User+" error");
+				return  BaseAxis.ACTIONFAILURE+" Del"+regName+"FileError";
 			}
 			else{
 				tx = getTransaction();
 				regUserDAO.delete(regUser);
 				logOperate(getLoginUserId(),Operatelog.DEL,"DelUser:"+regName);
 				tx.commit();
-				LOG.debug("delUser success");
-				return BaseAxis.ACTIONSUCCESS;				
+				LOG.debug("delUser "+regName+" success.");
+				return BaseAxis.ACTIONSUCCESS;
 			}			
 		}catch(Exception e){
 			if(tx!=null){
 				tx.rollback();
 			}
 			LOG.error("delUser fail",e);
-			return "Del"+regName+"Error";
+			return BaseAxis.ACTIONFAILURE+" Del"+regName+"Error: "+e.getMessage();
 		}finally{
 			this.closeSession();
 		}
@@ -156,7 +169,8 @@ public class UserOperate extends BaseAxis {
 			ReguserDAO regUserDAO = new ReguserDAO();
 			Reguser regUser = regUserDAO.findByRegName(regName);
 			if (regUser!=null){
-				return "UserExistError";
+				LOG.warn(regName+" exist, can't be added.");
+				return BaseAxis.ACTIONFAILURE+" UserExistError";
 			}
 			String defConfig = GenericConfig.getInstance().getFile("users/default");
 			File defFile = new File(defConfig);
@@ -176,26 +190,51 @@ public class UserOperate extends BaseAxis {
 						tx.commit();
 					}
 				}catch (IOException e) {
-					LOG.error("addUser fail: DefaultFileCopyError", e);
-					return "DefaultConfigCopyError";
+					LOG.error("addUser "+regName+" fail: DefaultFileCopyError", e);
+					return BaseAxis.ACTIONFAILURE+" DefaultConfigCopyError";
 				} catch (JDOMException e) {
-					LOG.error("addUser fail: DefaultFileParseError", e);
-					return "DefaultFileParseError";
+					LOG.error("addUser "+regName+" fail: DefaultFileParseError", e);
+					return BaseAxis.ACTIONFAILURE+" DefaultFileParseError";
 				}
+				LOG.info("add User: "+regName+" success");
 				return BaseAxis.ACTIONSUCCESS;
 			}
 			else{		
-				return "DefaultConfigNotExistError";
+				LOG.error("add regUser: "+regName +"fail: DefaultConfigNotExistError");
+				return BaseAxis.ACTIONFAILURE+" DefaultConfigNotExistError";
 			}
 		}catch(Exception e){
 			if(tx!=null){
 				tx.rollback();
 			}
 			LOG.error("addUser fail",e);
-			return BaseAxis.ACTIONFAILURE;
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
 		}finally{
 			this.closeSession();
 		}
 	}
-
+	public String setPassWord(String regName ,String passWord){
+		LOG.debug("setPassWord: "+ regName);
+		if (regName == null || passWord == null){
+			LOG.debug("args can't be null regName: "+regName+" passWord: "+passWord);
+			return BaseAxis.ACTIONFAILURE+" Args is null";
+		}
+		Transaction tx = null;
+		try{
+			tx = getTransaction();
+			ReguserDAO regUserDAO = new ReguserDAO();
+			Reguser regUser = regUserDAO.findByRegName(regName);
+			if (regUser==null){
+				return BaseAxis.ACTIONFAILURE+" UserNotExistError";
+			}
+			regUser.setPassWord(passWord);
+			regUserDAO.save(regUser);
+			tx.commit();
+		}catch(Exception e){
+			LOG.error("setPassWord fail Name: "+regName,e);
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
+		}
+		LOG.debug("setPassWord success Name: "+regName);
+		return BaseAxis.ACTIONSUCCESS;
+	}
 }

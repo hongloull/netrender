@@ -175,7 +175,7 @@ public class PoolOperate extends BaseAxis {
 			Reguser regUser = regUserDAO.findById(regUserId);
 			if(regUser==null) return RIGHTERROR;			
 			Iterator<Nodegroup> ite_Pools = null;
-			if(canVisit(8)){
+			if(canVisit(0)){
 				ite_Pools = ( new NodegroupDAO() ).findAll().iterator(); 
 			}else{
 				ite_Pools = regUser.getNodegroups().iterator();				

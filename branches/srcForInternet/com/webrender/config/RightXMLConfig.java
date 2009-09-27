@@ -22,22 +22,22 @@ public class RightXMLConfig extends XMLConfig {
 
 	@Override
 	public void loadFromXML(File file) throws JDOMException {
-		LOG.debug("loadFromXML");
-		if(file.canWrite()){
-			LOG.info(file.getAbsoluteFile()+": canWrite");
-			RightDAO rightDAO = new RightDAO();
-			Iterator ite_Rights = rightDAO.findAll().iterator();
-			Element root = new Element("Rights");
-			Document doc = new Document(root);
-			while (ite_Rights.hasNext()){
-				Element element = RightUtils.bean2xml(   (Right)ite_Rights.next() ) ;
-				root.addContent(element);
-			}
-			XMLOut.outputToFile(doc,file);
-			LOG.debug("loadFromXML success");
-		}
-		else  LOG.error(file.getAbsoluteFile()+": cannot Write");
-		
+//		LOG.debug("loadFromXML");
+//		if(file.canWrite()){
+//			LOG.info(file.getAbsoluteFile()+": canWrite");
+//			RightDAO rightDAO = new RightDAO();
+//			Iterator ite_Rights = rightDAO.findAll().iterator();
+//			Element root = new Element("Rights");
+//			Document doc = new Document(root);
+//			while (ite_Rights.hasNext()){
+//				Element element = RightUtils.bean2xml(   (Right)ite_Rights.next() ) ;
+//				root.addContent(element);
+//			}
+//			XMLOut.outputToFile(doc,file);
+//			LOG.debug("loadFromXML success");
+//		}
+//		else  LOG.error(file.getAbsoluteFile()+": cannot Write");
+//		
 	}
 
 }

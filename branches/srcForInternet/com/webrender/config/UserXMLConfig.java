@@ -35,27 +35,30 @@ public class UserXMLConfig extends XMLConfig {
 	}
 	@Override
 	public void loadFromXML(File file) throws JDOMException {
-		LOG.debug("loadFromXML");
+		LOG.debug("loadFromXML name:"+ file.getName());
 		int index = file.getName().lastIndexOf(".xml");
 		if (index == -1){
+			LOG.debug(file.getName()+" isn't xml. Return. ");
 			return;
 		}
-		SAXBuilder sb =  new SAXBuilder();
-		Document doc = sb.build(file);
-		String regName = file.getName().substring(0, index);
-		if(regName.equalsIgnoreCase("admin")){
-			file.delete();
-			return;
-		}
-		ReguserDAO regUserDAO = new ReguserDAO();
-		RightDAO rightDAO = new RightDAO();
-		CommandmodelDAO modelDAO = new CommandmodelDAO();
-		NodegroupDAO nodeGroupDAO = new NodegroupDAO(); 
 		Transaction tx = null;
 		try{
+			SAXBuilder sb =  new SAXBuilder();
+			Document doc = sb.build(file);
+			String regName = file.getName().substring(0, index);
+			if(regName.equalsIgnoreCase("admin")){
+				file.delete();
+				LOG.info("Server delete admin.xml");
+				return;
+			}
+			ReguserDAO regUserDAO = new ReguserDAO();
+			RightDAO rightDAO = new RightDAO();
+			CommandmodelDAO modelDAO = new CommandmodelDAO();
+			NodegroupDAO nodeGroupDAO = new NodegroupDAO(); 
 			tx = getTransaction();
 			Reguser reguser = regUserDAO.findByRegName(regName);
 			if(reguser==null){
+				LOG.info("a new user name: "+regName);
 				reguser = new Reguser(regName,"");
 			}
 			regUserDAO.save(reguser);
@@ -138,7 +141,6 @@ public class UserXMLConfig extends XMLConfig {
 			LOG.error("loadFromXML fail fileName: "+file.getName(),e);
 		}
 		
-	
 	}
 	
 	@Override
@@ -150,10 +152,12 @@ public class UserXMLConfig extends XMLConfig {
 			Iterator<Reguser> ite_Users = lisUsers.iterator();
 			ReguserDAO regUserDAO = new ReguserDAO();
 			while(ite_Users.hasNext()){
+				Reguser user= (Reguser)ite_Users.next();
+				LOG.info("ConfigServer delete user: "+user.getRegName());
 				regUserDAO.delete( ite_Users.next());
 			}
 			tx.commit();
-			LOG.debug("deleteExtraUsers ok");
+			LOG.debug("deleteExtraUsers success");
 		}catch(Exception e){
 			LOG.error("deleteExtraUsers fail", e);
 			if (tx != null) 

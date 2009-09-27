@@ -161,32 +161,32 @@ public class QuestDAO extends BaseHibernateDAO {
 		}
 	}
 	public void pauseQuest(Quest instance) {
-		LOG.debug("pauseQuest");
+		LOG.debug("pauseQuest questId:"+instance.getQuestId());
 		try {
 			StatusDAO statusDAO = new StatusDAO();
 			instance.setStatus(statusDAO.findById(51));
 			this.attachDirty(instance);
-			LOG.debug("pauseQuest successful");
+			LOG.debug("pauseQuest successful questId:"+instance.getQuestId());
 		} catch (RuntimeException re) {
-			LOG.error("pauseQuest failed", re);
+			LOG.error("pauseQuest failed questId:"+instance.getQuestId(), re);
 			throw re;
 		}
 	}
 	public void resumeQuest(Quest instance) {
-		LOG.debug("resumeQuest");
+		LOG.debug("resumeQuest questId:"+instance.getQuestId());
 		try {
 			StatusDAO statusDAO = new StatusDAO();
 			instance.setStatus(statusDAO.findById(50));
 			this.attachDirty(instance);
-			LOG.debug("resumeQuest successful");
+			LOG.debug("resumeQuest successful questId:"+instance.getQuestId());
 		} catch (RuntimeException re) {
-			LOG.error("resumeQuest failed", re);
+			LOG.error("resumeQuest failed questId:"+instance.getQuestId(), re);
 			throw re;
 		}
 	}
 	public void reinitQuest(Quest instance)
 	{
-		LOG.debug("reinitQuest");
+		LOG.debug("reinitQuest questId:"+instance.getQuestId());
 		try {
 			CommandDAO commandDAO = new CommandDAO();
 			Iterator ite_Commands = instance.getCommands().iterator();
@@ -195,13 +195,31 @@ public class QuestDAO extends BaseHibernateDAO {
 				commandDAO.reinitCommand( (Command)ite_Commands.next() );				
 			}
 			
-			LOG.debug("reinitQuest successful");
+			LOG.debug("reinitQuest successful questId:"+instance.getQuestId());
 		} catch (RuntimeException re) {
-			LOG.error("reinitQuest failed", re);
+			LOG.error("reinitQuest failed questId:"+instance.getQuestId(), re);
 			throw re;
 		}
 	}
 
+	public void setFinish(Quest instance)
+	{
+		LOG.debug("setFinishQuest questId:"+instance.getQuestId());
+		try {
+			CommandDAO commandDAO = new CommandDAO();
+			Iterator ite_Commands = instance.getCommands().iterator();
+			while(ite_Commands.hasNext())
+			{
+				commandDAO.setFinish( (Command)ite_Commands.next() );				
+			}
+			
+			LOG.debug("setFinish successful questId:"+instance.getQuestId());
+		} catch (RuntimeException re) {
+			LOG.error("setFinish failed questId:"+instance.getQuestId(), re);
+			throw re;
+		}
+	}
+	
 	/**
 	 * 获取任务状态
 	 * @param quest

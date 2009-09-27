@@ -1,5 +1,7 @@
 package com.webrender.axis.beanxml;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jdom.Element;
 
 import com.webrender.dao.Commandmodelarg;
@@ -8,18 +10,22 @@ import com.webrender.dao.Questarg;
 import com.webrender.dao.QuestargDAO;
 
 public final class QuestargUtils {
+	private static final Log LOG = LogFactory.getLog(QuestargUtils.class);	
 	public static Element bean2xml(Questarg questarg)
 	{
+		LOG.debug("bean2xml questArgId:"+ questarg.getQuestArgId());
 		Element root = new Element("Questarg");
 		root.addAttribute("questArgId", questarg.getQuestArgId().toString());
 		root.addAttribute("commandModelArgId",questarg.getCommandmodelarg().getCommandModelArgId().toString() );
 		if (questarg.getValue()!=null) root.addAttribute("value", questarg.getValue());
 		root.addAttribute("type",questarg.getCommandmodelarg().getType()+"");
+		LOG.debug("bean2xml success questArgId:"+questarg.getQuestArgId());
 		return root;
 	}
 
 	public static Questarg xml2bean(Element element) {
 		String questArgId = element.getAttributeValue("questArgId");
+		LOG.debug("xml2bean questArgId:"+questArgId);
 		String commandModelArgId = element.getAttributeValue("commandModelArgId");
 		String value = element.getAttributeValue("value");
 		Questarg questarg = null; 
@@ -40,6 +46,7 @@ public final class QuestargUtils {
 			Commandmodelarg commandmodelarg = commandmodelargDAO.findById(Integer.parseInt(commandModelArgId));
 			questarg.setCommandmodelarg(commandmodelarg);
 		}
+		LOG.debug("xml2bean success questArgId:"+questArgId);
 		return questarg;
 	}
 }

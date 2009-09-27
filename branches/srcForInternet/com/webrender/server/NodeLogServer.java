@@ -36,7 +36,7 @@ public final class NodeLogServer {
     	ByteBuffer.setUseDirectBuffers(false);/*设置内存获取方式*/
         ByteBuffer.setAllocator(new SimpleByteBufferAllocator());
     	acceptor.bind(new InetSocketAddress(PORT), ioHandler);
-    	LOG.debug("NodeLogServer Listening on port " + PORT);
+    	LOG.info("NodeLogServer Listening on port " + PORT);
     }
 
 }
