@@ -14,7 +14,12 @@ public class TestControlThread {
 		try {
 //			RealLogServer.getInstance().run();
 			NodeLogServer.getInstance().run();
-			Thread.sleep(6000000);
+			Thread.sleep(10000);
+			NodeLogServer.getInstance().close();
+			Thread.sleep(10000);
+			NodeLogServer.getInstance().run();
+			Thread.sleep(10000);
+			NodeLogServer.getInstance().close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

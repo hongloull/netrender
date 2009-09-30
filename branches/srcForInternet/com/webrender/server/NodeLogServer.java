@@ -38,5 +38,9 @@ public final class NodeLogServer {
     	acceptor.bind(new InetSocketAddress(PORT), ioHandler);
     	LOG.info("NodeLogServer Listening on port " + PORT);
     }
+    public void close(){
+    	acceptor.unbindAll();
+    	LOG.info("NodeLogServer  port " + PORT + " is closed");
+    }
 
 }

@@ -39,4 +39,8 @@
   <parameter name="className" value="com.webrender.axis.ConfigOperate"/>
   <parameter name="allowedMethods" value="*"/>
 </service>
+<service name="ServerOperate" provider="java:RPC">
+  <parameter name="className" value="com.webrender.axis.ServerOperate"/>
+  <parameter name="allowedMethods" value="*"/>
+</service>
 </deployment>

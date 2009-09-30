@@ -128,7 +128,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 			result.get(bytes);
 			String data = new String(bytes);
 			LOG.info("remaining: " +data);			
-			LOG.error("messageReceived:"+message,e);
+			LOG.error("messageReceived parse failed : "+message,e);
 //			LOG.error(message.toString());
 		}
 //		String ip = ((InetSocketAddress)session.getRemoteAddress()).getAddress().getHostAddress();
