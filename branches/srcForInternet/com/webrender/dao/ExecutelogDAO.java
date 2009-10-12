@@ -150,13 +150,19 @@ public class ExecutelogDAO extends BaseHibernateDAO {
 			throw re;
 		}
 	}
-	public List getRealLog(Command command){
+	public Executelog getRealLog(Command command){
 		LOG.debug("getRealLog commandId: " +command.getCommandId());
 		try{
-			String queryString = "from Executelog as model where model.command.commandId= ? and model.status.statusId<90 ";
+			String queryString = "from Executelog as model where model.command.commandId= ? and model.status.statusId<90 order by executeLogId desc";
 			Query queryObject = getSession().createQuery(queryString);
 			queryObject.setParameter(0, command.getCommandId());
-			return queryObject.list();
+			List list = queryObject.list();
+			if (list.size() > 0 ){
+				return (Executelog)list.get(0);
+			}
+			else{
+				return null;
+			}
 		}catch(RuntimeException re){
 			LOG.error("getRealLog fail",re);
 			throw re;

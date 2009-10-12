@@ -49,6 +49,7 @@ import com.webrender.protocol.enumn.EOPCODES;
 import com.webrender.protocol.enumn.EOPCODES.CODE;
 import com.webrender.protocol.messages.ServerMessages;
 import com.webrender.protocol.processor.IClientProcessor;
+import com.webrender.server.Dispatcher;
 import com.webrender.server.RealLogServer;
 /* 
  *  NodeMachine 控制节点机操作的类；不与数据库交互信息
@@ -209,7 +210,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		if (this.isConnect==false) return false;
 		session.setAttribute("StartFlag",null);
 		session.write(command);
-    	for (int i = 0 ; i<300 ; i++)
+    	for (int i = 0 ; i<500 ; i++)
     	{
     		if (session.getAttribute("StartFlag")!=null)
     		{
@@ -397,9 +398,9 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	{
 		if (isConnect() && isBusy()==false && isPause()==false )
 		{
-			if(NodeMachineManager.idleMachines.contains(this)==false){
+			if(NodeMachineManager.containIdles(this)==false){
 				LOG.debug(nodeId +" Add to IdleMachines ");
-				NodeMachineManager.idleMachines.add(this);
+				NodeMachineManager.addNodeMachines(this);
 			}
 			else{
 				LOG.debug(nodeId+" is in IdleMachines ");
@@ -408,7 +409,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		else
 		{
 			LOG.debug(nodeId+" remove from IdleMachines ");
-			NodeMachineManager.idleMachines.remove(this);
+			NodeMachineManager.delNodeMachines(this);
 		}
 	}
 	
@@ -434,11 +435,14 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 
 				Command command = commandDAO.findById(commandId);
 				commandDAO.reinitCommand(command);
-//				ControlThreadServer.getInstance().resume();
 				LOG.info("CommandID: "+command.getCommandId()+" reinit");
 
 				tx.commit();
 				this.removeCommandId(commandId);
+				
+//				ControlThreadServer.getInstance().resume();
+//				Dispatcher.getInstance().exeCommands();
+				
 				return true;
 			}catch(Exception e){
 				LOG.error(nodeId+": cleanCurrentCommand Error",e);
@@ -660,6 +664,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				return ;
 			}
 		}
+//		LOG.info("CODEID: "+code.getId());
 		try{
 			if(code == null){
 				LOG.error("code is null");

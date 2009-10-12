@@ -66,11 +66,11 @@ public final class ControlThreadServer extends Thread {
 				try
 				{
 					List<Command> waitingCommands = commandDAO.getWaitingCommands();
-					int waitingCommandsSize = waitingCommands.size();
-					StringBuilder commandsInfo = new StringBuilder();
-					for(int i=0;i<waitingCommandsSize;i++){
-						commandsInfo.append(waitingCommands.get(i).getCommandId()).append(" ");
-					}
+//					int waitingCommandsSize = waitingCommands.size();
+//					StringBuilder commandsInfo = new StringBuilder();
+//					for(int i=0;i<waitingCommandsSize;i++){
+//						commandsInfo.append(waitingCommands.get(i).getCommandId()).append(" ");
+//					}
 //					LOG.info("WaitingCommands size: "+ waitingCommandsSize+":commandsInfo:"+commandsInfo);
 					
 					
@@ -101,7 +101,7 @@ public final class ControlThreadServer extends Thread {
 						//	Iterator ite_Nodes = nodeDAO.findAll().iterator();
 					
 				
-						if(NodeMachineManager.idleMachines.isEmpty())
+						if(NodeMachineManager.isIdleEmpty())
 						{
 							if (threadStop){
 								break;
@@ -112,7 +112,7 @@ public final class ControlThreadServer extends Thread {
 						NodeMachine nodeMachine = null;
 						Node node = null;
 						try{
-							Object[] nodeMachines = NodeMachineManager.idleMachines.toArray();
+							Object[] nodeMachines = NodeMachineManager.getIdleArray();
 							int length = nodeMachines.length;
 							for(int i = 0 ; i<length ; i++){
 								NodeMachine tempNodeMachine = (NodeMachine) nodeMachines[i];
