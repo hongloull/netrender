@@ -19,6 +19,7 @@ import com.webrender.protocol.enumn.EOPCODES.CODE;
 import com.webrender.protocol.messages.ServerMessages;
 import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
+import com.webrender.server.Dispatcher;
 
 public class NodeOperate extends BaseAxis {
 	
@@ -166,6 +167,8 @@ public class NodeOperate extends BaseAxis {
 			
 			nodeMachine.setBusy(false);
 //			ControlThreadServer.getInstance().resume();
+//			Dispatcher.getInstance().exeCommands();
+			
 			LOG.debug("killCommand success");
 			return BaseAxis.ACTIONSUCCESS;
 		}

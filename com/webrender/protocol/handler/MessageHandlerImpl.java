@@ -30,7 +30,7 @@ public class MessageHandlerImpl implements MessageHandler {
 	
 	public ByteBuffer parseClientPacket(CODE code, ByteBuffer packet,
 			IClientProcessor processor) {
-		
+//		LOG.info("CODEID: "+ code.getId());
 		int initialPositon = packet.position();
 		try {
 			
@@ -79,7 +79,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			processor.execute(code, byteFmts, datas);
 			return null;
 		} catch (java.nio.BufferUnderflowException e) {
-			
+			//解析到不完整包 数据未完
 			packet.position( (initialPositon-1) );
 			int remaining = packet.remaining();
 			byte[] bytes = new byte[remaining];

@@ -40,6 +40,7 @@ import com.webrender.dao.ReguserDAO;
 import com.webrender.dao.StatusDAO;
 import com.webrender.logic.CalcFrame;
 import com.webrender.server.ControlThreadServer;
+import com.webrender.server.Dispatcher;
 import com.webrender.axis.beanxml.ChunkDetailUtils;
 
 public class QuestOperate extends BaseAxis {
@@ -125,6 +126,8 @@ public class QuestOperate extends BaseAxis {
 			}
 		
 //			ControlThreadServer.getInstance().resume();
+//			Dispatcher.getInstance().exeCommands();
+			
 			return BaseAxis.ACTIONSUCCESS;
 		} catch (Exception e) {
 			LOG.error("commitQuest fail",e);
@@ -235,6 +238,8 @@ public class QuestOperate extends BaseAxis {
 			logOperate(getLoginUserId(),Operatelog.MOD,"Resume quest "+quest.getQuestName());
 			tx.commit();
 //			ControlThreadServer.getInstance().resume();
+//			Dispatcher.getInstance().exeCommands();
+			
 			LOG.debug("resumeQuest success");
 			return BaseAxis.ACTIONSUCCESS;
 		}
@@ -275,6 +280,8 @@ public class QuestOperate extends BaseAxis {
 			logOperate(getLoginUserId(),Operatelog.MOD,"Reinit quest "+quest.getQuestName());
 			tx.commit();
 //			ControlThreadServer.getInstance().resume();
+//			Dispatcher.getInstance().exeCommands();
+			
 			LOG.debug("reinitQuest success");
 			return BaseAxis.ACTIONSUCCESS;
 		}
@@ -314,7 +321,7 @@ public class QuestOperate extends BaseAxis {
 			questDAO.setFinish(quest);
 			logOperate(getLoginUserId(),Operatelog.MOD,"setFinish quest "+quest.getQuestName());
 			tx.commit();
-//			ControlThreadServer.getInstance().resume();
+			
 			LOG.debug("setFinish success");
 			return BaseAxis.ACTIONSUCCESS;
 		}

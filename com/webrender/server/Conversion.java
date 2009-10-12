@@ -127,13 +127,15 @@ public final class Conversion extends Thread {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			ControlThreadServer.getInstance().start();			
+			ControlThreadServer.getInstance().start();
+//			Dispatcher.getInstance().exeCommands();
+			
 		}
 		else if (status.equals(EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_PAUSE")))
 		{
 			LOG.info("ControlThreadServer restart");
 			ControlThreadServer.getInstance().resume();
-//			NodeThreadServer.getInstance().resume();
+
 		}
 		status = EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_ON");
 	}
@@ -143,7 +145,6 @@ public final class Conversion extends Thread {
 		if ( status.equals(EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_ON")))
 		{
 			ControlThreadServer.getInstance().threadSuspend("pauseServer");
-//			NodeThreadServer.getInstance().threadStop("NodeThreadServer stop");
 			status = EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_PAUSE");
 		}
 	}

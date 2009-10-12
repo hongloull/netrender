@@ -16,6 +16,7 @@ import com.webrender.dao.CommandDAO;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
 import com.webrender.dao.Operatelog;
+import com.webrender.server.Dispatcher;
 
 public class CommandOperate extends BaseAxis {
 	private static final Log LOG = LogFactory.getLog(CommandOperate.class);
@@ -38,12 +39,12 @@ public class CommandOperate extends BaseAxis {
 			CommandDAO commandDAO = new CommandDAO();
 			ExecutelogDAO exeLogDAO = new ExecutelogDAO();
 			Command command = (Command)commandDAO.findById(Integer.parseInt(commandId) );
-			Iterator ite_Executelogs = exeLogDAO.getRealLog(command).iterator();
 			Element root = new Element("Reallogs");
 			Document doc =new Document(root);
-			while(ite_Executelogs.hasNext()){
-				Executelog log = (Executelog)ite_Executelogs.next();
-					root.addContent( ExecutelogUtils.bean2xml(log) );
+		
+			Executelog log  = exeLogDAO.getRealLog(command);
+			if(log!=null){
+				root.addContent( ExecutelogUtils.bean2xml(log) );				
 			}
 			LOG.debug("getRealLog success");
 		//	XMLOut.outputToFile(doc,new File("d:/reallog.xml") );
@@ -81,6 +82,7 @@ public class CommandOperate extends BaseAxis {
 			logOperate(this.getLoginUserId(),Operatelog.MOD,"ReInit Command: "+commandDAO.getNote(command));
 			tx.commit();
 //			ControlThreadServer.getInstance().resume();
+//			Dispatcher.getInstance().exeCommands();
 			
 			LOG.debug("reinitCommand success");
 			return BaseAxis.ACTIONSUCCESS;
@@ -109,8 +111,7 @@ public class CommandOperate extends BaseAxis {
 			commandDAO.setFinish(command );
 			logOperate(this.getLoginUserId(),Operatelog.MOD,"setFinish Command: "+commandDAO.getNote(command));
 			tx.commit();
-//			ControlThreadServer.getInstance().resume();
-			
+		
 			LOG.debug("finishCommand success");
 			return BaseAxis.ACTIONSUCCESS;
 		}catch(Exception e){
