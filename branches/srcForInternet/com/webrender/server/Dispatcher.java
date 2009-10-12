@@ -20,13 +20,13 @@ import com.webrender.dao.StatusDAO;
 import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
 
-public class Dispatcher {
+public final class Dispatcher extends Thread {
 	private static Dispatcher instance = new Dispatcher();
 	private static final Log LOG = LogFactory.getLog(Dispatcher.class);
 	private NodeDAO nodeDAO=new NodeDAO();
 	private CommandDAO commandDAO = new CommandDAO();
 	private StatusDAO statusDAO = new StatusDAO();
-	private boolean isRunning = false;
+//	private boolean isRunning = false;
 	private boolean noUsableNode = false;
 	private Dispatcher(){
 	}
@@ -34,28 +34,24 @@ public class Dispatcher {
 	public static Dispatcher getInstance()
 	{
 		return instance;
+		
 	}
 	
-	public  void exeCommands(){
-		if(isRunning == true ){
-			LOG.debug("Dispatcher is running..");
-			return ; 
-		}
+	public  void run(){
 		LOG.info("Dispatcher runs..");
-		UpdateVersion("Dispatcher runs");
-		isRunning = true;
+//		isRunning = true;
 		while(true){
 			try{
 				Iterator ite_Commands =commandDAO.getWaitingCommands().iterator();
 				if(ite_Commands.hasNext()==false || NodeMachineManager.isIdleEmpty()){
-					isRunning = false;
+//					isRunning = false;
 					LOG.info("Dispatcher ends..");
 					return;
 				}
 				while(ite_Commands.hasNext()){
 					Command command = (Command)ite_Commands.next();
 					if(NodeMachineManager.isIdleEmpty()){
-						isRunning = false;
+//						isRunning = false;
 						LOG.info("Dispatcher ends..");
 						return;
 					}
@@ -115,14 +111,14 @@ public class Dispatcher {
 				}
 				// 判定是否跳出循环的结束代码
 				if(noUsableNode == true){
-					isRunning = false;
+//					isRunning = false;
 					LOG.info("Dispatcher ends..");
 					return;
 				}
 			}catch(Exception e){
 				LOG.error("exeCommands total fail",e);
 				HibernateSessionFactory.closeSession();
-				isRunning = false;
+//				isRunning = false;
 				LOG.info("Dispatcher ends..");
 				return;
 			}

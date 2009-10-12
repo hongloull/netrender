@@ -100,6 +100,8 @@ public class QuestOperate extends BaseAxis {
 				int questargssize = lis_questargs.size();
 				
 				QuestargDAO questargDAO = new QuestargDAO();
+				quest.getQuestargs().clear();
+				quest.getCommands().clear();
 				for(int j =0 ; j<questargssize ;j++)
 				{
 					Questarg questarg = QuestargUtils.xml2bean(lis_questargs.get(j));
@@ -128,7 +130,7 @@ public class QuestOperate extends BaseAxis {
 //			ControlThreadServer.getInstance().resume();
 //			Dispatcher.getInstance().exeCommands();
 			
-			return BaseAxis.ACTIONSUCCESS;
+			return quest.getQuestId().toString();
 		} catch (Exception e) {
 			LOG.error("commitQuest fail",e);
 			return BaseAxis.ACTIONFAILURE;
