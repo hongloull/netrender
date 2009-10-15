@@ -17,7 +17,7 @@ import com.webrender.dao.ReguserDAO;
 
 public abstract class BaseAxis {
 	private   static final Log LOG = LogFactory.getLog(BaseAxis.class);
-	protected static final String NOTLOGIN = "NotLogin";
+	protected static final String NOTLOGIN = "Please log in first.";
 	protected static final String ACTIONSUCCESS = "Success";
 	protected static final String ACTIONFAILURE = "Failure";	
 	protected static final String RIGHTERROR = "NoRight";
@@ -41,7 +41,16 @@ public abstract class BaseAxis {
 	}
 	
 	/**
-	 * 
+	 * 未登录
+	 * if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+	 * 需要管理员权限
+	 * if (  !this.canVisit(0) ) return BaseAxis.RIGHTERROR;
+     * 修改job权限
+	 * if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(commandId)) ) )
+	 *		 return BaseAxis.RIGHTERROR;
+	 * 需要20权限
+     * if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
+     * 
 	 * @param rightId
 	 * @return
 	 */

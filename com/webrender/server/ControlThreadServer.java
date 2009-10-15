@@ -114,9 +114,11 @@ public final class ControlThreadServer extends Thread {
 						try{
 							Object[] nodeMachines = NodeMachineManager.getIdleArray();
 							int length = nodeMachines.length;
+							NodeMachine tempNodeMachine = null;
+							Node tempNode = null;
 							for(int i = 0 ; i<length ; i++){
-								NodeMachine tempNodeMachine = (NodeMachine) nodeMachines[i];
-								Node tempNode = nodeDAO.findById(tempNodeMachine.getId());
+								tempNodeMachine = (NodeMachine) nodeMachines[i];
+								tempNode = nodeDAO.findById(tempNodeMachine.getId());
 								if( command.getQuest().getNodegroup().getNodes().contains(tempNode) ){
 									// 该节点保包含在任务执行池中，可以渲染
 									nodeMachine = tempNodeMachine;

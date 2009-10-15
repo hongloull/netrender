@@ -42,10 +42,10 @@ public final class GenericConfig {
 		} catch (ConfigurationException e) {
 			e.printStackTrace();
 		}
-		int index = configPath.indexOf("NetRender/Server");
+		int index = configPath.lastIndexOf("Server");
 		if (index!=-1){
 			configPath = configPath.substring(0,index);
-			configPath = configPath+"NetRender/config/";
+			configPath = configPath+"config/";
 		}
 		else{
 			configPath = configPath+"config/";

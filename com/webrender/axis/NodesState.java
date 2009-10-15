@@ -20,6 +20,9 @@ public class NodesState extends BaseAxis{
 	private static final Log LOG = LogFactory.getLog(NodesState.class);
 	public String getNodeStatus(String nodeId)
 	{
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+		
+		
 		LOG.debug("getNodeStatus nodeId:"+nodeId);
 //		try{
 //			if ( ! this.canVisit(7)){
@@ -46,6 +49,7 @@ public class NodesState extends BaseAxis{
 	}
 	public String getNodesStatus()
 	{
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
 		LOG.debug("getNodesStatus");
 //		try{
 //			if ( ! this.canVisit(7)){
@@ -84,6 +88,8 @@ public class NodesState extends BaseAxis{
 	}
 	
 	public String getAllNodes(){
+		
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
 		try{
 			LOG.debug("getAllNodes");
 			Element root = new Element("Nodes");

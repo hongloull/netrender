@@ -27,15 +27,10 @@ public class NodeOperate extends BaseAxis {
 	
 	public String pauseNode(String nodeId)
 	{
+
+		if ( !this.canVisit(0) && !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
+		
 		LOG.debug("pauseNode nodeId:"+nodeId);
-//		try{
-//			if ( ! this.canVisit(5)){
-//				return BaseAxis.RIGHTERROR;
-//			}			
-//		}catch(Exception e){
-//			LOG.error("RightVisit error",e);
-//			return BaseAxis.RIGHTERROR+e.getMessage();
-//		}
 		Transaction tx = null;
 		try{
 			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
@@ -65,15 +60,11 @@ public class NodeOperate extends BaseAxis {
 	}
 	public String resumeNode(String nodeId)
 	{
+
+		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
+		
 		LOG.debug("resumeNode nodeId:"+nodeId);
-//		try{
-//			if ( ! this.canVisit(5)){
-//				return BaseAxis.RIGHTERROR;
-//			}			
-//		}catch(Exception e){
-//			LOG.error("RightVisit error",e);
-//			return BaseAxis.RIGHTERROR+e.getMessage();
-//		}
+
 		Transaction tx = null;
 		try{
 			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
@@ -94,6 +85,9 @@ public class NodeOperate extends BaseAxis {
 		}
 	}
 	public String setRealLog(String nodeId,String isOpen){
+		
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+		
 		LOG.debug("setRealLog nodeId:"+nodeId+" isOpen:"+isOpen);
 //		try{
 //			if ( ! this.canVisit(7)){
@@ -125,16 +119,11 @@ public class NodeOperate extends BaseAxis {
 	}
 	public String killCommand(String nodeId)
 	{
-		LOG.info("killCommand nodeId:"+nodeId);
-//		try{
-//			if ( ! this.canVisit(5)){
-//				return BaseAxis.RIGHTERROR;
-//			}			
-//		}catch(Exception e){
-//			LOG.error("RightVisit error",e);
-//			return BaseAxis.RIGHTERROR+e.getMessage();
-//		}
 		
+		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
+		
+		LOG.info("killCommand nodeId:"+nodeId);
+
 		Transaction tx = null;
 		try
 		{
@@ -189,16 +178,11 @@ public class NodeOperate extends BaseAxis {
 	}
 	public String  shutdownNode(String nodeId ,String isReboot)
 	{
+		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
+		
 		// isReboot  0 shutdown  1 reboot 
+		
 		LOG.info("shutdownNode nodeId:"+nodeId +" isReboot:"+isReboot);
-//		try{
-//			if ( ! this.canVisit(5)){
-//				return BaseAxis.RIGHTERROR;
-//			}			
-//		}catch(Exception e){
-//			LOG.error("RightVisit error",e);
-//			return BaseAxis.RIGHTERROR+e.getMessage();
-//		}
 		Transaction tx =null;
 		boolean exeFlag = false;
 		String message = "";
@@ -237,14 +221,8 @@ public class NodeOperate extends BaseAxis {
 		}
 	}
 	public String  softRestart(String nodeId){
-//		try{
-//			if ( ! this.canVisit(5)){
-//				return BaseAxis.RIGHTERROR;
-//			}			
-//		}catch(Exception e){
-//			LOG.error("RightVisit error",e);
-//			return BaseAxis.RIGHTERROR+e.getMessage();
-//		}
+		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
+		
 		LOG.debug("softRestart nodeId: "+nodeId);
 		Transaction tx =null;
 		boolean exeFlag = false;
@@ -286,6 +264,8 @@ public class NodeOperate extends BaseAxis {
 	 */
 	public String exeSystemCommand(String nodeId,String FLAG,String needFeedBack)
 	{
+		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
+		
 		Transaction tx =null;
 		boolean exeFlag = false;
 		boolean feedBackFlag = true;
@@ -330,6 +310,9 @@ public class NodeOperate extends BaseAxis {
 	}
 	
 	public String delNode(String nodeId){
+		
+		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
+		
 		LOG.debug("delete node id:"+nodeId);
 		Transaction tx = null;
 		try{

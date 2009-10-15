@@ -23,6 +23,10 @@ public class ConfigOperate extends BaseAxis {
 	private static final Log LOG = LogFactory.getLog(ConfigOperate.class);
 	
 	public String getPathConfig(){
+		
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+		
+		
 		LOG.debug("getPathConfig");
 		try{
 		String mapDir = GenericConfig.getInstance().getFile("mapDir.xml");
@@ -46,7 +50,12 @@ public class ConfigOperate extends BaseAxis {
 	}
 	
 	public String setPathConfig(String questXML){
+		
+		if (  !this.canVisit(0) ) return BaseAxis.RIGHTERROR;
+		
+				
 		LOG.debug("setPathConfig");
+		
 		Transaction tx = null;
 		try {
 			String mapDir = GenericConfig.getInstance().getFile("mapDir.xml");
@@ -76,6 +85,8 @@ public class ConfigOperate extends BaseAxis {
 	}
 	
 	public String getNodeConfig(String nodeId){
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+		
 		NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
 		nodeMachine.updateConfig(null);
 		try {
@@ -94,6 +105,7 @@ public class ConfigOperate extends BaseAxis {
 	}
 	
 	public String setNodeConfig(String nodeId,String config){
+		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
 		try {
 			NodeMachine nodeMachine  = NodeMachineManager.getNodeMachine(Integer.parseInt(nodeId));
 			if( nodeMachine.execute( ServerMessages.createSetConfigPkt(config)) ){

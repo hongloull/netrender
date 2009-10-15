@@ -1,6 +1,7 @@
 package com.webrender.axis;
 
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import com.webrender.server.Conversion;
 public class UserLogin extends BaseAxis {
 	public String LoginValidate(String regName ,String passWord)
 	{
+		if( check()==false ) return "OutOfDate";
 		try{
 			Reguser loginReguser = LoginValidate.check(regName,passWord);
 			if(loginReguser != null)
@@ -73,6 +75,15 @@ public class UserLogin extends BaseAxis {
 	public int isRun()
 	{
 		return Conversion.getInstance().getStatus().getId();
+	}
+	private static boolean check() {
+		Date date = new Date();
+		long limit = 1277867456437L;
+		if (date.getTime() > limit)
+			return false;
+		else
+			return true;
+
 	}
 }
  

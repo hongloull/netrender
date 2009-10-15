@@ -34,6 +34,9 @@ public class PoolOperate extends BaseAxis {
 	private static final Log LOG = LogFactory.getLog(PoolOperate.class);
 	
 	public String addPool(String name){
+		
+		if (  !this.canVisit(0) ) return BaseAxis.RIGHTERROR;
+		
 		LOG.debug("addPool :"+name);
 		Transaction tx = null;
 		try{
@@ -80,6 +83,9 @@ public class PoolOperate extends BaseAxis {
 	}
 	
 	public String modPool(String name ,String questXML){
+		
+		if (  !this.canVisit(0) ) return BaseAxis.RIGHTERROR;
+		
 		LOG.debug("modPoolConfig: "+name);
 		Transaction tx = null;
 		try{			
@@ -112,6 +118,8 @@ public class PoolOperate extends BaseAxis {
 	}
 	
 	public String getPoolConfig(String name){
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+		
 		LOG.debug("getPoolConfig: "+name);
 		try{
 			String poolFile = GenericConfig.getInstance().getFile("nodes/"+name+".xml");
@@ -131,6 +139,8 @@ public class PoolOperate extends BaseAxis {
 	}
 	
 	public String delPool(String name){
+		if (  !this.canVisit(0) ) return BaseAxis.RIGHTERROR;
+		
 		LOG.debug("delPool: " +name);
 		try{
 			if(name.equalsIgnoreCase("All") ) return "DelPoolAllError";
@@ -168,6 +178,8 @@ public class PoolOperate extends BaseAxis {
 	
 	public String getPools()
 	{
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+		
 		LOG.debug("getPools");
 		try{
 			int regUserId = this.getLoginUserId();
@@ -198,6 +210,8 @@ public class PoolOperate extends BaseAxis {
 	}
 	
 	public String getNodes(){
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+		
 		LOG.debug("getNodes");
 		try{
 			Element root = new Element("Nodes");
