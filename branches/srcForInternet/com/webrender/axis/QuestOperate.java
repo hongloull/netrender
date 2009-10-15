@@ -49,19 +49,12 @@ public class QuestOperate extends BaseAxis {
 	//String NotLogin = "<ResultSet>NotLogin</ResultSet>";
 	public String CommitQuest(String questXML)
 	{
-	//	System.out.println(questXML);
+		if (  !this.canVisit(0) &&  !this.canVisit(10) ) return BaseAxis.RIGHTERROR;
+		
 		LOG.debug("CommitQuest");
 		int regUserId =  this.getLoginUserId();
 		
-//		try{
-//			if (!this.canVisit(1)){
-//				return BaseAxis.RIGHTERROR;
-//			}			
-//		}catch(Exception e){
-//			LOG.error("RightVisit error",e);
-//			return BaseAxis.RIGHTERROR;
-//		}
-		
+	
 		
 		try{
 			
@@ -94,14 +87,14 @@ public class QuestOperate extends BaseAxis {
 				
 				QuestDAO questDAO = new QuestDAO();
 				questDAO.save(quest);
+				questDAO.delQuestRel(quest);
 				
 				List<Element> lis_questargs = ele_quest.getChildren("Questarg");
 				
 				int questargssize = lis_questargs.size();
 				
 				QuestargDAO questargDAO = new QuestargDAO();
-				quest.getQuestargs().clear();
-				quest.getCommands().clear();
+				
 				for(int j =0 ; j<questargssize ;j++)
 				{
 					Questarg questarg = QuestargUtils.xml2bean(lis_questargs.get(j));
@@ -143,16 +136,11 @@ public class QuestOperate extends BaseAxis {
 
 	public String deleteQuest(String questId)
 	{
+		if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) )
+					return BaseAxis.RIGHTERROR;
+		
 		LOG.debug("deleteQuest");
-//		try{
-//			if (!this.canVisit(3) && ( !this.canVisit(2) || !this.isSelf(Integer.parseInt(questId)) ) ){
-//				return BaseAxis.RIGHTERROR;
-//			}			
-//		}catch(Exception e){
-//			LOG.error("RightVisit error",e);
-//			return BaseAxis.RIGHTERROR;
-//		}
-//		
+
 		Transaction tx = null;
 		try
 		{
@@ -182,16 +170,11 @@ public class QuestOperate extends BaseAxis {
 	}
 	public String pauseQuest(String questId)
 	{
-		LOG.debug("pauseQuest");
-//		try{
-//			if (!this.canVisit(3) && ( !this.canVisit(2) || !this.isSelf(Integer.parseInt(questId)) ) ){
-//				return BaseAxis.RIGHTERROR;
-//			}			
-//		}catch(Exception e){
-//			LOG.error("RightVisit error",e);
-//			return BaseAxis.RIGHTERROR;
-//		}
+		if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) )
+			return BaseAxis.RIGHTERROR;
+
 		
+		LOG.debug("pauseQuest");
 		Transaction tx = null;
 		try
 		{
@@ -220,16 +203,12 @@ public class QuestOperate extends BaseAxis {
 	}
 	public String resumeQuest(String questId)
 	{
+		if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) )
+			return BaseAxis.RIGHTERROR;
+
+		
 		LOG.debug("resumeQuest");
-//		try{
-//			if (!this.canVisit(3) && ( !this.canVisit(2) || !this.isSelf(Integer.parseInt(questId)) ) ){
-//				return BaseAxis.RIGHTERROR;
-//			}			
-//		}catch(Exception e){
-//			LOG.error("RightVisit error",e);
-//			return BaseAxis.RIGHTERROR;
-//		}
-//		
+
 		Transaction tx = null;
 		try
 		{
@@ -262,16 +241,11 @@ public class QuestOperate extends BaseAxis {
 	
 	public String reinitQuest(String questId)
 	{
+		if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) )
+			return BaseAxis.RIGHTERROR;
+
 		LOG.debug("reinitQuest");
-//		try{
-//			if (!this.canVisit(3) && ( !this.canVisit(2) || !this.isSelf(Integer.parseInt(questId)) ) ){
-//				return BaseAxis.RIGHTERROR;
-//			}			
-//		}catch(Exception e){
-//			LOG.error("RightVisit error",e);
-//			return BaseAxis.RIGHTERROR;
-//		}
-//		
+
 		Transaction tx = null;
 		try
 		{
@@ -304,16 +278,11 @@ public class QuestOperate extends BaseAxis {
 	
 	public String setFinish(String questId)
 	{
+		if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) )
+			return BaseAxis.RIGHTERROR;
+
 		LOG.debug("setFinish");
-//		try{
-//			if (!this.canVisit(3) && ( !this.canVisit(2) || !this.isSelf(Integer.parseInt(questId)) ) ){
-//				return BaseAxis.RIGHTERROR;
-//			}			
-//		}catch(Exception e){
-//			LOG.error("RightVisit error",e);
-//			return BaseAxis.RIGHTERROR;
-//		}
-//		
+
 		Transaction tx = null;
 		try
 		{
@@ -342,10 +311,48 @@ public class QuestOperate extends BaseAxis {
 		}
 	}
 	
-	
+	public String changeName(String questId,String name){
+		
+		if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) )
+			return BaseAxis.RIGHTERROR;
+		
+		Transaction tx = null;
+		
+		
+		try
+		{
+			tx = getTransaction();
+			QuestDAO questDAO = new QuestDAO();
+			Quest quest = questDAO.findById(Integer.parseInt(questId));
+			if (quest==null){
+				return BaseAxis.ACTIONFAILURE+" QuestNotExist";
+			}
+			quest.setQuestName(name);
+			questDAO.attachDirty(quest);
+			logOperate(getLoginUserId(),Operatelog.MOD,"Change "+quest.getQuestName()+" to "+name);
+			tx.commit();
+			return BaseAxis.ACTIONSUCCESS;
+		}
+		catch(Exception e)
+		{
+			if (tx != null) 
+			{
+				tx.rollback();
+			}			
+			return BaseAxis.ACTIONFAILURE;
+		}
+		finally
+		{
+			this.closeSession();
+		}
+	}
 	
 	public String  changePriority(String questId,String pri)
 	{
+		if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) )
+			return BaseAxis.RIGHTERROR;
+
+		
 		Transaction tx = null;
 		
 //		try{
@@ -383,6 +390,10 @@ public class QuestOperate extends BaseAxis {
 	}
 	public String  changeMaxNodes(String questId,String maxNodes)
 	{
+		if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) )
+			return BaseAxis.RIGHTERROR;
+
+		
 		Transaction tx = null;
 		
 //		try{
@@ -418,8 +429,15 @@ public class QuestOperate extends BaseAxis {
 			this.closeSession();
 		}
 	}
-	public String changePool(String questId , String nodeGroupId)
+	public String changePool(String questId , String poolName)
 	{
+		
+		if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) )
+			return BaseAxis.RIGHTERROR;
+
+		
+		Transaction tx = null;
+		
 //		try{
 //			if (!this.canVisit(3) && ( !this.canVisit(2) || !this.isSelf(Integer.parseInt(questId)) ) ){
 //				return BaseAxis.RIGHTERROR;
@@ -429,11 +447,42 @@ public class QuestOperate extends BaseAxis {
 //			return BaseAxis.RIGHTERROR;
 //		}
 //		
-		return BaseAxis.ACTIONFAILURE;
+		try
+		{
+			QuestDAO questDAO = new QuestDAO();
+			NodegroupDAO nGDAO = new NodegroupDAO();
+			Nodegroup nG = nGDAO.findByNodeGroupName(poolName);
+			Quest quest = questDAO.findById(Integer.parseInt(questId));
+			if(quest==null || nG==null){
+				return BaseAxis.ACTIONFAILURE+" questId or poolName not exist";
+			}
+			tx = getTransaction();
+			quest.setNodegroup(nG);
+			questDAO.attachDirty(quest);
+			logOperate(getLoginUserId(),Operatelog.MOD,"Change quest "+quest.getQuestName()+"'s pool to "+poolName);
+			tx.commit();
+			return BaseAxis.ACTIONSUCCESS;
+		}
+		catch(Exception e)
+		{
+			if (tx != null) 
+			{
+				tx.rollback();
+			}			
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
+		}
+		finally
+		{
+			this.closeSession();
+		}
+		
 	}
 	
 	public String getDetail(String questId)
 	{
+		
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+
 		LOG.debug("getDetail");
 		
 //		try{
@@ -478,6 +527,8 @@ public class QuestOperate extends BaseAxis {
 	
 	public String getChunkDetail(String questId)
 	{
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+
 		LOG.debug("getChunkDetail");
 		
 //		try{

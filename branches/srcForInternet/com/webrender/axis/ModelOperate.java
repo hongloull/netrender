@@ -27,16 +27,8 @@ public class ModelOperate extends BaseAxis {
 	public String getModel(String commandModelId)
 	{
 		// 权限判断
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
 		
-//		try{
-//			if ( ! this.canVisit(7)){
-//				LOG.debug("VisitRight error");
-//				return BaseAxis.RIGHTERROR;
-//			}			
-//		}catch(Exception e){
-//			LOG.error("RightVisit error",e);
-//			return BaseAxis.RIGHTERROR;
-//		}
 		LOG.debug("getCommandModel");
 		try {
 			CommandmodelDAO cMDAO = new CommandmodelDAO();
@@ -67,17 +59,9 @@ public class ModelOperate extends BaseAxis {
 	 */
 	public String getModels()
 	{
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+
 		LOG.debug("getCommandModels");
-		
-		// 权限判断
-//		try{
-//			if ( ! this.canVisit(7)){
-//				return BaseAxis.RightError;
-//			}			
-//		}catch(Exception e){
-//			log.error("RightVisit error",e);
-//			return BaseAxis.RightError;
-//		}		
 		try{
 			
 			int regUserId = this.getLoginUserId();

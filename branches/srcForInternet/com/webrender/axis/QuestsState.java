@@ -23,10 +23,13 @@ public class QuestsState extends BaseAxis {
 	
 	public String getQuestStatus(String questId)
 	{
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+
+		
+		LOG.debug("getQuestStatus: id = "+questId);
 		if(questId==null || questId.equals("")){
 			return BaseAxis.ACTIONFAILURE;
 		}
-		LOG.debug("getQuestStatus: id = "+questId);
 //		try{
 //			if (!this.canVisit(7) ){
 //				return BaseAxis.RIGHTERROR;
@@ -63,6 +66,8 @@ public class QuestsState extends BaseAxis {
 	
 	public String getQuestsStatus()
 	{
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+
 		LOG.debug("getQuestsStatus");
 		
 //		try{
@@ -108,6 +113,8 @@ public class QuestsState extends BaseAxis {
 	}
 	
 	public String getUserQuests(){
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+		
 		LOG.debug("getUserQuests");
 		int regUserId = getLoginUserId();
 		if(regUserId == 0 ){

@@ -1,6 +1,11 @@
 package com.webrender.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -251,6 +256,29 @@ public class QuestDAO extends BaseHibernateDAO {
 		int total = quest.getCommands().size() ;
 		if (total == 0 ) return "error";
 		return finish*100/total+"%";
+	}
+
+	public void delQuestRel(Quest quest) {
+		LOG.debug("delQuestRel questId:"+quest.getQuestId());
+		try
+		{
+//			String hql = "from Questarg as o where o.quest.questId="+quest.getQuestId();
+//			getSession().delete(hql);
+//			String hql2 = "from Command as o where o.quest.questId="+quest.getQuestId();
+//			getSession().delete(hql2);
+			Connection con=getSession().connection();
+			Statement state=con.createStatement();
+			state.execute("DELETE FROM questarg WHERE QuestID ="+quest.getQuestId());
+			state.execute("DELETE FROM command WHERE QuestID ="+quest.getQuestId());			
+			
+			
+			
+		}catch(RuntimeException re){
+			LOG.error("delQuestRel failed",re);
+			throw re;
+		} catch (SQLException e) {
+			LOG.error("delQuestRel",e);
+		}	
 	}
 
 	

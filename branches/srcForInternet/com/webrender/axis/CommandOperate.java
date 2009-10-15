@@ -23,15 +23,9 @@ public class CommandOperate extends BaseAxis {
 	
 	public String getRealLogs(String commandId){
 		
-		// 权限判断
-//		try{
-//			if (! this.canVisit(7) ){
-//				return BaseAxis.RightError;
-//			}
-//		}catch(Exception e){
-//			log.error("RightVisit error",e);
-//			return BaseAxis.RightError;
-//		}
+//      权限判断
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+		
 		
 		LOG.debug("getRealLogs");
 		
@@ -64,15 +58,13 @@ public class CommandOperate extends BaseAxis {
 	
 	public String reinitCommand(String commandId){
 			
-		LOG.debug("reinitCommand");
-		try{
-			if (!this.canVisit(0) || !this.canVisit(11) && ( !this.canVisit(10) || !this.isSelf(Integer.parseInt(commandId)) ) ){
-				return BaseAxis.RIGHTERROR;
-			}			
-		}catch(Exception e){
-			LOG.error("RightVisit error",e);
+		if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(commandId)) ) )
 			return BaseAxis.RIGHTERROR;
-		}
+			
+		
+
+		LOG.debug("reinitCommand");
+		
 		Transaction tx = null;
 		try{
 			tx = getTransaction();
@@ -101,8 +93,11 @@ public class CommandOperate extends BaseAxis {
 	}
 	
 	public String setFinish(String commandId){
-		LOG.debug("finishCommand");
+		if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(commandId)) ) )
+			return BaseAxis.RIGHTERROR;
 		
+		
+		LOG.debug("finishCommand");
 		Transaction tx = null;
 		try{
 			tx = getTransaction();

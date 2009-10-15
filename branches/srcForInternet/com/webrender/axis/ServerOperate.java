@@ -10,6 +10,8 @@ import org.apache.commons.logging.LogFactory;
 public class ServerOperate extends BaseAxis {
 	private static final Log LOG = LogFactory.getLog(ServerOperate.class);
 	public String restartServer(){
+		if (  !this.canVisit(0) ) return BaseAxis.RIGHTERROR;
+		
 		try {
 			LOG.info("restart Server");
 			

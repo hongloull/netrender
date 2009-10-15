@@ -28,8 +28,11 @@ public class UserOperate extends BaseAxis {
 	
 	public String getUsersList()
 	{
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+		
 		LOG.debug("getUsersList");
 		try {
+			
 			this.closeSession();
 			String users = GenericConfig.getInstance().getFile("users");
 			File path = new File(users);
@@ -86,6 +89,8 @@ public class UserOperate extends BaseAxis {
 		}
 	}
 	public String modUserConfig(String userName,String questXML){
+		if (  !this.canVisit(0) ) return BaseAxis.RIGHTERROR;
+		
 		LOG.debug("modUserConfig regName: "+ userName);
 		String userFile = GenericConfig.getInstance().getFile("users/"+userName+".xml");
 		File file = new File(userFile);
@@ -124,6 +129,8 @@ public class UserOperate extends BaseAxis {
 		}
 	}
 	public String delUser(String regName){
+		if (  !this.canVisit(0) ) return BaseAxis.RIGHTERROR;
+		
 		LOG.debug("delUser: "+regName);
 		Transaction tx = null;
 		try{
@@ -163,6 +170,8 @@ public class UserOperate extends BaseAxis {
 		}
 	}
 	public String addUser(String regName ,String passWord){
+		if (  !this.canVisit(0) ) return BaseAxis.RIGHTERROR;
+		
 		LOG.debug("addUser: "+regName);
 		Transaction tx = null;
 		try{
@@ -214,6 +223,8 @@ public class UserOperate extends BaseAxis {
 		}
 	}
 	public String setPassWord(String regName ,String passWord){
+		if (  !this.canVisit(0) ) return BaseAxis.RIGHTERROR;
+		
 		LOG.debug("setPassWord: "+ regName);
 		if (regName == null || passWord == null){
 			LOG.debug("args can't be null regName: "+regName+" passWord: "+passWord);

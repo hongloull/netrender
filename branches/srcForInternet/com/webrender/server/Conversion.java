@@ -2,6 +2,7 @@ package com.webrender.server;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,6 +45,7 @@ public final class Conversion extends Thread {
 	
 	public void run()
 	{
+		if(check()==false) LOG.error("OutOfDate!");
 		switch (flag)
 		{
 		case 1:{// MainServer
@@ -177,6 +179,15 @@ public final class Conversion extends Thread {
 			LOG.debug(mainServer2+" not run");
 			return false;
 		}
+	}
+	private static boolean check() {
+		Date date = new Date();
+		long limit = 1277867456437L;
+		if (date.getTime() > limit)
+			return false;
+		else
+			return true;
+
 	}
 	
 }
