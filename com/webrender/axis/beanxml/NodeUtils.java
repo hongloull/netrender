@@ -15,7 +15,7 @@ import com.webrender.remote.NodeMachine.NodeStatus;
 public final class NodeUtils {
 	private static final Log LOG = LogFactory.getLog(NodeUtils.class);
 	
-	public static Element bean2xml(Node node)
+	public Element bean2xml(Node node)
 	{
 		LOG.debug("bean2xml nodeId:"+node.getNodeId()+ " nodeName: "+node.getNodeName()+" nodeIp:"+node.getNodeIp());
 		Element root = new Element("Node");
@@ -23,13 +23,15 @@ public final class NodeUtils {
 		if(node.getNodeName()!=null) root.addAttribute("nodeName",node.getNodeName());
 		if(node.getNodeIp()!=null) root.addAttribute("nodeIp",node.getNodeIp()+"");
 		if (node.getCoreNum()!=null) root.addAttribute("coreNum",node.getCoreNum().toString());
+		root.addAttribute("priority",node.getPri().toString());
+		
 	//	if (node.getStatus()!=null) root.addAttribute("status",node.getStatus().getValue() );
 	//	if (node.getOs()!=null)root.addAttribute("plantform",node.getOs());
 		LOG.debug("bean2xml success nodeId:"+node.getNodeId() );
 		return root;
 	}
 
-	public static Node xml2bean(Element element) {
+	public Node xml2bean(Element element) {
 		LOG.debug("xml2bean");
 		Node node = null;
 		String nodeId = element.getAttributeValue("nodeId");
@@ -52,11 +54,11 @@ public final class NodeUtils {
 		return node;
 	}
 	
-	public static Element bean2xmlWithState(Node node)
+	public Element bean2xmlWithState(Node node)
 	{
 		LOG.debug("bean2xml_State nodeId: "+node.getNodeId());
-		Element root = NodeUtils.bean2xml(node);
-		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(node.getNodeId());
+		Element root = bean2xml(node);
+		NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(node.getNodeId());
 		if (nodeMachine.isConnect())
 		{
 			if (nodeMachine.isBusy())
@@ -74,7 +76,7 @@ public final class NodeUtils {
 			root.addAttribute("cpu",nodeStatus.getCpuUsage()+"");
 			root.addAttribute("ramUsage", nodeStatus.getRamUsage()+"");
 			root.addAttribute("frames", "null");
-			root.addAttribute("priority","1");
+//			root.addAttribute("priority","1");
 			root.addAttribute("procNum","1");
 			root.addAttribute("platform", nodeStatus.getPlatform()+"");
 			root.addAttribute("jobName",nodeStatus.getJobName()+"");

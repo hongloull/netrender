@@ -13,7 +13,7 @@ import java.io.*;
  * static copy() method that other programs can use to copy files.
  **/
 public class FileCopy {
-  /** The main() method of the standalone program.  Calls copy(). */
+  /** The main() method of the standalone program.  Calls copy(). 
   public static void main(String[] args) {
     if (args.length != 2)    // Check arguments 
       System.err.println("Usage: java FileCopy <source file> <destination>");
@@ -22,14 +22,14 @@ public class FileCopy {
       try { copy(args[0], args[1]); }
       catch (IOException e) { System.err.println(e.getMessage()); }
     }
-  }
+  }*/
 
   /**
    * The static method that actually performs the file copy.
    * Before copying the file, however, it performs a lot of tests to make
    * sure everything is as it should be.
    */
-  public static void copy(String from_name, String to_name) throws IOException{
+  public void copy(String from_name, String to_name) throws IOException{
     File from_file = new File(from_name);  // Get File objects from Strings
     File to_file = new File(to_name);
     
@@ -92,7 +92,7 @@ public class FileCopy {
   }
 
   /** A convenience method to throw an exception */
-  private static void abort(String msg) throws IOException { 
+  private void abort(String msg) throws IOException { 
     throw new IOException(msg); 
   }
 }

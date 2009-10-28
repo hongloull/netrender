@@ -15,7 +15,8 @@ public class TestMessageHandlerImpl {
 		CODE code = EOPCODES.getInstance().get("S_SYSTEM");
 		ByteBuffer buffer = ServerMessages.createStatusPkt();
 		buffer.get();
-		NodeMachine nodeMachine = new NodeMachine(50);
+		Short pri = 0;
+		NodeMachine nodeMachine = new NodeMachine(50,pri);
 		MessageHandlerImpl.getInstance().parseClientPacket(code, buffer, nodeMachine);
 	}
 }

@@ -33,35 +33,46 @@ import org.hibernate.Transaction;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
+
+import com.webrender.axis.beanxml.CommmandUtils;
 import com.webrender.axis.beanxml.XMLOut;
+import com.webrender.axis.operate.ConfigOperateImpl;
 import com.webrender.dao.Command;
 import com.webrender.dao.CommandDAO;
 import com.webrender.dao.Commandarg;
 import com.webrender.dao.Commandmodelarg;
+import com.webrender.dao.CommandmodelargDAO;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
 import com.webrender.dao.HibernateSessionFactory;
 import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
+import com.webrender.dao.Quest;
+import com.webrender.dao.QuestDAO;
 import com.webrender.dao.Questarg;
 import com.webrender.dao.StatusDAO;
+import com.webrender.logic.CalcFrame;
 import com.webrender.protocol.enumn.EOPCODES;
 import com.webrender.protocol.enumn.EOPCODES.CODE;
 import com.webrender.protocol.messages.ServerMessages;
 import com.webrender.protocol.processor.IClientProcessor;
 import com.webrender.server.Dispatcher;
 import com.webrender.server.RealLogServer;
+import com.webrender.server.deal.DealQuest;
+import com.webrender.tool.NameMap;
 /* 
  *  NodeMachine 控制节点机操作的类；不与数据库交互信息
  */
 public class NodeMachine implements TimeoutOperate,IClientProcessor {
 //	String command ;
 	private int nodeId ;
+	private Short pri;
 	private Set<Integer> currentCommands ;
 	private static final Log LOG = LogFactory.getLog(NodeMachine.class);
 	private String configInfo = null;
 	private StringBuffer realLog = new StringBuffer();
-	
+	private ServerMessages serverMessages = new ServerMessages();
+	private CommmandUtils commmandUtils = new CommmandUtils();
 //	IResultStore resultStore;
 
 
@@ -76,9 +87,10 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	
 	
 	
-	public NodeMachine(Integer nodeId)
+	public NodeMachine(Integer nodeId,Short pri)
 	{
 		this.nodeId = nodeId;
+		this.pri = pri;
 	    currentCommands = Collections.synchronizedSet(new HashSet<Integer>());;
 	    status = new NodeStatus();
 	    ConnectTest cTest = new ConnectTest(this);
@@ -86,13 +98,43 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	}
 	
 	
+	/**
+	 * @return the pri
+	 */
+	public Short getPri() {
+		return pri;
+	}
+
+
+	/**
+	 * @param pri the pri to set
+	 */
+	public void setPri(Short pri) {
+		this.pri = pri;
+	}
+
+
 	public boolean execute(Command command)
 	{
 		LOG.info("nodeId: "+nodeId + " execute commandId: "+command.getCommandId());
-		String cmdString = this.getCommand(command);
+		CODE cmdType = null;
+		if( command.getType()==null || NameMap.RENDER.equalsIgnoreCase(command.getType())){
+			cmdType = EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_RENDER");
+		}
+		else if( (NameMap.GETFRAME).equalsIgnoreCase(command.getType()) ){
+			cmdType = EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_GETFRAME");
+		}
+		else if( (NameMap.ONETOMANY).equalsIgnoreCase(command.getType()) ){
+			cmdType = EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_SHELL");
+		}
+		else if( (NameMap.PRELIGHT).equalsIgnoreCase(command.getType()) ){
+			cmdType = EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_PRELIGHT");
+		}
+		String cmdString = commmandUtils.commandToXMLForExe(command);
+		
 		ByteBuffer cmdBuffer;
 		try {
-			cmdBuffer = ServerMessages.createCommandPkt(command.getCommandId(),cmdString);
+			cmdBuffer = serverMessages.createCommandPkt(cmdType,command.getCommandId(),cmdString);
 		} catch (Exception e) {
 			LOG.error("createCommandPkt fail",e);
 			return false;
@@ -132,77 +174,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		if(currentCommands.size()==0) setBusy(false);
 	}
 		
-	public String getCommand(Command command)
-	{
-		org.jdom.Element root = new org.jdom.Element("Cmd");
-		root.addAttribute("cmdModelName",command.getQuest().getCommandmodel().getCommandModelName());
-		root.addAttribute("cmdId",command.getCommandId()+"");
-		root.addAttribute("questId",command.getQuest().getQuestId()+"");
-		root.addAttribute("questName",command.getQuest().getQuestName()+"");
-		
-		HashSet<Integer> set_ids = new HashSet<Integer>();
-		
-		Iterator ite_CommandArgs = command.getCommandargs().iterator();
-		while(ite_CommandArgs.hasNext())
-		{
-			
-			Commandarg commandArg = (Commandarg)ite_CommandArgs.next();
-			Commandmodelarg cMDArg = commandArg.getCommandmodelarg();
-			set_ids.add(cMDArg.getCommandModelArgId());
-			org.jdom.Element element = null;
-			if (commandArg.getCommandmodelarg().getStatus().getStatusId()==64){
-				element = new org.jdom.Element("Endarg");
-			}
-			else element = new org.jdom.Element("Cmdarg");
-//			element.addAttribute("cmdModelArgId", cMDArg.getCommandModelArgId().toString());
-//			element.addAttribute("argInstruction", cMDArg.getArgInstruction());
-			element.addAttribute("argName", cMDArg.getArgName());
-//			element.addAttribute("type",cMDArg.getType().toString());
-			element.addAttribute("value", commandArg.getValue());
-//	        element.addAttribute("statusId",commandArg.getCommandmodelarg().getStatus().getStatusId().toString());
-			root.addContent(element);
-		}
-		Iterator ite_Questargs = command.getQuest().getQuestargs().iterator();
-		while(ite_Questargs.hasNext())
-		{
-			Questarg questArg = (Questarg)ite_Questargs.next();
-			Commandmodelarg cMDArg = questArg.getCommandmodelarg();
-			if ( set_ids.contains( cMDArg.getCommandModelArgId() ) )
-			{
-				continue;
-			}
-			else {
-				org.jdom.Element element = null;
-				if (questArg.getCommandmodelarg().getStatus().getStatusId()==64){
-					element = new org.jdom.Element("Endarg");
-				}
-				else element = new org.jdom.Element("Cmdarg");
-//				element.addAttribute("commandModelArgId", cMDArg.getCommandModelArgId().toString());	
-//				element.addAttribute("argInstruction", cMDArg.getArgInstruction());
-				element.addAttribute("argName", cMDArg.getArgName());
-//				element.addAttribute("type",cMDArg.getType().toString());
-				element.addAttribute("value", questArg.getValue());	
-				root.addContent(element);
-			}
-		}
-		
-		
-		
-//		StringBuilder result = new StringBuilder();
-//		result.append(" ").append( command.getCommand() ).append(" ");
-//		QuestargDAO questArgDAO = new QuestargDAO();
-//		Iterator<Questarg> constantArgs = questArgDAO.getConstantArgs(command.getQuest()).iterator();
-//		while(constantArgs.hasNext())
-//		{
-//			Questarg arg = constantArgs.next();
-//			String argName = arg.getCommandmodelarg().getArgName();
-//			String argValue = arg.getValue();
-//			result.append(argName).append(" ").append(argValue).append(" ");
-//		}
-//		root.addAttribute("content",result.toString() );
-		org.jdom.Document doc = new org.jdom.Document(root);
-		return XMLOut.outputToString(doc);
-	}
+	
 	public synchronized boolean execute(ByteBuffer command)
 	{
 		LOG.debug("execute bytebuffer");
@@ -212,17 +184,20 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		session.write(command);
     	for (int i = 0 ; i<500 ; i++)
     	{
-    		if (session.getAttribute("StartFlag")!=null)
-    		{
-    			LOG.info(nodeId +" exe Success");
-    			session.setAttribute("StartFlag",null);
-    			return true;	
-    		}
     		try {
+    			if (session.getAttribute("StartFlag")!=null)
+    			{
+    				LOG.debug(nodeId +" exe Success");
+    				session.setAttribute("StartFlag",null);
+    				return true;	
+    			}
 				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+    		}catch (InterruptedException e) {
+    			e.printStackTrace();
+    		}catch(NullPointerException e){
+    			LOG.info("Node: "+ nodeId +" disconnect..");
+    			break;
+    		}
     	}
 		LOG.info("execute error");
 		return false;
@@ -252,7 +227,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		else{
 			status.setStatus("CONNECT");
 			try {
-				session.write(ServerMessages.createStatusPkt());
+				session.write(serverMessages.createStatusPkt());
 			} catch (Exception e) {
 				LOG.error("testStatus fail",e);
 			}
@@ -398,9 +373,9 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	{
 		if (isConnect() && isBusy()==false && isPause()==false )
 		{
-			if(NodeMachineManager.containIdles(this)==false){
+			if(NodeMachineManager.getInstance().containIdles(this)==false){
 				LOG.debug(nodeId +" Add to IdleMachines ");
-				NodeMachineManager.addNodeMachines(this);
+				NodeMachineManager.getInstance().addNodeMachines(this);
 			}
 			else{
 				LOG.debug(nodeId+" is in IdleMachines ");
@@ -409,7 +384,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		else
 		{
 			LOG.debug(nodeId+" remove from IdleMachines ");
-			NodeMachineManager.delNodeMachines(this);
+			NodeMachineManager.getInstance().delNodeMachines(this);
 		}
 	}
 	
@@ -454,8 +429,12 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	}
 	
 	
-	
-	private void setFinish(int commandId){
+	/**
+	 *
+	 * @param commandId
+	 * @return questId
+	 */
+	private Quest setFinish(int commandId){
 		/*
 		 * 接受到结束标记，根据IP地址获取节点机，查询该节点的CurrentCommands（表示该节点在执行Command的ID ，当前只有1个）
 		 * 根据CommandId 查找对应数据库中的Command 将其设置成已完成状态 72
@@ -474,48 +453,20 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			tx = HibernateSessionFactory.getSession().beginTransaction();
 			
 			CommandDAO commandDAO = new CommandDAO();
-			Command command = commandDAO.findById(commandId);
-			//Command command = null;
-//			List list = commandDAO.getCurrentCommand(node);
-//			System.out.println(ip+" currentCommandNum "+list.size());
-//			if ( list.size()==1 )
-//			{
-//				command = (Command)list.get(0);
-//			}
-			
+			Command command = commandDAO.findById(commandId);			
 			StatusDAO statusDAO = new StatusDAO();
 			if (command !=null)
 			{
-//				node.setStatus(statusDAO.findById(41)); //41 -> idle
-//				nodeDAO.attachDirty(node);
 				command.setNode(node);
 				command.setStatus(statusDAO.findById(72)); //72->Finish
 				command.setSendTime(new Date());
 				commandDAO.attachDirty(command);							
-				LOG.info(nodeId+" finish command");
+				LOG.info(nodeId+" finish command "+command.getCommandId());
 			}
-//			else
-//			{
-//				/*改错功能：遇到查找不到该节点在执行哪条Command情况时。但收到GOODBYE
-//				 *         将节点设为闲置（41） 节点上运行的未完成的任务状态设置成Input（70）
-//				 *         日志记录重置节点机
-//				 */
-//
-//				Iterator ite_ListCommands = list.iterator();
-//				ExecutelogDAO exeDAO = new ExecutelogDAO();
-//				Executelog executelog = null;
-//				while(ite_ListCommands.hasNext())
-//				{
-//					command = (Command) ite_ListCommands.next();
-//				//	command.setNode(node);
-//					command.setStatus(statusDAO.findById(70)); //72->input
-//					commandDAO.attachDirty(command);			
-//					executelog = new  Executelog(command,statusDAO.findById(99),node,"Redo",new Date()); 
-//					exeDAO.save(executelog);
-//				}
-//				
-//			}
 			tx.commit();
+			LOG.debug("setFinish success");
+			removeCommandId(commandId);
+			return command.getQuest();
 		}
 		catch(Exception e)
 		{
@@ -525,9 +476,10 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				tx.rollback();
 			}
 			// kill command
+			return null;
 		}
 //		setBusy(false);
-		LOG.debug("setFinish success");
+		
 	}
 	
 	private synchronized void  saveRealLog(int commandId ,boolean isNormal,String message){
@@ -563,7 +515,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				HibernateSessionFactory.closeSession();
 				LOG.info("realLog renew");
 				realLog = new StringBuffer();
-				removeCommandId(commandId);
+				
 			}
 		}
 	}
@@ -586,6 +538,8 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			RealLogServer.getInstance().broadCast(nodeId+"***"+message);
 		}
 		if(message==null || ! this.currentCommands.contains(commandId) ){
+			
+			// 目前 commandId 传过来都是null
 			if(currentCommands.iterator().hasNext()){
 				commandId = this.currentCommands.iterator().next();				
 			}
@@ -606,7 +560,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				LOG.info("addReadlog goodBye");
 				timeOutThread.cancel();
 				saveRealLog(commandId,true,"finish");
-				setFinish(commandId);
+				setFinish(commandId); 
 				timeOutThread = null;
 			}
 			else{
@@ -650,12 +604,21 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	public String getConfigInfo() {
 		return configInfo;
 	}
-
+	public boolean sendPathCongfigToNode(){
+		String pathConfig = (new ConfigOperateImpl()).getPathConfig();
+		try {
+			return execute(serverMessages.createPathConfigPkt(pathConfig));
+			
+		} catch (Exception e) {
+			LOG.error("sendPathCongfigToNode fail",e);
+			return false;
+		}
+		
+	}
 
 	public void setConfigInfo(String configInfo) {
 		this.configInfo = configInfo;
 	}
-
 
 	public void execute(CODE code, byte[] fmts, List<String> datas){
 		if( fmts.length!= datas.size() ){
@@ -669,26 +632,53 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			if(code == null){
 				LOG.error("code is null");
 				return ;
-			}
-			else if(code.getId() == EOPCODES.getInstance().get("N_FEEDBACK").getId()){
+			}else if(code.getId() == EOPCODES.getInstance().get("N_FEEDBACK").getId()){
 				int commandId =Integer.parseInt(datas.get(0));
 				String mesString = datas.get(1);
 				addFeedBack(commandId,mesString);
-			}
-			else if(code.getId() == EOPCODES.getInstance().get("N_STATUSINFO").getId()){
+			}else if(code.getId() == EOPCODES.getInstance().get("N_STATUSINFO").getId()){
 				String statusString = datas.get(0);
 				updateStatus(statusString);
-			}
-			else if ( code.getId() == EOPCODES.getInstance().get("N_SUCCESS").getId() ){
+			}else if ( code.getId() == EOPCODES.getInstance().get("N_SUCCESS").getId() ){
 				ready();
-			}
-			else if(code.getId() == EOPCODES.getInstance().get("N_CONFIGINFO").getId()){
+			}else if(code.getId() == EOPCODES.getInstance().get("N_CONFIGINFO").getId()){
 				String configString = datas.get(0);
 				updateConfig(configString);
+			}else if(code.getId() == EOPCODES.getInstance().get("N_FRAMEINFO").getId()){
+				if (datas.size()==4){
+					String commandId = datas.get(0);
+					String startFrame = datas.get(1);
+					String endFrame = datas.get(2);
+					String byFrame = datas.get(3);
+					LOG.info("commandId: "+commandId+". start: "+startFrame+". end: "+endFrame+". by: "+byFrame);
+					Quest quest = setFinish(Integer.parseInt(commandId));
+					(new DealQuest()).makeQuestFrames(quest, startFrame, endFrame, byFrame);
+					
+//					QuestDAO questDAO = new QuestDAO();
+//					questDAO.getQuestWithFrameInfo(quest, startFrame, endFrame, byFrame);
+//					CalcFrame calcFrame = new CalcFrame();
+//					int result = calcFrame.calcFrames(quest,quest.getPacketSize());
+				}
+				else{
+					LOG.error("N_FRAMEINFO need 4 arguments :"+ datas);
+				}
+			}else if(code.getId() == EOPCODES.getInstance().get("N_GETPATHCONFIG").getId()){
+				LOG.info("send path config");
+				if( sendPathCongfigToNode()){
+					LOG.info("send path config success");
+				}
+				else{
+					LOG.error("send path config fail.");
+				}
+			}
+			else if( code.getId() == EOPCODES.getInstance().get("N_PRELIGHT").getId() ){
+				String commandId = datas.get(0);
+				String preLight = datas.get(1);
+				Quest quest = setFinish(Integer.parseInt(commandId));
+				(new DealQuest()).setPreLight(quest, preLight);
 			}
 			else{
 				// send not type 
-			
 			}
 						
 		}catch(Exception e){

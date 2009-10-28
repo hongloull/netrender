@@ -43,19 +43,19 @@ public final class Dispatcher extends Thread {
 		while(true){
 			try{
 				Iterator ite_Commands =commandDAO.getWaitingCommands().iterator();
-				if(ite_Commands.hasNext()==false || NodeMachineManager.isIdleEmpty()){
+				if(ite_Commands.hasNext()==false || NodeMachineManager.getInstance().isIdleEmpty()){
 //					isRunning = false;
 					LOG.info("Dispatcher ends..");
 					return;
 				}
 				while(ite_Commands.hasNext()){
 					Command command = (Command)ite_Commands.next();
-					if(NodeMachineManager.isIdleEmpty()){
+					if(NodeMachineManager.getInstance().isIdleEmpty()){
 //						isRunning = false;
 						LOG.info("Dispatcher ends..");
 						return;
 					}
-					NodeMachine nodeMachine = NodeMachineManager.canExeCommand(command);
+					NodeMachine nodeMachine = NodeMachineManager.getInstance().canExeCommand(command);
 					if(nodeMachine !=null){
 						noUsableNode = false;
 						Node node = nodeDAO.findById(nodeMachine.getId());

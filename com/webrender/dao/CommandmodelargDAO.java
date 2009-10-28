@@ -91,8 +91,27 @@ public class CommandmodelargDAO extends BaseHibernateDAO {
 		}
 	}
 
-	public List findByArgName(Object argName) {
-		return findByProperty(ARG_NAME, argName);
+	public Commandmodelarg findByArgName(Object argName,int commandModelId) throws Exception {
+//		return findByProperty(, argName);
+		try {
+			String queryString = "from Commandmodelarg as model where model."
+					+ ARG_NAME + "= ?" + " and commandmodel.commandModelId = "+ commandModelId;
+			Query queryObject = getSession().createQuery(queryString);
+			queryObject.setParameter(0, argName);
+			List list = queryObject.list();
+			if(list.size()==1) return (Commandmodelarg) list.get(0);
+			else if(list.size()==0){
+				return null;
+			}
+			else{
+				LOG.error("finding more than one Commandmodelarg instance with argName: "
+				+ argName +" commandModelId: "+commandModelId + ". Please check model error!");
+				throw new java.lang.Exception("CommandmodelargError");
+			}
+		} catch (RuntimeException re) {
+			LOG.error("find by property name failed", re);
+			throw re;
+		}
 	}
 
 	public List findByArgInstruction(Object argInstruction) {
@@ -114,7 +133,72 @@ public class CommandmodelargDAO extends BaseHibernateDAO {
 			throw re;
 		}
 	}
-
+	
+	public List findFinalArgs(Commandmodel commandModel) {
+		LOG.debug("finding findFinalArgs instances commandmodelName:" +commandModel.getCommandModelName());
+		try {
+			String queryString = "from Commandmodelarg as arg where commandmodel.commandModelId="+commandModel.getCommandModelId()+" and status.statusId= 65 ";
+			Query queryObject = getSession().createQuery(queryString);
+			return queryObject.list();
+		} catch (RuntimeException re) {
+			LOG.error("find final args failed", re);
+			throw re;
+		}
+	}
+	public Commandmodelarg findStartArg(Commandmodel commandModel){
+		LOG.debug("finding findStartArg instances commandmodelName:" +commandModel.getCommandModelName());
+		try {
+			String queryString = "from Commandmodelarg as arg where commandmodel.commandModelId="+commandModel.getCommandModelId()+" and status.statusId= 61 ";
+			Query queryObject = getSession().createQuery(queryString);
+			List list = queryObject.list();
+			if ( list.size()==1){
+				return (Commandmodelarg) list.get(0);
+			}
+			else{
+				return null;
+			}
+			
+		} catch (RuntimeException re) {
+			LOG.error("find start arg failed", re);
+			throw re;
+		}
+	}
+	public Commandmodelarg findEndArg(Commandmodel commandModel){
+		LOG.debug("finding findEndArg instances commandmodelName:" +commandModel.getCommandModelName());
+		try {
+			String queryString = "from Commandmodelarg as arg where commandmodel.commandModelId="+commandModel.getCommandModelId()+" and status.statusId= 62 ";
+			Query queryObject = getSession().createQuery(queryString);
+			List list = queryObject.list();
+			if ( list.size()==1){
+				return (Commandmodelarg) list.get(0);
+			}
+			else{
+				return null;
+			}
+			
+		} catch (RuntimeException re) {
+			LOG.error("find end arg failed", re);
+			throw re;
+		}
+	}
+	public Commandmodelarg findByArg(Commandmodel commandModel){
+		LOG.debug("finding findByArg instances commandmodelName:" +commandModel.getCommandModelName());
+		try {
+			String queryString = "from Commandmodelarg as arg where commandmodel.commandModelId="+commandModel.getCommandModelId()+" and status.statusId= 63 ";
+			Query queryObject = getSession().createQuery(queryString);
+			List list = queryObject.list();
+			if ( list.size()==1){
+				return (Commandmodelarg) list.get(0);
+			}
+			else{
+				return null;
+			}
+			
+		} catch (RuntimeException re) {
+			LOG.error("find  byArg failed", re);
+			throw re;
+		}
+	}
 	public Commandmodelarg merge(Commandmodelarg detachedInstance) {
 		LOG.debug("merging Commandmodelarg instance");
 		try {

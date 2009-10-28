@@ -78,7 +78,7 @@ public class NodeXMLConfig extends XMLConfig {
 			while(ite_Nodes.hasNext())
 			{
 				Element element = (Element)ite_Nodes.next();
-				Node node = NodeUtils.xml2bean(element);
+				Node node = (new NodeUtils()).xml2bean(element);
 				if(node==null){
 					root.getMixedContent().remove(element);
 					continue;
@@ -103,7 +103,7 @@ public class NodeXMLConfig extends XMLConfig {
 			
 			tx.commit();
 			lisNGs.remove(nodeGroup);
-			XMLOut.outputToFile(doc,file);
+			(new XMLOut()).outputToFile(doc,file);
 			LOG.debug("loadFromXML success "+file.getName());
 		}
 		catch(Exception e)

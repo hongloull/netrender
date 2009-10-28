@@ -15,7 +15,7 @@ public class TestConfig {
 			System.out.println("isDir");
 		}
 		System.out.println(GenericConfig.getInstance().getMainServer());
-		System.out.println(GenericConfig.getInstance().getStatusPort());
+		System.out.println(GenericConfig.getInstance().getRealLogPort());
 		System.out.println(GenericConfig.getInstance().getSubServer());
 	}
 }

@@ -53,11 +53,8 @@ public class CommandModelXMLConfig extends XMLConfig {
 			else{
 				element.getAttribute("commandModelName").setValue(commandModelName);
 			}
-			Commandmodel cM = CommandmodelUtils.xml2bean(element);
-			boolean newFlag = false;
-			if(cM.getCommandModelId() == null){
-				newFlag = true;
-			}
+			Commandmodel cM = (new CommandmodelUtils()).xml2bean(element);
+			
 			cMDAO.save(cM);
 //			if ( ! cM.getCommandModelId().toString().equals(  element.getAttributeValue("commandModelId") ) ){ // 保存后的CommandModelId 与XML内的Id不同。需要将数据库中ID存入XML中
 //				if (element.getAttribute("commandModelId")!=null )element.getAttribute("commandModelId").setValue(cM.getCommandModelId().toString());
@@ -69,22 +66,22 @@ public class CommandModelXMLConfig extends XMLConfig {
 			Set set_CMAs = cM.getCommandmodelargs();
 			for(int i =0;i<argsSize;i++)
 			{
-				Commandmodelarg cMArg = CommandmodelargUtils.xml2bean(lis_args.get(i),newFlag);
+				Commandmodelarg cMArg = (new CommandmodelargUtils()).xml2bean(lis_args.get(i),cM.getCommandModelId() );
 				cMArg.setCommandmodel(cM);
 				cM.getCommandmodelargs().add(cMArg);
 				cMADAO.save(cMArg);
 				set_CMAs.remove(cMArg);
-				if ( ! cMArg.getCommandModelArgId().toString().equals(  lis_args.get(i).getAttributeValue("commandModelArgId") ) ){ // 保存后的CommandModelArgId 与XML内的Id不同。需要将数据库中ID存入XML中
-					if(lis_args.get(i).getAttribute("commandModelArgId")!=null) lis_args.get(i).getAttribute("commandModelArgId").setValue(cMArg.getCommandModelArgId().toString());
-					else lis_args.get(i).addAttribute("commandModelArgId",cMArg.getCommandModelArgId().toString());
-				}
+//				if ( ! cMArg.getCommandModelArgId().toString().equals(  lis_args.get(i).getAttributeValue("commandModelArgId") ) ){ // 保存后的CommandModelArgId 与XML内的Id不同。需要将数据库中ID存入XML中
+//					if(lis_args.get(i).getAttribute("commandModelArgId")!=null) lis_args.get(i).getAttribute("commandModelArgId").setValue(cMArg.getCommandModelArgId().toString());
+//					else lis_args.get(i).addAttribute("commandModelArgId",cMArg.getCommandModelArgId().toString());
+//				}
 			}
 			Iterator ite_CMAs = set_CMAs.iterator();
 			while(ite_CMAs.hasNext()){
 				cMADAO.delete( (Commandmodelarg)ite_CMAs.next() );
 			}
 			tx.commit();
-			XMLOut.outputToFile(doc,file);
+//			XMLOut.outputToFile(doc,file);
 			lisCMs.remove(cM);
 		}
 		catch(Exception e)

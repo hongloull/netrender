@@ -38,7 +38,7 @@ public class ExecutelogDAO extends BaseHibernateDAO {
 			
 			if(transientInstance.getStatus().getStatusId()>=90){
 				//executeLog send to client;
-				String xmlExecuteLog = ExecutelogUtils.bean2XMLString(transientInstance);
+				String xmlExecuteLog = (new ExecutelogUtils()).bean2XMLString(transientInstance);
 				ExecuteLogServer.getInstance().broadCast(xmlExecuteLog);				
 			}
 		} catch (RuntimeException re) {

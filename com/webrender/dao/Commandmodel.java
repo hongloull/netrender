@@ -16,7 +16,7 @@ public class Commandmodel implements java.io.Serializable {
 	private Integer commandModelId;
 	private Status status;
 	private String commandModelName;
-	private String description;
+	private String type;
 	private Set regusers = new HashSet(0);
 	private Set commandmodelargs = new HashSet(0);
 	private Set quests = new HashSet(0);
@@ -34,11 +34,11 @@ public class Commandmodel implements java.io.Serializable {
 
 	/** full constructor */
 	public Commandmodel(Status status, String commandModelName,
-			String description, Set regusers, Set commandmodelargs,
+			String type, Set regusers, Set commandmodelargs,
 			Set quests) {
 		this.status = status;
 		this.commandModelName = commandModelName;
-		this.description = description;
+		this.type = type;
 		this.regusers = regusers;
 		this.commandmodelargs = commandmodelargs;
 		this.quests = quests;
@@ -70,12 +70,12 @@ public class Commandmodel implements java.io.Serializable {
 		this.commandModelName = commandModelName;
 	}
 
-	public String getDescription() {
-		return this.description;
+	public String getType() {
+		return this.type;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public Set getRegusers() {

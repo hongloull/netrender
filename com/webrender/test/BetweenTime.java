@@ -27,7 +27,7 @@ public class BetweenTime {
 		
 		
 		try {
-			ByteBuffer buffer = ServerMessages.createSetConfigPkt("==================");
+			ByteBuffer buffer = (new ServerMessages()).createSetConfigPkt("==================");
 			System.out.println(buffer);
 			buffer.setAutoExpand(true);
 			buffer.put((byte)16);

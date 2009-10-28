@@ -18,7 +18,7 @@ public class Command implements java.io.Serializable {
 	private Status status;
 	private Quest quest;
 	private Node node;
-	private String command;
+	private String type;
 	private Date sendTime;
 	private Set commandargs = new HashSet(0);
 	private Set executelogs = new HashSet(0);
@@ -35,12 +35,12 @@ public class Command implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public Command(Status status, Quest quest, Node node, String command,
+	public Command(Status status, Quest quest, Node node, String type,
 			Date sendTime, Set commandargs, Set executelogs) {
 		this.status = status;
 		this.quest = quest;
 		this.node = node;
-		this.command = command;
+		this.type = type;
 		this.sendTime = sendTime;
 		this.commandargs = commandargs;
 		this.executelogs = executelogs;
@@ -80,12 +80,19 @@ public class Command implements java.io.Serializable {
 		this.node = node;
 	}
 
-	public String getCommand() {
-		return this.command;
+
+	/**
+	 * @return the type
+	 */
+	public String getType() {
+		return type;
 	}
 
-	public void setCommand(String command) {
-		this.command = command;
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public Date getSendTime() {

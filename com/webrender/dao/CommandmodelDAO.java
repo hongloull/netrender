@@ -96,10 +96,6 @@ public class CommandmodelDAO extends BaseHibernateDAO {
 		return null;
 	}
 
-	public List findByDescription(Object description) {
-		return findByProperty(DESCRIPTION, description);
-	}
-
 	public List findAll() {
 		LOG.debug("finding all Commandmodel instances");
 		try {

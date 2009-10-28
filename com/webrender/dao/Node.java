@@ -17,6 +17,7 @@ public class Node implements java.io.Serializable {
 	private Status status;
 	private String nodeName;
 	private String nodeIp;
+	private Short pri;
 	private String os;
 	private String fileBase;
 	private Short coreNum;
@@ -141,5 +142,19 @@ public class Node implements java.io.Serializable {
 
 	public void setNodegroups(Set nodegroups) {
 		this.nodegroups = nodegroups;
+	}
+
+	/**
+	 * @return the pri
+	 */
+	public Short getPri() {
+		return pri;
+	}
+
+	/**
+	 * @param pri the pri to set
+	 */
+	public void setPri(Short pri) {
+		this.pri = pri;
 	}
 }

@@ -12,7 +12,7 @@ import com.webrender.logic.CalcFrame;
 
 public final class QuestUtils {
 	private static final Log LOG = LogFactory.getLog(QuestUtils.class);
-	 public static Element bean2xml(Quest quest){
+	 public Element bean2xml(Quest quest){
 		 LOG.debug("bean2xml questId"+quest.getQuestId());
 		 Element root = new Element("Quest");
 		 root.addAttribute("questId",quest.getQuestId().toString());
@@ -30,7 +30,7 @@ public final class QuestUtils {
 		 
 		 
 		 
-	 public static Quest xml2bean(Element element)
+	 public Quest xml2bean(Element element)
 	 {
 		 LOG.debug("xml2bean");
 		 Quest quest = null;
@@ -39,7 +39,6 @@ public final class QuestUtils {
 		 String maxNode = element.getAttributeValue("maxNode");
 		 String packetSize = element.getAttributeValue("packetSize");
 		 String pri = element.getAttributeValue("pri");
-		 String information = element.getAttributeValue("information");
 		 if(questId!=null)
 		 {
 			QuestDAO questDAO = new QuestDAO();
@@ -63,13 +62,12 @@ public final class QuestUtils {
 			 if(pri!=null)	quest.setPri(Short.parseShort(pri));		 
 		 }catch(NumberFormatException e){
 		 }
-		 if(information != null)	quest.setInformation(information);
 		 if(questName != null)	quest.setQuestName(questName);
 		 LOG.debug("xml2bean success questName:"+ questName);
 		 return quest;
 	 }
 	 
-	 public static Element bean2xmlWithState(Quest quest)
+	 public Element bean2xmlWithState(Quest quest)
 	 {
 		 LOG.debug("bean2xmlWithState questId:"+quest.getQuestId());
 		 QuestargDAO questargDAO = new QuestargDAO();

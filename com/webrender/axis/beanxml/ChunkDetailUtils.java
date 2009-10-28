@@ -14,10 +14,10 @@ import com.webrender.dao.ExecutelogDAO;
 
 public final class ChunkDetailUtils {
 	private   static final Log LOG = LogFactory.getLog(ChunkDetailUtils.class);
-	public static Element getElement(Command command)
+	public Element getElement(Command command)
 	{
 		int statusId = command.getStatus().getStatusId(); 
-		if ( statusId ==72 || statusId ==71)
+		if ( statusId ==72 || statusId ==71 || statusId ==70)
 		{
 			LOG.debug("getCommandChunkDetail commandId:"+command.getCommandId());
 			Element root = new Element("Detail");

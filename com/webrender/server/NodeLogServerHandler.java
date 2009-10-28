@@ -21,6 +21,7 @@ import com.webrender.remote.NodeMachineManager;
 
 public class NodeLogServerHandler extends IoHandlerAdapter {
 	private static final Log LOG = LogFactory.getLog(NodeLogServerHandler.class);
+	private ServerMessages serverMessages = new ServerMessages();
 	public void exceptionCaught(IoSession session, Throwable cause) {
 		  // Close connection when unexpected exception is caught.
 		cause.printStackTrace();
@@ -97,23 +98,22 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 						}else{
 							session.setAttribute("nodeId",nodeId);
 							LOG.info("nodeId:"+nodeId + " run success.");
-							NodeMachine processor = NodeMachineManager.getNodeMachine(nodeId);
+							NodeMachine processor = NodeMachineManager.getInstance().getNodeMachine(nodeId);
 							processor.setSession(session);
-							session.write(ServerMessages.createConnectFlagPkt(nodeId));					
+							session.write(serverMessages.createConnectFlagPkt(nodeId));					
 						}
 					}
 					else if (EOPCODES.getInstance().get("N_GETSERVERSTATUS").getId()== opCode){
 						lastBuffer.get(); // 后面跟了00 需要读取
-						session.write(ServerMessages.createServerStatusPkt());
+						session.write(serverMessages.createServerStatusPkt());
 					}
 					else if(nodeId !=null && nodeId !=0){
-						ByteBuffer remainBuffer = handler.parseClientPacket(EOPCODES.getInstance().get(opCode),lastBuffer,NodeMachineManager.getNodeMachine(nodeId));
+						ByteBuffer remainBuffer = handler.parseClientPacket(EOPCODES.getInstance().get(opCode),lastBuffer,NodeMachineManager.getInstance().getNodeMachine(nodeId));
 						if(remainBuffer !=null){ // 还有未结束的数据包
 							session.setAttribute("HalfPacket",remainBuffer);
 						}
 					}
 					else{
-						
 						LOG.error("messageReceived nodeId error:"+nodeId);
 					}	
 					
@@ -195,7 +195,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 		Integer  nodeId = (Integer)session.getAttribute("nodeId");
 		if(nodeId!=null){
 			LOG.info("NodeId:"+nodeId+" connect close.");
-			NodeMachineManager.getNodeMachine(nodeId).setSession(null);
+			NodeMachineManager.getInstance().getNodeMachine(nodeId).setSession(null);
 		}
 		HibernateSessionFactory.closeSession();
 	}

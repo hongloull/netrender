@@ -6,7 +6,7 @@ import com.webrender.dao.Reguser;
 import com.webrender.dao.ReguserDAO;
 
 public class LoginValidate {
-	public static Reguser check(String regName,String passWord)
+	public Reguser check(String regName,String passWord)
 	{
 		ReguserDAO regDAO = new ReguserDAO();
 		Reguser reguser = regDAO.findByRegName(regName);

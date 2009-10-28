@@ -23,7 +23,7 @@ public class UserLogin extends BaseAxis {
 	{
 		if( check()==false ) return "OutOfDate";
 		try{
-			Reguser loginReguser = LoginValidate.check(regName,passWord);
+			Reguser loginReguser = (new LoginValidate()).check(regName,passWord);
 			if(loginReguser != null)
 			{
 				MessageContext mc = MessageContext.getCurrentContext();
@@ -46,7 +46,7 @@ public class UserLogin extends BaseAxis {
 				Transaction tx = null;
 				try{
 					tx = getTransaction();
-					logOperate(regUserId,Operatelog.LOGIN,"login");
+					logOperate(regUserId,Operatelog.LOGIN,regName+" login");
 					tx.commit();
 				}catch(Exception e){
 					if(tx!=null){
@@ -58,12 +58,12 @@ public class UserLogin extends BaseAxis {
 			}
 			else
 			{
-				return BaseAxis.ACTIONFAILURE;
+				return BaseAxis.ACTIONFAILURE+"regName password error";
 			}
 			
 		}catch(Exception e)
 		{
-			return BaseAxis.ACTIONFAILURE;
+			return BaseAxis.ACTIONFAILURE+e.getMessage();
 		}finally{
 			closeSession();
 		}

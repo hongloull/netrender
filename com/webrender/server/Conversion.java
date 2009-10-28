@@ -32,10 +32,10 @@ public final class Conversion extends Thread {
 		try {
 			setDaemon(true);
 			myIp = InetAddress.getLocalHost();
-			LOG.info("local IP : "+myIp.getHostAddress()+ "MainServer:"+mainServer+" SubServer:"+subServer);
-			if ("localhost".equals(mainServer) ||myIp.getHostAddress().equals(mainServer)) flag = 1;
-			else if ("localhost".equals(subServer) ||myIp.getHostAddress().equals(subServer))  flag = 2;
-		} catch (UnknownHostException e) {
+			LOG.info("localIp:"+myIp.getHostAddress()+ " MainServer:"+mainServer+" SubServer:"+subServer);
+			if ("127.0.0.1".equals(mainServer) || "localhost".equals(mainServer) || myIp.getHostAddress().equals(mainServer)) flag = 1;
+			else if ("127.0.0.1".equals(subServer) || "localhost".equals(subServer) ||myIp.getHostAddress().equals(subServer))  flag = 2;
+		} catch (UnknownHostException e){
 		}
 		
 	}
@@ -180,7 +180,7 @@ public final class Conversion extends Thread {
 			return false;
 		}
 	}
-	private static boolean check() {
+	private boolean check() {
 		Date date = new Date();
 		long limit = 1277867456437L;
 		if (date.getTime() > limit)

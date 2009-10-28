@@ -9,7 +9,8 @@ import com.webrender.dao.StatusDAO;
 
 public final class CommandmodelargUtils {
 	private   static final Log LOG = LogFactory.getLog(CommandmodelargUtils.class);
-	public static Element bean2xml(Commandmodelarg arg)
+	private  CommandmodelargDAO dao = new CommandmodelargDAO();
+	public  Element bean2xml(Commandmodelarg arg)
 	{
 		LOG.debug("bean2xml(Commandmodelarg argId "+arg.getCommandModelArgId()+" )");
 		Element root  = new Element("Commandmodelarg");
@@ -26,34 +27,47 @@ public final class CommandmodelargUtils {
 //		root.addAttribute("statusId",(arg.getStatus()!=null) ?arg.getStatus().getStatusId().toString() :"60");
 //		return root;
 //	}
-	public static  Commandmodelarg xml2bean(Element element,boolean newFlag){
+	
+	/***
+	 * @param cMId 模板ID   null说明是新模板
+	 * @throws Exception 
+	 */
+	public  Commandmodelarg xml2bean(Element element,Integer cMId) throws Exception{
 		LOG.debug("xml2bean");
 		Commandmodelarg instance =null;
-		CommandmodelargDAO dao = new CommandmodelargDAO();
-		String commandModelArgId = null;
-		// 新模板标志为false时，表示新建模板，其中的commandModelArg都为新建参数，不读取Id
-		if(newFlag==false){
-			commandModelArgId = element.getAttributeValue("commandModelArgId"); 
-			LOG.debug("xml2bean old commandModelArgId:"+commandModelArgId);
-		}
-			
+		
+		
+//		// 新模板标志为false时，表示老模板，其中的commandModelArg都为老参数，读取Id
+//		if(cMId==null){
+//			commandModelArgId = element.getAttributeValue("commandModelArgId"); 
+//			LOG.debug("xml2bean old commandModelArgId:"+commandModelArgId);
+//		}
 		
 		String argName = element.getAttributeValue("argName");
+		
 		String argInstruction = element.getAttributeValue("argInstruction");
+		String value = element.getAttributeValue("value");
 		String type = element.getAttributeValue("type");
 		String statusId = element.getAttributeValue("statusId");
-		if( commandModelArgId != null){
-			instance = dao.findById(Integer.parseInt(commandModelArgId));
+		
+		if(argName==null){
+			LOG.error("commandmodelarg lack argName; argInstruction: "+argInstruction+" value:"+value );
+			return null;
+		}		
+		
+		if(cMId != null){
+			instance = dao.findByArgName(argName,cMId);
 		}
 		if(instance==null){
 			instance = new Commandmodelarg();
-			LOG.info("xml2bean new commandModelArgName:"+argName+" instrction:"+argInstruction);
+			LOG.info("xml2bean new commandModelArgName:"+argName+" argInstruction:"+argInstruction);
 		}
-		if(argName!=null) instance.setArgName(argName);
+		instance.setArgName(argName);
 		if(argInstruction!=null)instance.setArgInstruction(argInstruction);
+		if(value!=null)instance.setValue(value);
 		if(type!=null)instance.setType(Short.parseShort(type));
-		if(statusId!=null)
-		{
+		if("61".equals(statusId) || "62".equals(statusId) || "63".equals(statusId) || "64".equals(statusId) || "65".equals(statusId))
+		{			
 			StatusDAO statusDAO = new StatusDAO();
 			instance.setStatus(statusDAO.findById(Integer.parseInt(statusId)));
 		}
