@@ -15,9 +15,11 @@ import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 
+import com.webrender.config.GenericConfig;
+
 public final class NodeLogServer {
 	private static NodeLogServer instance = new NodeLogServer();
-    private static final int PORT = 10061;
+    private int PORT = GenericConfig.getInstance().getNodePort();
     private static final Log LOG = LogFactory.getLog(NodeLogServer.class);
     private IoAcceptor acceptor = new SocketAcceptor();
 //    private IoAcceptorConfig config = new SocketAcceptorConfig();

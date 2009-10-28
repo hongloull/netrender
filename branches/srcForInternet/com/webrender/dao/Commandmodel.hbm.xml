@@ -16,8 +16,8 @@
         <property name="commandModelName" type="string">
             <column name="CommandModelName" length="50" not-null="true" unique="true" />
         </property>
-        <property name="description" type="string">
-            <column name="Description" length="50" />
+        <property name="type" type="string">
+            <column name="Type" length="50" />
         </property>
         <set name="regusers" table="regusermodel" inverse="true">
             <key>

@@ -19,6 +19,7 @@ import com.webrender.dao.NodeDAO;
 import com.webrender.dao.StatusDAO;
 import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
+import com.webrender.tool.NameMap;
 
 
 
@@ -30,9 +31,10 @@ import com.webrender.remote.NodeMachineManager;
 //
 public final class ControlThreadServer extends Thread {
 	private static ControlThreadServer instance = new ControlThreadServer();
-	private static  boolean   threadStop   =   false;   
+	private  boolean   threadStop   =   false;   
 	private static final Log LOG = LogFactory.getLog(ControlThreadServer.class);
-	private static boolean noUsableNode = true;
+//	private static final String ONETOMANY = "onetomany";
+	private boolean noUsableNode = true;
 	private ControlThreadServer()
 	{
 		super();
@@ -46,19 +48,17 @@ public final class ControlThreadServer extends Thread {
 	}
 	public void run()
 	{
-//		NodeDAO nodeDAO = new NodeDAO();
-//		Iterator nodes= nodeDAO.findAll().iterator();
-//		while (nodes.hasNext())
-//		{
-//			NodeMachineManager.getNodeMachine(((Node)nodes.next() ).getNodeIp());			
-//		}
 		NodeDAO nodeDAO = new NodeDAO();
 		CommandDAO commandDAO = new CommandDAO();
 		StatusDAO statusDAO = new StatusDAO();
+		Command command = null;
+		NodeMachine nodeMachine = null;
+		Node node = null;
+		NodeMachine tempNodeMachine = null;
+		Node tempNode = null;
+		Executelog executelog = null;
 		while(true)
 		{
-//			LOG.info("ControlThreadServerRun");
-//				获取未完成的Quest ，得到相关命令，交给空闲的节点
 			if (!threadStop)
 			{
 //				根据优先级获取未完成的Quest
@@ -66,42 +66,23 @@ public final class ControlThreadServer extends Thread {
 				try
 				{
 					List<Command> waitingCommands = commandDAO.getWaitingCommands();
-//					int waitingCommandsSize = waitingCommands.size();
-//					StringBuilder commandsInfo = new StringBuilder();
-//					for(int i=0;i<waitingCommandsSize;i++){
-//						commandsInfo.append(waitingCommands.get(i).getCommandId()).append(" ");
-//					}
-//					LOG.info("WaitingCommands size: "+ waitingCommandsSize+":commandsInfo:"+commandsInfo);
-					
-					
-				//	System.out.println("CommandsSize : " + .size());
+
 					Iterator ite_Commands =waitingCommands.iterator();
 					
-					// 无待执行命令。
+					
 					if (!ite_Commands.hasNext()) 
 					{
-						// 停顿半分钟
-						sleepUpdateVersion("NoWaitingCommand",60000);
+						sleepUpdateVersion("NoWaitingCommand",30000);
 						noUsableNode = false;
-												
 					}
-					// 按序执行命令
 					while(ite_Commands.hasNext())
 					{
 						if (threadStop){
 							break;
 						}
+						command = (Command)ite_Commands.next();
 						
-						Command command = (Command)ite_Commands.next();
-						
-//					取1子命令，取1节点机 逻辑处理命令格式（考虑节点机具体参数不同）
-//					将子命令发送给该节点机	
-//					获取空闲节点机  （需要判断是否有该渲染引擎）
-						//	Iterator ite_Nodes = nodeDAO.getIdleNodes(command).iterator();//从数据库中读取状态
-						//	Iterator ite_Nodes = nodeDAO.findAll().iterator();
-					
-				
-						if(NodeMachineManager.isIdleEmpty())
+						if(NodeMachineManager.getInstance().isIdleEmpty())
 						{
 							if (threadStop){
 								break;
@@ -109,13 +90,15 @@ public final class ControlThreadServer extends Thread {
 							noUsableNode = true;
 							break;
 						}
-						NodeMachine nodeMachine = null;
-						Node node = null;
+						
 						try{
-							Object[] nodeMachines = NodeMachineManager.getIdleArray();
+							commandDAO.attachClean(command);
+							Object[] nodeMachines = NodeMachineManager.getInstance().getIdleArray();
 							int length = nodeMachines.length;
-							NodeMachine tempNodeMachine = null;
-							Node tempNode = null;
+							if(NameMap.ONETOMANY.equalsIgnoreCase( command.getType() ) ){
+								nodeMachine = NodeMachineManager.getInstance().getNodeMachine( command.getNode().getNodeId() );
+								node = command.getNode();
+							}
 							for(int i = 0 ; i<length ; i++){
 								tempNodeMachine = (NodeMachine) nodeMachines[i];
 								tempNode = nodeDAO.findById(tempNodeMachine.getId());
@@ -128,96 +111,59 @@ public final class ControlThreadServer extends Thread {
 								}
 								noUsableNode = true;
 							}
-							//  将游离的Command 变成 持久化
 						}
 						catch(Exception e){
 							LOG.error("getIdleMaichine fail",e);
 						}
-						if(nodeMachine!=null && node!=null) ///   111111111111
-						{
-//						Node node = (Node)ite_Nodes.next();
-//						NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(node.getNodeIp());
-							
-							//  将游离的Command 变成 持久化
-							commandDAO.attachClean(command);
-							
-							// 交给nodeMachine 执行 一条command
+						if(nodeMachine!=null && node!=null){ ///   111111111111
+//							commandDAO.attachClean(command);
 							boolean result = nodeMachine.execute(command);
-							if (result){
-							/*
-							 * 节点执行Command成功
-							 * 修改command状态为Inprogress 71 
-							 * 添加日志。
-							 *  成功Break 跳出寻找节点机的循环，找下一个Command
-							 *  失败一般为保存数据库出错。如 Command状态没改。可能会再执行一遍。
-							 */
-								//节点状态变成InProgress（42） &&  Command状态为InProgress（71）
+							if (result || NameMap.ONETOMANY.equalsIgnoreCase(command.getType()) ){// ONETOMANY 无论执行结果对错都算完成
 								Transaction tx = null;
 								try{
 									tx = HibernateSessionFactory.getSession().beginTransaction();
 									statusDAO = new StatusDAO();
-									//		node.setStatus(statusDAO.findById(42));
-									//		nodeDAO.attachDirty(node);
 									command.setNode(node);
 									command.setStatus(statusDAO.findById(71));
-									commandDAO.attachDirty(command);	
-									// add LOG
+									commandDAO.attachDirty(command);
 									
-									Executelog executelog = new  Executelog(command,statusDAO.findById(90),node,commandDAO.getNote(command).toString(),new Date()); 
+									if(result==true) executelog = new  Executelog(command,statusDAO.findById(90),node,commandDAO.getNote(command).toString(),new Date()); 
+									else { // onetomany 执行错误
+										command.setStatus(statusDAO.findById(72));
+										command.setSendTime(new Date());
+										executelog = new  Executelog(command,statusDAO.findById(99),node,commandDAO.getNote(command).toString(),new Date());
+									}
 									ExecutelogDAO exeDAO = new ExecutelogDAO();
 									exeDAO.save(executelog);
-									
 									tx.commit();
-									
-									LOG.debug(node.getNodeId()+" :executeOperate Success save to database");
-									//	HibernateSessionFactory.closeSession();
-									//	System.out.println ("发送成功：closeSession : " + nodeDAO.getIdleNodes(command).size() );
-									
+									LOG.debug(node.getNodeId()+" :executeOperate Success save to database");									
 								}
-								catch(Exception e)
-								{
+								catch(Exception e){
 									LOG.error("save commandStatus fail",e);
-									if (tx != null) 
-									{
+									if (tx != null){
 										tx.rollback();
 									}
-									
-								}finally
-								{
+								}finally{
 									HibernateSessionFactory.closeSession();
 								}
-								//跳出此循环，分发下一个命令
-								break;
+								break; //跳出此循环，分发下一个命令
 							}
-							else 
-							{
-								/*
-								 * 发送错误。添加出错日志
-								 * 保存后，使用Continue交给下个节点继续执行该Command
-								 */
+							else{
 								Transaction tx = null;
 								try{
 									tx = HibernateSessionFactory.getSession().beginTransaction();
 									statusDAO = new StatusDAO();
-									//		node.setStatus(statusDAO.findById(44)); //disconnect
-									//		nodeDAO.attachDirty(node);	
-									Executelog executelog = new  Executelog(command,statusDAO.findById(99),node,"SendError: " +commandDAO.getNote(command),new Date()); 
+									executelog = new  Executelog(command,statusDAO.findById(99),node,"SendError: " +commandDAO.getNote(command),new Date()); 
 									ExecutelogDAO exeDAO = new ExecutelogDAO();
 									exeDAO.save(executelog);
 									tx.commit();
 									LOG.debug(node.getNodeId()+" :executeOperate fail  save to database");
-									//		HibernateSessionFactory.closeSession();
-									//	System.out.println (" 发送错误 : closeSession : " + nodeDAO.getIdleNodes(command).size() );
-									
-								}
-								catch(Exception e)
-								{
-									LOG.error("", e);
-									if (tx != null) 
-									{
+									}
+								catch(Exception e){
+									LOG.error("save senderror event fail.", e);
+									if (tx != null){
 										tx.rollback();
 									}
-									// kill command
 								}finally{
 									HibernateSessionFactory.closeSession();
 								}

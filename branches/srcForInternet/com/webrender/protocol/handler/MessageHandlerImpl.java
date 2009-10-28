@@ -37,8 +37,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			ArrayList<String> datas = new ArrayList<String>();
 			
 			int headLength = (int)packet.get();
-			if(headLength==0 ){ // 无参数
-				
+			if(headLength==0 ){  // 无参数
 				processor.execute(code, new byte[0], datas);
 				return null;
 			}
@@ -69,13 +68,12 @@ public class MessageHandlerImpl implements MessageHandler {
 //					LOG.info(new String(bytes,"UTF-16"));
 					String data = new String(bytes);
 					datas.add(data);
-					
 					break;
 				}	
 			}
 			fmts.flip();
 			byte[] byteFmts = new byte[fmts.limit()];
-			fmts.get(byteFmts);				
+			fmts.get(byteFmts);
 			processor.execute(code, byteFmts, datas);
 			return null;
 		} catch (java.nio.BufferUnderflowException e) {
@@ -141,7 +139,7 @@ public class MessageHandlerImpl implements MessageHandler {
 				mapName = new String(name);
 				e.printStackTrace();
 			}
-			NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(nodeId);
+			NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(nodeId);
 			if( nodeMachine != null && nodeMachine.isConnect()==true){
 //				已经有nodeId节点连接到服务器上了。需要重新分配
 				nodeId=0;

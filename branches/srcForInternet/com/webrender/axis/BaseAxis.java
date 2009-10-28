@@ -17,10 +17,10 @@ import com.webrender.dao.ReguserDAO;
 
 public abstract class BaseAxis {
 	private   static final Log LOG = LogFactory.getLog(BaseAxis.class);
-	protected static final String NOTLOGIN = "Please log in first.";
+	protected static final String NOTLOGIN = "Failure:Please log in first.";
 	protected static final String ACTIONSUCCESS = "Success";
-	protected static final String ACTIONFAILURE = "Failure";	
-	protected static final String RIGHTERROR = "NoRight";
+	protected static final String ACTIONFAILURE = "Failure ";	
+	protected static final String RIGHTERROR = "Failure: NoRight";
 	/**
 	 * 查看登录用户ID
 	 * @return ReguserId 0为未登录

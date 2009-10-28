@@ -25,8 +25,8 @@
         <property name="questName" type="string">
             <column name="QuestName" length="50" not-null="true"/>
         </property>
-        <property name="information" type="string">
-            <column name="Information" />
+        <property name="preLight" type="string">
+            <column name="PreLight" length="65535" />
         </property>
         <property name="pri" type="java.lang.Short">
             <column name="PRI" not-null="true" />

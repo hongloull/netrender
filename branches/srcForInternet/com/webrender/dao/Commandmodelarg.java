@@ -18,6 +18,7 @@ public class Commandmodelarg implements java.io.Serializable {
 	private Commandmodel commandmodel;
 	private String argName;
 	private String argInstruction;
+	private String value; 
 	private Short type;
 	private Set commandargs = new HashSet(0);
 	private Set questargs = new HashSet(0);
@@ -111,6 +112,20 @@ public class Commandmodelarg implements java.io.Serializable {
 
 	public void setQuestargs(Set questargs) {
 		this.questargs = questargs;
+	}
+
+	/**
+	 * @return the value
+	 */
+	public String getValue() {
+		return value;
+	}
+
+	/**
+	 * @param value the value to set
+	 */
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 }

@@ -12,6 +12,7 @@ public class XMLConfigFactory {
 //			throw new java.io.IOException("Not XML");
 //		}
 		String pojoName = file.getParentFile().getName();
+//		(XMLConfig) Class.forName(pojoName).newInstance();   
 		if(pojoName.equalsIgnoreCase("templates")){
 			XMLConfig instance=new CommandModelXMLConfig();
 			return instance;
@@ -24,19 +25,18 @@ public class XMLConfigFactory {
 			XMLConfig instance = new UserXMLConfig();
 			return instance;
 		}
-		if(pojoName.equalsIgnoreCase("right")){
-			if(fileName.equalsIgnoreCase("right.xml")){
-				XMLConfig instance = new RightXMLConfig();				
-				return instance;
-			}
-		}
+//		if(pojoName.equalsIgnoreCase("right")){
+//			if(fileName.equalsIgnoreCase("right.xml")){
+//				XMLConfig instance = new RightXMLConfig();				
+//				return instance;
+//			}
+//		}
 //		if(pojoName.equalsIgnoreCase("protocol")){
 //			if(fileName.equalsIgnoreCase("head.xml")){
 //				XMLConfig instance = new HeadXMLConfig();
 //				return instance;
 //			}
-//		}
-		
+//		}		
 		return null;
 	}
 	

@@ -17,6 +17,7 @@ import org.jdom.input.SAXBuilder;
 
 import com.webrender.axis.beanxml.NodeUtils;
 import com.webrender.axis.beanxml.XMLOut;
+import com.webrender.axis.operate.PoolOperateImpl;
 import com.webrender.config.GenericConfig;
 import com.webrender.config.NodeXMLConfig;
 import com.webrender.dao.Node;
@@ -37,205 +38,38 @@ public class PoolOperate extends BaseAxis {
 		
 		if (  !this.canVisit(0) ) return BaseAxis.RIGHTERROR;
 		
-		LOG.debug("addPool :"+name);
-		Transaction tx = null;
-		try{
-			NodegroupDAO nGDAO = new NodegroupDAO();
-			Nodegroup pool = nGDAO.findByNodeGroupName(name);
-			if(pool != null){
-				return "PoolExistError";
-			}
-			
-			String defConfig = GenericConfig.getInstance().getFile("nodes/default");
-			File defFile = new File(defConfig);
-			if(!defFile.exists() || !defFile.canRead() ){
-				return "PoolConfigNotExistError";
-			}
-			String poolFile = GenericConfig.getInstance().getFile("nodes/"+name+".xml");
-			
-			try{
-				FileCopy.copy(defConfig,poolFile);
-				File file_Pool = new File(poolFile);
-				if(file_Pool.exists()){
-					NodeXMLConfig loadConfig = new NodeXMLConfig();
-					loadConfig.loadFromXML(file_Pool);
-					tx = getTransaction();
-					logOperate(getLoginUserId(),Operatelog.ADD,"AddPool:"+name);
-					tx.commit();
-				}
-			}catch(IOException e){
-				LOG.error("addPool fail: DefaultFileCopyError",e);
-				return "DefaultFileCopyError";
-			}catch (JDOMException e) {
-				LOG.error("addUser fail: DefaultFileParseError", e);
-				return "DefaultFileParseError";
-			}
-			return BaseAxis.ACTIONSUCCESS;
-		}catch(Exception e){
-			if(tx!=null){
-				tx.rollback();
-			}
-			LOG.error("addPool fail",e);
-			return BaseAxis.ACTIONFAILURE;
-		}finally{
-			this.closeSession();
-		}
+		return (new PoolOperateImpl()).addPool(name,this.getLoginUserId());
 	}
 	
 	public String modPool(String name ,String questXML){
 		
 		if (  !this.canVisit(0) ) return BaseAxis.RIGHTERROR;
 		
-		LOG.debug("modPoolConfig: "+name);
-		Transaction tx = null;
-		try{			
-			String poolFile = GenericConfig.getInstance().getFile("nodes/"+name+".xml");
-			File file = new File(poolFile);
-			if(!file.exists()) return "PoolFileNotExistError";
-			if(!file.canWrite()) return "PoolFileReadOnlyError";
-			SAXBuilder builder = new SAXBuilder();
-			InputStream inputStream = new ByteArrayInputStream(questXML.getBytes());			
-			Document doc = builder.build(inputStream);
-			XMLOut.outputToFile(doc, file);
-			NodeXMLConfig loadConfig = new NodeXMLConfig();
-			loadConfig.loadFromXML(file);
-			tx = getTransaction();
-			logOperate(getLoginUserId(),Operatelog.MOD,"ModPool:"+name);
-			tx.commit();
-			return BaseAxis.ACTIONSUCCESS;
-		}catch(JDOMException e){
-			LOG.warn("modPool fail: XMLParseError name: "+name);
-			return "XMLParseError";
-		}catch(Exception e){
-			if(tx!=null){
-				tx.rollback();
-			}
-			LOG.error("modPool fail name: "+name,e);
-			return BaseAxis.ACTIONFAILURE;
-		}finally{
-			this.closeSession();
-		}
+		return (new PoolOperateImpl()).modPool(name, questXML, this.getLoginUserId());
 	}
 	
 	public String getPoolConfig(String name){
 		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
-		
-		LOG.debug("getPoolConfig: "+name);
-		try{
-			String poolFile = GenericConfig.getInstance().getFile("nodes/"+name+".xml");
-			File file = new File(poolFile);
-			if( !file.exists() ) return "PoolNotExistError";
-			
-			SAXBuilder sb =  new SAXBuilder();
-			Document document = null;
-			document = sb.build(file);			
-			return XMLOut.outputToString(document);
-		}catch(Exception e){
-			LOG.error("getPoolConfig fail poolName: "+name,e);
-			return BaseAxis.ACTIONFAILURE;
-		}finally{
-			this.closeSession();
-		}
+		return (new PoolOperateImpl()).getPoolConfig(name);
 	}
 	
 	public String delPool(String name){
 		if (  !this.canVisit(0) ) return BaseAxis.RIGHTERROR;
 		
-		LOG.debug("delPool: " +name);
-		try{
-			if(name.equalsIgnoreCase("All") ) return "DelPoolAllError";
-			NodegroupDAO nGDAO = new NodegroupDAO();
-			Nodegroup pool = nGDAO.findByNodeGroupName(name);
-			if(pool==null ) return "PoolNotExistError";
-			String poolFile = GenericConfig.getInstance().getFile("nodes/"+name+".xml");
-			File file_Pool = new File(poolFile);
-			boolean result = file_Pool.delete();
-			if(file_Pool.exists() && result == false){
-				return "Del"+name+"FileError";
-			}else{
-				Transaction tx =null;
-				try{
-					tx = getTransaction();
-					nGDAO.delete(pool);
-					logOperate(getLoginUserId(),Operatelog.DEL,"DelPool:"+name);
-					tx.commit();
-					LOG.debug("delPool success");
-					return BaseAxis.ACTIONSUCCESS;
-				}catch(Exception e){
-					if(tx!=null){
-						tx.rollback();
-					}
-					LOG.error("delPool from database fail",e);
-					return "Del"+name+"FromDBError";
-				}
-			}
-		}catch(Exception e){
-			return BaseAxis.ACTIONFAILURE;
-		}finally{
-			this.closeSession();
-		}
+		return (new PoolOperateImpl()).delPool(name, this.getLoginUserId());
 	}
 	
 	public String getPools()
 	{
-		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
-		
-		LOG.debug("getPools");
-		try{
-			int regUserId = this.getLoginUserId();
-			ReguserDAO regUserDAO = new ReguserDAO();
-			Reguser regUser = regUserDAO.findById(regUserId);
-			if(regUser==null) return RIGHTERROR;			
-			Iterator<Nodegroup> ite_Pools = null;
-			if(canVisit(0)){
-				ite_Pools = ( new NodegroupDAO() ).findAll().iterator(); 
-			}else{
-				ite_Pools = regUser.getNodegroups().iterator();				
-			}
-			Element root = new Element("Pools");
-			Document doc = new Document(root);
-			while (ite_Pools.hasNext()) {
-				Nodegroup pool = ite_Pools.next();
-				Element element = new Element("Pool");
-				element.addAttribute("name", pool.getNodeGroupName());
-				root.addContent(element);
-			}
-			LOG.debug("getPools success");
-			return XMLOut.outputToString(doc);
-		} catch (Exception e) {
-			return BaseAxis.ACTIONFAILURE;
-		}finally{
-			this.closeSession();
-		}
+		int regUserId = this.getLoginUserId();
+		if ( regUserId ==0 )	return BaseAxis.NOTLOGIN;
+		return (new PoolOperateImpl()).getPools(regUserId, this.canVisit(0));
 	}
 	
 	public String getNodes(){
 		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
 		
-		LOG.debug("getNodes");
-		try{
-			Element root = new Element("Nodes");
-			Document doc = new Document(root);
-//			Collection machines = NodeMachineManager.getNodeMachines();
-			NodeDAO nodeDAO = new NodeDAO();
-			Element element = null;
-			Iterator ite_Nodes = nodeDAO.findAll().iterator();
-			while(ite_Nodes.hasNext()){
-				Node node = (Node) ite_Nodes.next();
-				NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(node.getNodeId());
-				if ( nodeMachine.isConnect() ){
-					root.addContent(NodeUtils.bean2xml(node));
-				}
-			}
-			String result = XMLOut.outputToString(doc);
-			LOG.debug("getNodes success");
-			return result;
-		}catch(Exception e){
-			LOG.error("getNodes fail",e);
-			return null;
-		}finally{
-			this.closeSession();
+		return (new PoolOperateImpl()).getNodes();
 		}
-	}
 	
 }

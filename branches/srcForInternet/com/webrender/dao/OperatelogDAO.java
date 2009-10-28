@@ -33,7 +33,7 @@ public class OperatelogDAO extends BaseHibernateDAO {
 		try {
 			getSession().save(transientInstance);
 			LOG.debug("save successful");
-			String xmlLog = OperatelogUtils.bean2XMLString(transientInstance);
+			String xmlLog = (new OperatelogUtils()).bean2XMLString(transientInstance);
 			ExecuteLogServer.getInstance().broadCast(xmlLog);	
 		} catch (RuntimeException re) {
 			LOG.error("save failed", re);

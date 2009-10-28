@@ -18,7 +18,7 @@ public class Quest implements java.io.Serializable {
 	private Nodegroup nodegroup;
 	private Reguser reguser;
 	private String questName;
-	private String information;
+	private String preLight;
 	private Short pri;
 	private Date commitTime;
 	private Integer maxNodes;
@@ -44,7 +44,7 @@ public class Quest implements java.io.Serializable {
 
 	/** full constructor */
 	public Quest(Status status, Commandmodel commandmodel,Nodegroup nodegroup, Reguser reguser,
-			String questName, String information, Short pri,
+			String questName, String preLight, Short pri,
 			Date commitTime, Integer maxNodes, Short packetSize,
 			Set commands, Set questargs) {
 		this.status = status;
@@ -52,7 +52,7 @@ public class Quest implements java.io.Serializable {
 		this.nodegroup = nodegroup;
 		this.reguser = reguser;
 		this.questName = questName;
-		this.information = information;
+		this.preLight = preLight;
 		this.pri = pri;
 		this.commitTime = commitTime;
 		this.maxNodes = maxNodes;
@@ -103,12 +103,20 @@ public class Quest implements java.io.Serializable {
 		this.questName = questName;
 	}
 
-	public String getInformation() {
-		return this.information;
+
+
+	/**
+	 * @return the preLight
+	 */
+	public String getPreLight() {
+		return preLight;
 	}
 
-	public void setInformation(String information) {
-		this.information = information;
+	/**
+	 * @param preLight the preLight to set
+	 */
+	public void setPreLight(String preLight) {
+		this.preLight = preLight;
 	}
 
 	public Short getPri() {

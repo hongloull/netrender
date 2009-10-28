@@ -22,6 +22,8 @@ public class ConnectTest extends Thread {
 		while(true){
 			try {
 				nodeMachine.testStatus();
+//				LOG.info("sendPathConfigTonode "+nodeMachine.getId());
+//				nodeMachine.sendPathCongfigToNode();
 				Thread.sleep(20000);
 			} catch (InterruptedException e) {
 			}

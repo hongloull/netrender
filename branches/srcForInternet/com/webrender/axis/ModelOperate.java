@@ -5,6 +5,7 @@ import java.util.Iterator;
 import com.webrender.axis.beanxml.CommandmodelUtils;
 import com.webrender.axis.beanxml.CommandmodelargUtils;
 import com.webrender.axis.beanxml.XMLOut;
+import com.webrender.axis.operate.ModelOperateImpl;
 import com.webrender.dao.Commandmodel;
 import com.webrender.dao.CommandmodelDAO;
 import com.webrender.dao.Commandmodelarg;
@@ -26,31 +27,9 @@ public class ModelOperate extends BaseAxis {
 	 */
 	public String getModel(String commandModelId)
 	{
-		// 权限判断
 		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
 		
-		LOG.debug("getCommandModel");
-		try {
-			CommandmodelDAO cMDAO = new CommandmodelDAO();
-			Commandmodel cm = cMDAO.findById(Integer.parseInt(commandModelId));
-			Element root = CommandmodelUtils.bean2xml(cm);
-			Document doc = new Document(root);
-			Iterator ite_CMA = cm.getCommandmodelargs().iterator();
-			while (ite_CMA.hasNext()) {
-				Commandmodelarg cma = (Commandmodelarg) ite_CMA.next();
-				Element ele_CMA = CommandmodelargUtils.bean2xml(cma);
-				root.addContent(ele_CMA);
-			}
-			LOG.debug("getCommandModel success");
-			return XMLOut.outputToString(doc);
-		}catch(Exception e)
-		{
-			LOG.error("getCommandModel error",e);
-			return BaseAxis.ACTIONFAILURE;
-		}finally
-		{
-			this.closeSession();
-		}
+		return (new ModelOperateImpl()).getModel(commandModelId);
 	}
 	
 	/**
@@ -59,36 +38,9 @@ public class ModelOperate extends BaseAxis {
 	 */
 	public String getModels()
 	{
-		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+		int regUserId = this.getLoginUserId();
+		if ( regUserId == 0 )	return BaseAxis.NOTLOGIN;
 
-		LOG.debug("getCommandModels");
-		try{
-			
-			int regUserId = this.getLoginUserId();
-			ReguserDAO regUserDAO = new ReguserDAO();
-			Reguser regUser = regUserDAO.findById(regUserId);
-			if(regUser==null) return RIGHTERROR;
-			
-			Element root = new Element("Commandmodels");
-			Document doc = new Document(root);
-			
-			Iterator ite_CMS = (new CommandmodelDAO()).findAll().iterator(); 
-				
-			
-			while(ite_CMS.hasNext())
-			{
-				Commandmodel cM = (Commandmodel)ite_CMS.next();
-				root.addContent(CommandmodelUtils.bean2xml(cM));
-			}
-			LOG.debug("getCommandModels success");
-			return XMLOut.outputToString(doc);
-		}catch(Exception e)
-		{
-			LOG.error("getCommandModels failure",e);
-			return BaseAxis.ACTIONFAILURE;
-		}finally
-		{
-			this.closeSession();
-		}
+		return (new ModelOperateImpl()).getModels(regUserId);
 	}
 }

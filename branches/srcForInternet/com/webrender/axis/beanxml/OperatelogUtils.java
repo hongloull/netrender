@@ -12,7 +12,7 @@ import com.webrender.dao.Operatelog;
 
 public final class OperatelogUtils {
 	private static final Log LOG = LogFactory.getLog(OperatelogUtils.class);
-	public static Element bean2xml(Operatelog opeLog){
+	public Element bean2xml(Operatelog opeLog){
 		LOG.debug("bean2xml For Event operateLogId:"+ opeLog.getOperateLogId());
 		Element root = new Element("Event");
 		SimpleDateFormat dateFormat =new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -35,10 +35,10 @@ public final class OperatelogUtils {
 		LOG.debug("bean2xml For Event success operateLogId:"+ opeLog.getOperateLogId());
 		return root;
 	}
-	public static String bean2XMLString(Operatelog opeLog){
+	public String bean2XMLString(Operatelog opeLog){
 		Element element = bean2xml(opeLog);
 		Document doc = new Document(element);
 		LOG.debug("bean2XMLString success");
-		return XMLOut.outputToString(doc);
+		return (new XMLOut()).outputToString(doc);
 	}
 }

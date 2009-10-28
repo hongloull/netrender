@@ -91,10 +91,6 @@ public class CommandDAO extends BaseHibernateDAO {
 		}
 	}
 
-	public List findByCommand(Object command) {
-		return findByProperty(COMMAND, command);
-	}
-
 	public List findAll() {
 		LOG.debug("finding all Command instances");
 		try {
@@ -149,7 +145,7 @@ public class CommandDAO extends BaseHibernateDAO {
 		LOG.debug("getWaitingCommands ");
 		try
 		{
-			return getSession().createQuery("from Command as command where command.status.statusId=70 and command.quest.status.statusId=50 order by command.quest.pri desc , command.commandId asc").list();
+			return getSession().createQuery("from Command as command where command.status.statusId =70 and command.quest.status.statusId=50 order by command.quest.pri desc , command.commandId asc").list();
 			
 		}catch(RuntimeException re){
 			LOG.error("getWaitingCommands failed",re);
@@ -260,8 +256,12 @@ public class CommandDAO extends BaseHibernateDAO {
 	
 	public String getNote(Command command){
 		LOG.debug("getNote commandId: "+command.getCommandId());
+		StringBuffer note = new StringBuffer();
+		note.append(command.getQuest().getQuestId()).append(".").append(command.getCommandId()).append(".").append(command.getQuest().getQuestName()).append(":");
+		if( "GETFRAME".equals(command.getType()) ){
+			note.append("get frame info. ");
+		}
 		Iterator<Commandarg> ite_Args = command.getCommandargs().iterator();
-		StringBuffer note = new StringBuffer(command.getQuest().getQuestName()+":");
 		while(ite_Args.hasNext()){
 			Commandarg arg = ite_Args.next();
 			note.append(" ").append(arg.getCommandmodelarg().getArgName()).append(" ").append(arg.getValue()).append(" ");

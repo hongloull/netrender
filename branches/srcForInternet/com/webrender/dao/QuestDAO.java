@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -194,10 +195,24 @@ public class QuestDAO extends BaseHibernateDAO {
 		LOG.debug("reinitQuest questId:"+instance.getQuestId());
 		try {
 			CommandDAO commandDAO = new CommandDAO();
+			Set set_Commands = instance.getCommands();
 			Iterator ite_Commands = instance.getCommands().iterator();
 			while(ite_Commands.hasNext())
 			{
-				commandDAO.reinitCommand( (Command)ite_Commands.next() );				
+				Command command =  (Command)ite_Commands.next();
+				commandDAO.reinitCommand(command);
+				if("GETFRAME".equals(command.getType())){
+					try {
+						LOG.debug("del quest commands  questId:"+instance.getQuestId());
+						Connection con = getSession().connection();
+						Statement state = con.createStatement();
+						state.execute("DELETE FROM command WHERE ( Type is NULL or Type <> 'GETFRAME' ) and QuestID ="+ instance.getQuestId());
+					} catch (SQLException e) {
+						LOG.error("Del questId "+instance.getQuestId()+"'s commands fail.",e);
+					}
+					break;
+				}
+				
 			}
 			
 			LOG.debug("reinitQuest successful questId:"+instance.getQuestId());
@@ -279,6 +294,38 @@ public class QuestDAO extends BaseHibernateDAO {
 		} catch (SQLException e) {
 			LOG.error("delQuestRel",e);
 		}	
+	}
+	public Quest getQuestWithFrameInfo(Quest quest,String startFrame,String endFrame,String byFrame){
+		CommandmodelargDAO cMADAO = new CommandmodelargDAO();
+		
+		QuestargDAO questArgDAO = new QuestargDAO();
+		
+		if(questArgDAO.getStartFrame(quest)==null){
+			Questarg startArg = new Questarg();
+			startArg.setCommandmodelarg(cMADAO.findStartArg(quest.getCommandmodel()));
+			startArg.setValue(startFrame);
+			startArg.setQuest(quest);
+			quest.getQuestargs().add(startArg);			
+			
+		}
+		
+		if(questArgDAO.getEndFrame(quest)==null){
+			Questarg endArg = new Questarg();
+			endArg.setCommandmodelarg(cMADAO.findEndArg(quest.getCommandmodel()));
+			endArg.setValue(endFrame);
+			endArg.setQuest(quest);
+			quest.getQuestargs().add(endArg);			
+		}
+		
+		if(questArgDAO.getByFrame(quest)==null){
+			Questarg byArg = new Questarg();
+			byArg.setCommandmodelarg(cMADAO.findByArg(quest.getCommandmodel()));
+			byArg.setValue(byFrame);
+			byArg.setQuest(quest);
+			quest.getQuestargs().add(byArg);			
+		}
+		
+		return quest;
 	}
 
 	

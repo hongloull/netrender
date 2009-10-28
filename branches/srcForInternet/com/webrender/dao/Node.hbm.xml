@@ -19,6 +19,9 @@
         <property name="nodeIp" type="string">
             <column name="NodeIP" length="20" />
         </property>
+        <property name="pri" type="java.lang.Short">
+            <column name="PRI" not-null="true" />
+        </property>
         <property name="os" type="string">
             <column name="OS" length="20" />
         </property>

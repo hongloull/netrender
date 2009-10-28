@@ -6,38 +6,44 @@ import com.webrender.protocol.enumn.EOPCODES.CODE;
 import com.webrender.server.Conversion;
 
 public class ServerMessages {
-	public static ByteBuffer createCommandPkt(Integer commandId, String cmdString) throws Exception{
-		char[] fmt = {'i','s'};
-		String[] datas = {commandId.toString(),cmdString};
+	public ByteBuffer createCommandPkt(CODE commandType,Integer commandId, String cmdString) throws Exception{
+		char[] fmt = {'b','i','s'};
+		String[] datas = {(char)commandType.getId()+"",commandId.toString(),cmdString};
 		return createPkt(EOPCODES.getInstance().get("S_COMMAND"),fmt,datas);
 	}
-	public static ByteBuffer createSystemPkt(CODE code) throws Exception{
+	public ByteBuffer createSystemPkt(CODE code) throws Exception{
 		char[] fmt = {'b'};
 		String[] datas = {(char)code.getId()+""};
 		return createPkt(EOPCODES.getInstance().get("S_SYSTEM"),fmt,datas);
 	}
-	public static ByteBuffer createStatusPkt() throws Exception{
+	public ByteBuffer createPathConfigPkt(String pathConfig) throws Exception{
+		char[] fmt = {'s'};
+		String[] datas = {pathConfig};
+		return createPkt(EOPCODES.getInstance().get("S_PATHCONFIG"),fmt,datas);
+		
+	}
+	public ByteBuffer createStatusPkt() throws Exception{
 		return createPkt(EOPCODES.getInstance().get("S_GETSTATUS"), null, null);
 	}
-	public static ByteBuffer createConnectFlagPkt(Integer nodeId) throws Exception{
+	public ByteBuffer createConnectFlagPkt(Integer nodeId) throws Exception{
 		char[] fmt = {'i'};
 		String[] datas = {nodeId.toString()};
 		return createPkt(EOPCODES.getInstance().get("S_SETNODEID"),fmt,datas);
 	}
-	public static ByteBuffer createWantConfigPkt() throws Exception{
+	public ByteBuffer createWantConfigPkt() throws Exception{
 		return createPkt(EOPCODES.getInstance().get("S_GETCONFIG"), null, null);
 	}
-	public static ByteBuffer createSetConfigPkt(String config) throws Exception {
+	public ByteBuffer createSetConfigPkt(String config) throws Exception {
 		char[] fmt = {'s'};
 		String[] datas = {config};
 		return createPkt(EOPCODES.getInstance().get("S_SETCONFIG"),fmt,datas);
 	}
-	public static ByteBuffer createServerStatusPkt() throws Exception {
+	public ByteBuffer createServerStatusPkt() throws Exception {
 		char[] fmt = {'b'};
 		String[] datas = {(char)Conversion.getInstance().getStatus().getId()+""};
 		return createPkt(EOPCODES.getInstance().get("S_SERVERSTATUS"),fmt,datas);
 	}
-	public static ByteBuffer createErrorPkt(String message) throws Exception{
+	public ByteBuffer createErrorPkt(String message) throws Exception{
 		char[] fmt = {'s'};
 		String[] datas = {message};
 		return createPkt(EOPCODES.getInstance().get("S_ERROR"),fmt,datas);
@@ -58,7 +64,7 @@ public class ServerMessages {
 	 * @return
 	 * @throws Exception
 	 */
-	public static ByteBuffer createPkt(CODE code,char[] fmts,String[] data ) throws Exception{
+	public ByteBuffer createPkt(CODE code,char[] fmts,String[] data ) throws Exception{
 		//只传CODE时，无参。
 		if(fmts == null || fmts.length==0){
 			byte[] bytes = new byte[1];

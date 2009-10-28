@@ -10,7 +10,7 @@ import org.jdom.output.XMLOutputter;
 public final class XMLOut {
 	
 	
-	public static String outputToString(Document document)
+	public String outputToString(Document document)
 	{
 //	  ByteArrayOutputStream byteRep=new ByteArrayOutputStream();
 	  XMLOutputter docWriter=new XMLOutputter(null,false,"UTF8");
@@ -28,7 +28,7 @@ public final class XMLOut {
 	  }
  	}
 	
-	public static void outputToFile(Document doc ,File file){
+	public void outputToFile(Document doc ,File file){
 		XMLOutputter docWriter=new XMLOutputter(null,false,"UTF8");
 		  docWriter.setEncoding("UTF8");
 		  try

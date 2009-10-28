@@ -1,7 +1,7 @@
 package com.webrender.tool;
 
 public class StrOperate {
-	private   static   String   StrReplace(String   rStr,   String   rFix,   String   rRep)   
+	private   String   StrReplace(String   rStr,   String   rFix,   String   rRep)   
     {   
         int   l   =   0;   
         String   gRtnStr   =   rStr;   
@@ -16,7 +16,7 @@ public class StrOperate {
         return   gRtnStr.substring(0,   gRtnStr.length());   
     }
 	
-	public static String pathReplace(String   rStr,   String   rFix,   String   rRep)
+	public String pathReplace(String   rStr,   String   rFix,   String   rRep)
 	{
 		if ( rFix.endsWith("\\") || rFix.endsWith("/") )
 		{
@@ -29,11 +29,11 @@ public class StrOperate {
 		String result = StrReplace(rStr,rFix,rRep);
 		return toUnixPath(result);
 	}
-	private  static String toUnixPath(String filePath) {
+	private  String toUnixPath(String filePath) {
 	    return filePath.replace('\\', '/');
 	}
 	public static void main(String args[])
 	{
-		System.out.println( StrOperate.pathReplace("/mnt/production/project/a.mb", "/mnt/production","D:\\") );
+//		System.out.println( StrOperate.pathReplace("/mnt/production/project/a.mb", "/mnt/production","D:\\") );
 	}
 }

@@ -20,6 +20,6 @@ public class TestServerMessageCreate {
 	
 	@Test
 	public void testCreateCommandPkt() throws Exception{
-		System.out.println( ServerMessages.createCommandPkt(5,"commandInformation") ); 
+		System.out.println( ServerMessages.createCommandPkt(EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_RENDER"),5,"commandInformation") ); 
 	}
 }

@@ -12,43 +12,53 @@ import com.webrender.dao.NodeDAO;
 import com.webrender.server.Dispatcher;
 
 public final  class  NodeMachineManager {
+	private NodeDAO nodeDAO = new NodeDAO();
 	private NodeMachineManager(){}
+	private static NodeMachineManager instance = new NodeMachineManager();
+	private Map<Integer,NodeMachine> machines= new Hashtable<Integer,NodeMachine>();
 	
-	private static Map<Integer,NodeMachine> machines= new Hashtable<Integer,NodeMachine>();
+	private Set<NodeMachine> idleMachines = Collections.synchronizedSet( new HashSet<NodeMachine>() ); 
 	
-	private static Set<NodeMachine> idleMachines = Collections.synchronizedSet( new HashSet<NodeMachine>() ); 
+	public static NodeMachineManager getInstance(){
+		return instance;
+	}
 	
-	public static NodeMachine getNodeMachine(int nodeId){
+	public NodeMachine getNodeMachine(int nodeId){
 		if(nodeId == 0 ) return null;
 		if(machines.get(nodeId)==null){
-			NodeMachine nodeMachine =new NodeMachine(nodeId);
-			machines.put(nodeId,nodeMachine );
+			Node node = nodeDAO.findById(nodeId);
+			if (node == null) return null;
+			else{
+				NodeMachine nodeMachine =new NodeMachine(nodeId,node.getPri());
+				machines.put(nodeId,nodeMachine );				
+			}
 		}
 		return machines.get(nodeId);
 	}
-	public static Set<Integer> getNodeMachines(){
+	public Set<Integer> getNodeMachines(){
 		return machines.keySet();
 	}
 	
-	public static void addNodeMachines(NodeMachine nodeMachine){
+	public void addNodeMachines(NodeMachine nodeMachine){
 		idleMachines.add(nodeMachine);
 //		Dispatcher.getInstance().exeCommands();
 	}
 	
-	public static boolean containIdles(NodeMachine nodeMachine){
+	public boolean containIdles(NodeMachine nodeMachine){
 		return idleMachines.contains(nodeMachine);
 	}
-	public static boolean isIdleEmpty(){
+	public boolean isIdleEmpty(){
 		return idleMachines.isEmpty();
 	}
-	public static void delNodeMachines(NodeMachine nodeMachine){
+	public void delNodeMachines(NodeMachine nodeMachine){
 		idleMachines.remove(nodeMachine);
 	}
-	public static Object[] getIdleArray(){
+	public Object[] getIdleArray(){
+//		Collections.sort(list)
 		return idleMachines.toArray();
 	}
 	
-	public static NodeMachine canExeCommand(Command command){
+	public NodeMachine canExeCommand(Command command){
 		NodeDAO nodeDAO = new NodeDAO();
 		Object[] nodeMachines = getIdleArray();
 		int length = nodeMachines.length;

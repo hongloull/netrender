@@ -19,8 +19,8 @@
         <many-to-one name="node" class="com.webrender.dao.Node" fetch="select">
             <column name="NodeID" />
         </many-to-one>
-        <property name="command" type="java.lang.String">
-            <column name="Command" length="65535" />
+        <property name="type" type="java.lang.String">
+            <column name="Type" length="20" />
         </property>
         <property name="sendTime" type="java.util.Date">
             <column name="SendTime" length="19" />

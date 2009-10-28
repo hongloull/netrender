@@ -22,6 +22,9 @@
         <property name="argInstruction" type="string">
             <column name="ArgInstruction" length="50" />
         </property>
+        <property name="value" type="string">
+            <column name="Value" length="255" />
+        </property>
         <property name="type" type="java.lang.Short">
             <column name="Type">
                 <comment>file , directory or constant</comment>

@@ -180,6 +180,10 @@ public class NodeDAO extends BaseHibernateDAO {
 			}
 			if(name!=null && !("".equals(name)) ) node.setNodeName(name);
 			if(ip!=null && !("".equals(ip)) ) node.setNodeIp(ip);
+			if(node.getPri()==null){
+				short s = 0;
+				node.setPri(s);
+			}
 			save(node);
 			return node;
 		}catch (RuntimeException re) {

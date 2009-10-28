@@ -13,15 +13,17 @@ import com.webrender.dao.Commandmodelarg;
 import com.webrender.dao.Quest;
 import com.webrender.dao.Questarg;
 import com.webrender.dao.StatusDAO;
+import com.webrender.tool.NameMap;
 
-public class CalcFrame {
+public class CalcFrame implements CalcCommands {
 	
 	private BigDecimal startFrame=null,endFrame=null,byFrame=null,framePerNode=null;
 	private Commandmodelarg startTag = null,endTag=null;
 //	private Set<String> results = null;
 	
-	public  void calcFrames(Quest quest,Short packetSize)
+	public int calc(Quest quest)
 	{
+		Short packetSize = quest.getPacketSize();
 		Iterator questArgs = quest.getQuestargs().iterator();
 		try {
 			while( questArgs.hasNext() )
@@ -45,13 +47,37 @@ public class CalcFrame {
 			framePerNode = new BigDecimal(packetSize.toString());
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
-			return ;
-		}
-		if (startFrame==null || endFrame==null || byFrame==null || framePerNode==null || (startFrame.compareTo(endFrame)==1))
-		{
-			return;			
+			return CalcCommands.NumberFormatException;
 		}
 		
+	
+		CommandDAO commandDAO = new CommandDAO();
+		CommandargDAO commandargDAO = new CommandargDAO();
+		StatusDAO statusDAO = new StatusDAO();
+		Commandarg commandArg =null;
+		Command command = null;
+		
+		if(framePerNode==null){
+			return CalcCommands.NEEDARGS;
+		}
+		
+		command = new Command(quest);
+		command.setType(NameMap.PRELIGHT);
+		command.setStatus(statusDAO.findById(70));
+		commandDAO.save(command);
+		
+		if (startFrame==null || endFrame==null || byFrame==null )
+		{
+			command = new Command(quest);
+			command.setType(NameMap.GETFRAME);
+			command.setStatus(statusDAO.findById(70));
+			commandDAO.save(command);
+			return CalcCommands.LACKFRAME;
+		}
+		else if( (startFrame.compareTo(endFrame)==1) )
+		{
+			return CalcCommands.NEEDARGS;
+		}
 		BigDecimal distance = byFrame.multiply(framePerNode);
 	//	BigDecimal total = endFrame.subtract(startFrame);
 	//	BigDecimal bignum = total.divide(distance,5,BigDecimal.);
@@ -63,11 +89,6 @@ public class CalcFrame {
 		BigDecimal currentStartFrame = startFrame;
 		BigDecimal currentEndFrame = startFrame.add(distance).subtract(byFrame);
 		boolean endFlag = false;
-		CommandDAO commandDAO = new CommandDAO();
-		CommandargDAO commandargDAO = new CommandargDAO();
-		StatusDAO statusDAO = new StatusDAO();
-		Commandarg commandArg =null;
-		Command command = null;
 		while(true)
 		{
 			if (currentEndFrame.compareTo(endFrame)>=0)
@@ -101,11 +122,10 @@ public class CalcFrame {
 			if ( endFlag ) break;
 		}
 		
-	//	return results;
+		return CalcCommands.SUCCESS;
 	}
 	
 	public String getTotalFrames(Quest quest){
-		
 		Iterator questArgs = quest.getQuestargs().iterator();
 		while( questArgs.hasNext() )
 		{
@@ -120,7 +140,6 @@ public class CalcFrame {
 						endTag  = questArg.getCommandmodelarg();
 						break;
 			case 63:    byFrame   = new BigDecimal(questArg.getValue());
-						
 						break;
 			}
 		}

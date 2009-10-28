@@ -11,7 +11,7 @@ import com.webrender.dao.QuestargDAO;
 
 public final class QuestargUtils {
 	private static final Log LOG = LogFactory.getLog(QuestargUtils.class);	
-	public static Element bean2xml(Questarg questarg)
+	public Element bean2xml(Questarg questarg)
 	{
 		LOG.debug("bean2xml questArgId:"+ questarg.getQuestArgId());
 		Element root = new Element("Questarg");
@@ -23,7 +23,7 @@ public final class QuestargUtils {
 		return root;
 	}
 
-	public static Questarg xml2bean(Element element) {
+	public Questarg xml2bean(Element element) {
 		String questArgId = element.getAttributeValue("questArgId");
 		LOG.debug("xml2bean questArgId:"+questArgId);
 		String commandModelArgId = element.getAttributeValue("commandModelArgId");
@@ -48,5 +48,32 @@ public final class QuestargUtils {
 		}
 		LOG.debug("xml2bean success questArgId:"+questArgId);
 		return questarg;
+	}
+	
+	public void xml2beans(Element element){
+		String questArgId = element.getAttributeValue("questArgId");
+		LOG.debug("xml2bean2 questArgId:"+questArgId);
+		String commandModelArgId = element.getAttributeValue("commandModelArgId");
+		String value = element.getAttributeValue("value");
+		Questarg questarg = null; 
+		if( questArgId!=null)
+		{
+			QuestargDAO dao = new QuestargDAO();
+			questarg = dao.findById(Integer.parseInt(questArgId));
+		}
+		else
+		{
+			questarg = new Questarg(); 
+		}
+		if (value!=null)questarg.setValue(value);
+		
+		if(commandModelArgId != null)
+		{
+			CommandmodelargDAO commandmodelargDAO = new CommandmodelargDAO();
+			Commandmodelarg commandmodelarg = commandmodelargDAO.findById(Integer.parseInt(commandModelArgId));
+			questarg.setCommandmodelarg(commandmodelarg);
+		}
+		LOG.debug("xml2bean success questArgId:"+questArgId);
+		
 	}
 }
