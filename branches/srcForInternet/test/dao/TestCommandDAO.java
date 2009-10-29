@@ -57,7 +57,7 @@ public class TestCommandDAO {
 	public void testgetNote(){
 		CommandDAO commandDAO = new CommandDAO();
 		Command command = (Command) commandDAO.findAll().get(0);
-		System.out.println(commandDAO.getNote(command));
+		System.out.println(commandDAO.getNoteWithID(command));
 	}
 	@Test
 	public void testUpdateExeLog(){
@@ -70,7 +70,7 @@ public class TestCommandDAO {
 			Executelog exeLog = ite.next();
 			if ( exeLog.getStatus().getStatusId()==99){
 				
-				exeLog.setNote("SendError: "+commandDAO.getNote(exeLog.getCommand()));
+				exeLog.setNote("SendError: "+commandDAO.getNoteWithID(exeLog.getCommand()));
 			}
 		}
 		tx.commit();

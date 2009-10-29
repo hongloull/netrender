@@ -62,7 +62,7 @@ public class CommandOperateImpl extends BaseOperate {
 			CommandDAO commandDAO = new CommandDAO();
 			Command command = commandDAO.findById(Integer.parseInt(commandId));
 			commandDAO.reinitCommand(command );
-			logOperate(regUserId,Operatelog.MOD,"ReInit Command: "+commandDAO.getNote(command));
+			logOperate(regUserId,Operatelog.MOD,"ReInit Command: "+commandDAO.getNoteWithID(command));
 			tx.commit();
 //			ControlThreadServer.getInstance().resume();
 //			Dispatcher.getInstance().exeCommands();
@@ -93,7 +93,7 @@ public class CommandOperateImpl extends BaseOperate {
 			CommandDAO commandDAO = new CommandDAO();
 			Command command = commandDAO.findById(Integer.parseInt(commandId));
 			commandDAO.setFinish(command );
-			logOperate(regUserId,Operatelog.MOD,"setFinish Command: "+commandDAO.getNote(command));
+			logOperate(regUserId,Operatelog.MOD,"setFinish Command: "+commandDAO.getNoteWithID(command));
 			tx.commit();
 		
 			LOG.debug("finishCommand success");

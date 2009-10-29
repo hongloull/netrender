@@ -173,7 +173,7 @@ public class NodeOperateImpl extends BaseOperate {
 			else
 			{
 				tx = getTransaction();
-				Executelog executelog = new  Executelog(null,statusDAO.findById(99),node,"killError",new Date());
+				Executelog executelog = new  Executelog(null,statusDAO.findById(99),node,"kill command no response.",new Date());
 				ExecutelogDAO exeDAO = new ExecutelogDAO();
 				exeDAO.save(executelog);
 				tx.commit();

@@ -67,7 +67,7 @@ public final class Dispatcher extends Thread {
 								command.setNode(node);
 								command.setStatus(statusDAO.findById(71));
 								commandDAO.attachDirty(command);
-								Executelog executelog = new  Executelog(command,statusDAO.findById(90),node,commandDAO.getNote(command).toString(),new Date()); 
+								Executelog executelog = new  Executelog(command,statusDAO.findById(90),node,commandDAO.getNoteWithID(command).toString(),new Date()); 
 								ExecutelogDAO exeDAO = new ExecutelogDAO();
 								exeDAO.save(executelog);
 								tx.commit();
@@ -85,7 +85,7 @@ public final class Dispatcher extends Thread {
 							try{
 								tx = HibernateSessionFactory.getSession().beginTransaction();
 								statusDAO = new StatusDAO();
-								Executelog executelog = new  Executelog(command,statusDAO.findById(99),node,"SendError: " +commandDAO.getNote(command),new Date()); 
+								Executelog executelog = new  Executelog(command,statusDAO.findById(99),node,"SendError: " +commandDAO.getNoteWithID(command),new Date()); 
 								ExecutelogDAO exeDAO = new ExecutelogDAO();
 								exeDAO.save(executelog);
 								tx.commit();

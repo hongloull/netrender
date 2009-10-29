@@ -16,6 +16,8 @@ import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.Example;
 
+import com.webrender.tool.NameMap;
+
 /**
  * A data access object (DAO) providing persistence and search support for Quest
  * entities. Transaction control of the save(), update() and delete() operations
@@ -197,22 +199,18 @@ public class QuestDAO extends BaseHibernateDAO {
 			CommandDAO commandDAO = new CommandDAO();
 			Set set_Commands = instance.getCommands();
 			Iterator ite_Commands = instance.getCommands().iterator();
+			boolean hasGetFrame = false;
 			while(ite_Commands.hasNext())
 			{
 				Command command =  (Command)ite_Commands.next();
-				commandDAO.reinitCommand(command);
-				if("GETFRAME".equals(command.getType())){
-					try {
-						LOG.debug("del quest commands  questId:"+instance.getQuestId());
-						Connection con = getSession().connection();
-						Statement state = con.createStatement();
-						state.execute("DELETE FROM command WHERE ( Type is NULL or Type <> 'GETFRAME' ) and QuestID ="+ instance.getQuestId());
-					} catch (SQLException e) {
-						LOG.error("Del questId "+instance.getQuestId()+"'s commands fail.",e);
-					}
-					break;
+				if(hasGetFrame){
+					commandDAO.delete(command);
+				}else{
+					commandDAO.reinitCommand(command);
+					if( NameMap.GETFRAME.equals(command.getType()) ){
+						hasGetFrame = true;
+					}					
 				}
-				
 			}
 			
 			LOG.debug("reinitQuest successful questId:"+instance.getQuestId());

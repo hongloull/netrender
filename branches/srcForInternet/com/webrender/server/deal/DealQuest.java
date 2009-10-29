@@ -44,6 +44,7 @@ public class DealQuest {
 	public void setPreLight(Quest quest , String preLight){
 		Transaction tx = null;
 		try{
+			tx = HibernateSessionFactory.getSession().beginTransaction();
 			QuestDAO questDAO = new QuestDAO();
 			quest.setPreLight(preLight);
 			questDAO.save(quest);
