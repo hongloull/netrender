@@ -10,7 +10,7 @@ public final class NameMap {
 
 	// CommandType 
 	public static final String GETFRAME = "getframe";
-	public static final String PRELIGHT = "prilight";
+	public static final String PRELIGHT = "prelight";
 	
 	
 }

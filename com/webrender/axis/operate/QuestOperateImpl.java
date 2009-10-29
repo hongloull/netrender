@@ -107,6 +107,10 @@ public class QuestOperateImpl extends BaseOperate {
 						quest.getQuestargs().add(questarg);
 						questargDAO.save(questarg);
 					}
+					Command command = new Command(quest);
+					command.setType(NameMap.PRELIGHT);
+					command.setStatus(statusDAO.findById(70));
+					(new CommandDAO()).save(command);
 					calcCommands = new CalcFrame(); 
 				}
 				else if(NameMap.MANYTOMANY.equalsIgnoreCase(modelType)){
@@ -501,10 +505,11 @@ public class QuestOperateImpl extends BaseOperate {
 			Command command = null;
 			Element element = null;
 			int i = 1;
+			ChunkDetailUtils chunkDetailUtils = new ChunkDetailUtils();
 			while(ite_Commands.hasNext())
 			{
 				command = (Command)ite_Commands.next();
-				element = (new ChunkDetailUtils()).getElement(command);
+				element = chunkDetailUtils.getElement(command);
 				if(element!=null){
 					element.addAttribute("id",i+"");
 					element.addAttribute("commandId",command.getCommandId().toString());

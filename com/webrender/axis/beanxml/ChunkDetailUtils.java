@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jdom.Element;
 
 import com.webrender.dao.Command;
+import com.webrender.dao.CommandDAO;
 import com.webrender.dao.Commandarg;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
@@ -22,6 +23,7 @@ public final class ChunkDetailUtils {
 			LOG.debug("getCommandChunkDetail commandId:"+command.getCommandId());
 			Element root = new Element("Detail");
 			ExecutelogDAO executeLogDAO = new ExecutelogDAO();
+			CommandDAO commandDAO = new CommandDAO();
 			Date startTime = null;
 			Date endTime = null;
 			String start = "";
@@ -67,8 +69,9 @@ public final class ChunkDetailUtils {
 				
 			}catch (Exception e) {
 			}
+			
 			root.addAttribute("errorResult", errorResult);
-			root.addAttribute("frames",frames.toString());
+			root.addAttribute("frames",commandDAO.getNote(command).toString());
 			root.addAttribute("renderedBy", nodeName);
 			root.addAttribute("nodeIp",nodeIp);
 			root.addAttribute("startingTime",start);

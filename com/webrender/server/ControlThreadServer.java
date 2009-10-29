@@ -33,7 +33,7 @@ public final class ControlThreadServer extends Thread {
 	private static ControlThreadServer instance = new ControlThreadServer();
 	private  boolean   threadStop   =   false;   
 	private static final Log LOG = LogFactory.getLog(ControlThreadServer.class);
-//	private static final String ONETOMANY = "onetomany";
+
 	private boolean noUsableNode = true;
 	private ControlThreadServer()
 	{
@@ -127,11 +127,11 @@ public final class ControlThreadServer extends Thread {
 									command.setStatus(statusDAO.findById(71));
 									commandDAO.attachDirty(command);
 									
-									if(result==true) executelog = new  Executelog(command,statusDAO.findById(90),node,commandDAO.getNote(command).toString(),new Date()); 
+									if(result==true) executelog = new  Executelog(command,statusDAO.findById(90),node,commandDAO.getNoteWithID(command).toString(),new Date()); 
 									else { // onetomany 执行错误
 										command.setStatus(statusDAO.findById(72));
 										command.setSendTime(new Date());
-										executelog = new  Executelog(command,statusDAO.findById(99),node,commandDAO.getNote(command).toString(),new Date());
+										executelog = new  Executelog(command,statusDAO.findById(99),node,commandDAO.getNoteWithID(command).toString(),new Date());
 									}
 									ExecutelogDAO exeDAO = new ExecutelogDAO();
 									exeDAO.save(executelog);
@@ -153,7 +153,7 @@ public final class ControlThreadServer extends Thread {
 								try{
 									tx = HibernateSessionFactory.getSession().beginTransaction();
 									statusDAO = new StatusDAO();
-									executelog = new  Executelog(command,statusDAO.findById(99),node,"SendError: " +commandDAO.getNote(command),new Date()); 
+									executelog = new  Executelog(command,statusDAO.findById(99),node,"SendError: " +commandDAO.getNoteWithID(command),new Date()); 
 									ExecutelogDAO exeDAO = new ExecutelogDAO();
 									exeDAO.save(executelog);
 									tx.commit();

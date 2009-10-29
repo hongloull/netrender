@@ -401,13 +401,12 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		LOG.debug("cleanRunCommand commandId:"+ commandId);
 		if ( this.currentCommands.contains(commandId)){
 			
-			this.saveRealLog(commandId,false,message);
 			
 			Transaction tx = null;
 			CommandDAO commandDAO = new CommandDAO();
 			try{
 				tx = HibernateSessionFactory.getSession().beginTransaction();
-
+				saveRealLog(commandId,false,message);
 				Command command = commandDAO.findById(commandId);
 				commandDAO.reinitCommand(command);
 				LOG.info("CommandID: "+command.getCommandId()+" reinit");
@@ -442,40 +441,47 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		 * 从节点机的CurrentCommands移除CommandID
 		 * 设置节点空闲。
 		 */
+		
 		LOG.debug("setFinish("+commandId+")");
-
-		HibernateSessionFactory.closeSession();
-		NodeDAO nodeDAO  = new NodeDAO();
-		Transaction tx = null;
-		try{
-			Node node  = nodeDAO.findById(nodeId) ;
+		if ( this.currentCommands.contains(commandId)){
 			
-			tx = HibernateSessionFactory.getSession().beginTransaction();
-			
-			CommandDAO commandDAO = new CommandDAO();
-			Command command = commandDAO.findById(commandId);			
-			StatusDAO statusDAO = new StatusDAO();
-			if (command !=null)
-			{
-				command.setNode(node);
-				command.setStatus(statusDAO.findById(72)); //72->Finish
-				command.setSendTime(new Date());
-				commandDAO.attachDirty(command);							
-				LOG.info(nodeId+" finish command "+command.getCommandId());
+			HibernateSessionFactory.closeSession();
+			NodeDAO nodeDAO  = new NodeDAO();
+			Transaction tx = null;
+			try{
+				Node node  = nodeDAO.findById(nodeId) ;
+				
+				tx = HibernateSessionFactory.getSession().beginTransaction();
+				saveRealLog(commandId,true,"finish");
+				CommandDAO commandDAO = new CommandDAO();
+				Command command = commandDAO.findById(commandId);			
+				StatusDAO statusDAO = new StatusDAO();
+				if (command !=null)
+				{
+					command.setNode(node);
+					command.setStatus(statusDAO.findById(72)); //72->Finish
+					command.setSendTime(new Date());
+					commandDAO.attachDirty(command);							
+					LOG.info(nodeId+" finish command "+command.getCommandId());
+				}
+				tx.commit();
+				LOG.debug("setFinish success");
+				removeCommandId(commandId);
+				return command.getQuest();
 			}
-			tx.commit();
-			LOG.debug("setFinish success");
-			removeCommandId(commandId);
-			return command.getQuest();
+			catch(Exception e)
+			{
+				LOG.error("finish command: "+commandId+" Error",e);
+				if (tx != null) 
+				{
+					tx.rollback();
+				}
+				// kill command
+				return null;
+			}
 		}
-		catch(Exception e)
-		{
-			LOG.error("FinishCommandError",e);
-			if (tx != null) 
-			{
-				tx.rollback();
-			}
-			// kill command
+		else{
+			LOG.info("NodeId:"+nodeId+" can not finish command:"+commandId+"!  node's current commands doesn't contain this command.");
 			return null;
 		}
 //		setBusy(false);
@@ -484,40 +490,38 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	
 	private synchronized void  saveRealLog(int commandId ,boolean isNormal,String message){
 		LOG.debug("saveRealLog");
-		if(this.currentCommands.contains(commandId))
-		{
-			Transaction tx = null;
-			try{
-				int realStatusId = isNormal?80:81;
-				int exeStatusId  = isNormal?91:99;
-				tx = HibernateSessionFactory.getSession().beginTransaction();				
-				CommandDAO commandDAO = new CommandDAO();
-				Command command = commandDAO.findById(commandId);
-				StatusDAO statusDAO = new StatusDAO();
-				NodeDAO nodeDAO = new NodeDAO();
-				ExecutelogDAO exeDAO = new ExecutelogDAO();
-				
+		
+		try{
+			int realStatusId = isNormal?80:81;
+			int exeStatusId  = isNormal?91:99;				
+			CommandDAO commandDAO = new CommandDAO();
+			Command command = commandDAO.findById(commandId);
+			StatusDAO statusDAO = new StatusDAO();
+			NodeDAO nodeDAO = new NodeDAO();
+			ExecutelogDAO exeDAO = new ExecutelogDAO();
+			if (realLog.length()>0) // 有则存之，无则无视
+			{
 				Executelog reallog = new Executelog(command,statusDAO.findById(realStatusId),nodeDAO.findById(nodeId),realLog.toString(),new Date());
-				Executelog exelog  = new Executelog(command,statusDAO.findById(exeStatusId),nodeDAO.findById(nodeId),commandDAO.getNote(command) + message,new Date());
-				exeDAO.save(exelog);
 				exeDAO.save(reallog);		
-				tx.commit();
-				LOG.debug("saveRealLog success");
-			}catch(Exception e)
-			{
-				LOG.error("saveRealLog fail",e);
-				if (tx != null)
-				{
-					tx.rollback();
-				}
-			}finally
-			{
-				HibernateSessionFactory.closeSession();
-				LOG.info("realLog renew");
-				realLog = new StringBuffer();
-				
 			}
+			
+			Executelog exelog  = new Executelog(command,statusDAO.findById(exeStatusId),nodeDAO.findById(nodeId),commandDAO.getNoteWithID(command) + message,new Date());
+			exeDAO.save(exelog);
+			LOG.debug("saveRealLog success");
+		}catch(Exception e)
+		{
+			LOG.error("saveRealLog fail",e);
+			
+		}finally
+		{
+			if(realLog.length()>0){
+				LOG.info("realLog renew");
+				realLog = new StringBuffer();					
+			}
+			
 		}
+		
+		
 	}
 
 	public void timeOutOperate(Object obj) {
@@ -559,7 +563,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			if(message.startsWith("***GOODBYE***")){
 				LOG.info("addReadlog goodBye");
 				timeOutThread.cancel();
-				saveRealLog(commandId,true,"finish");
+				
 				setFinish(commandId); 
 				timeOutThread = null;
 			}
@@ -683,7 +687,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 						
 		}catch(Exception e){
 			LOG.error("execute buffer fail",e);
-			//send Error Message
+			
 		}
 	}
 }

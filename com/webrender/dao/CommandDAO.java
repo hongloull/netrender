@@ -254,20 +254,26 @@ public class CommandDAO extends BaseHibernateDAO {
 		}
 	}
 	
-	public String getNote(Command command){
-		LOG.debug("getNote commandId: "+command.getCommandId());
+	public StringBuffer getNoteWithID(Command command){
+		LOG.debug("getNoteWithId commandId: "+command.getCommandId());
 		StringBuffer note = new StringBuffer();
 		note.append(command.getQuest().getQuestId()).append(".").append(command.getCommandId()).append(".").append(command.getQuest().getQuestName()).append(":");
-		if( "GETFRAME".equals(command.getType()) ){
-			note.append("get frame info. ");
-		}
+		
+		note.append(getNote(command));
+		LOG.debug("getNoteWithID success commandId: "+command.getCommandId()+" note:"+note.toString());
+		return note;
+	}
+	public StringBuffer getNote(Command command){
+		LOG.debug("getNote commandId: "+command.getCommandId());
+		StringBuffer note = new StringBuffer();
+		if( command.getType()!=null) note.append(command.getType()).append(" ");
 		Iterator<Commandarg> ite_Args = command.getCommandargs().iterator();
 		while(ite_Args.hasNext()){
 			Commandarg arg = ite_Args.next();
-			note.append(" ").append(arg.getCommandmodelarg().getArgName()).append(" ").append(arg.getValue()).append(" ");
+			note.append(arg.getCommandmodelarg().getArgName()).append(" ").append(arg.getValue()).append(" ");
 		}
 		LOG.debug("getNote success commandId: "+command.getCommandId()+" note:"+note.toString());
-		return note.toString();
+		return note;
 	}
 	private void reinitInProgressCommand(){
 		LOG.debug("reinitInProgressCommand ");

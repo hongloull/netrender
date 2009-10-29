@@ -61,10 +61,7 @@ public class CalcFrame implements CalcCommands {
 			return CalcCommands.NEEDARGS;
 		}
 		
-		command = new Command(quest);
-		command.setType(NameMap.PRELIGHT);
-		command.setStatus(statusDAO.findById(70));
-		commandDAO.save(command);
+		
 		
 		if (startFrame==null || endFrame==null || byFrame==null )
 		{
