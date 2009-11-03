@@ -1,10 +1,15 @@
 package com.webrender.remote;
 
 import java.util.Collections;
+
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.webrender.dao.Command;
 import com.webrender.dao.Node;
@@ -12,12 +17,13 @@ import com.webrender.dao.NodeDAO;
 import com.webrender.server.Dispatcher;
 
 public final  class  NodeMachineManager {
+	private static final Log LOG = LogFactory.getLog(NodeMachineManager.class);
 	private NodeDAO nodeDAO = new NodeDAO();
 	private NodeMachineManager(){}
 	private static NodeMachineManager instance = new NodeMachineManager();
 	private Map<Integer,NodeMachine> machines= new Hashtable<Integer,NodeMachine>();
-	
-	private Set<NodeMachine> idleMachines = Collections.synchronizedSet( new HashSet<NodeMachine>() ); 
+	private NodeComparator nodeComparator = new NodeComparator();
+	private Set<NodeMachine> idleMachines = Collections.synchronizedSet( new TreeSet<NodeMachine>(nodeComparator) );  
 	
 	public static NodeMachineManager getInstance(){
 		return instance;
@@ -29,14 +35,23 @@ public final  class  NodeMachineManager {
 			Node node = nodeDAO.findById(nodeId);
 			if (node == null) return null;
 			else{
+				LOG.info("New Machine nodeId:"+nodeId);
 				NodeMachine nodeMachine =new NodeMachine(nodeId,node.getPri());
 				machines.put(nodeId,nodeMachine );				
 			}
 		}
 		return machines.get(nodeId);
 	}
+	
+	public void deleteNodeMachine(int nodeId){
+		if( machines.containsKey(nodeId) ){
+			machines.remove(nodeId);
+		}
+	}
+	
 	public Set<Integer> getNodeMachines(){
-		return machines.keySet();
+		Set<Integer> set = new HashSet<Integer>(machines.keySet());
+		return set;
 	}
 	
 	public void addNodeMachines(NodeMachine nodeMachine){
@@ -48,13 +63,18 @@ public final  class  NodeMachineManager {
 		return idleMachines.contains(nodeMachine);
 	}
 	public boolean isIdleEmpty(){
+//		System.out.println("hasIdleMachine ?");
+//		for (NodeMachine machine : idleMachines){
+//			System.out.println("machineId:"+machine.getId()+" pri:"+machine.getPri() );
+//		}
 		return idleMachines.isEmpty();
 	}
-	public void delNodeMachines(NodeMachine nodeMachine){
+	public void removeIdleMachines(NodeMachine nodeMachine){
 		idleMachines.remove(nodeMachine);
 	}
 	public Object[] getIdleArray(){
 //		Collections.sort(list)
+		
 		return idleMachines.toArray();
 	}
 	

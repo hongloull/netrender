@@ -38,6 +38,9 @@ public final class ExecuteLogServer {
     			config);
     	LOG.info("EventServer Listening on port " + PORT);
     }
+    public void stop(){
+    	acceptor.unbindAll();
+    }
     public void broadCast(String message)
     {
     	( (ExecuteLogServerHandler)ioHandler ).broadcast(message);

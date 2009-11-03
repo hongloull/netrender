@@ -25,6 +25,8 @@ public final class GenericConfig {
 //	private String  configPath = GenericConfig.class.getResource("/").getPath();
 	// For Lan
 	private static String configPath = "Y:/NetRender/Server";
+	
+	
 	private static GenericConfig instance = new GenericConfig();
 //	private static final String CONF_FILE = "config.properties";
 	private static final Log LOG = LogFactory.getLog(GenericConfig.class);

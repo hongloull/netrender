@@ -86,7 +86,8 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	private TimeoutThread timeOutThread = null;
 	
 	
-	
+	private NodeMachine(){		
+	}
 	public NodeMachine(Integer nodeId,Short pri)
 	{
 		this.nodeId = nodeId;
@@ -94,6 +95,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	    currentCommands = Collections.synchronizedSet(new HashSet<Integer>());;
 	    status = new NodeStatus();
 	    ConnectTest cTest = new ConnectTest(this);
+	    cTest.setDaemon(true);
 		cTest.start();
 	}
 	
@@ -199,7 +201,6 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
     			break;
     		}
     	}
-		LOG.info("execute error");
 		return false;
 	}
 	public void updateStatus(String message)
@@ -331,11 +332,11 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		if (isConnect==false)
 		{
 			cleanRunCommands("NodeId:"+nodeId +" disconnect");
+//			NodeMachineManager.getInstance()
 		}
 		selfCheck();			
 	}
 	public boolean isConnect() {
-		
 		return isConnect;
 	}
 	
@@ -384,7 +385,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		else
 		{
 			LOG.debug(nodeId+" remove from IdleMachines ");
-			NodeMachineManager.getInstance().delNodeMachines(this);
+			NodeMachineManager.getInstance().removeIdleMachines(this);
 		}
 	}
 	

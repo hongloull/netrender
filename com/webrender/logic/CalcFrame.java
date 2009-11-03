@@ -18,7 +18,7 @@ import com.webrender.tool.NameMap;
 public class CalcFrame implements CalcCommands {
 	
 	private BigDecimal startFrame=null,endFrame=null,byFrame=null,framePerNode=null;
-	private Commandmodelarg startTag = null,endTag=null;
+	private Commandmodelarg startTag = null,endTag=null,byTag=null;
 //	private Set<String> results = null;
 	
 	public int calc(Quest quest)
@@ -39,7 +39,7 @@ public class CalcFrame implements CalcCommands {
 							endTag  = questArg.getCommandmodelarg();
 							break;
 				case 63:    byFrame   = new BigDecimal(questArg.getValue());
-							
+							byTag = questArg.getCommandmodelarg();
 							break;
 				}
 			}
@@ -76,13 +76,7 @@ public class CalcFrame implements CalcCommands {
 			return CalcCommands.NEEDARGS;
 		}
 		BigDecimal distance = byFrame.multiply(framePerNode);
-	//	BigDecimal total = endFrame.subtract(startFrame);
-	//	BigDecimal bignum = total.divide(distance,5,BigDecimal.);
-		
-	//	int num=(int)Math.ceil( bignum.doubleValue() );
 
-	//	System.out.println(" num: "+num);
-//		results = new LinkedHashSet<String>();
 		BigDecimal currentStartFrame = startFrame;
 		BigDecimal currentEndFrame = startFrame.add(distance).subtract(byFrame);
 		boolean endFlag = false;
@@ -111,7 +105,11 @@ public class CalcFrame implements CalcCommands {
 			commandArg.setValue(currentEndFrame.toString());
 			commandargDAO.save(commandArg);
 			
-			
+			commandArg = new Commandarg();
+			commandArg.setCommand(command);
+			commandArg.setCommandmodelarg(byTag);
+			commandArg.setValue(byFrame.toString());
+			commandargDAO.save(commandArg);
 			
 			currentStartFrame = currentStartFrame.add(distance);
 			currentEndFrame   = currentEndFrame.add(distance);
@@ -131,10 +129,10 @@ public class CalcFrame implements CalcCommands {
 			switch (typeValue)
 			{
 			case 61:	startFrame  = new BigDecimal(questArg.getValue());
-						startTag = questArg.getCommandmodelarg();
+//						startTag = questArg.getCommandmodelarg();
 						break;
 			case 62:    endFrame   = new BigDecimal(questArg.getValue());
-						endTag  = questArg.getCommandmodelarg();
+//						endTag  = questArg.getCommandmodelarg();
 						break;
 			case 63:    byFrame   = new BigDecimal(questArg.getValue());
 						break;

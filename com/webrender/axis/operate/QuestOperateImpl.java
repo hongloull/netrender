@@ -76,7 +76,7 @@ public class QuestOperateImpl extends BaseOperate {
 			Element ele_model = ele_quest.getChild("Commandmodel");
 			Commandmodel model = commandmodelUtils.xml2bean(ele_model);
 			String modelType = model.getType();
-			quest.setCommandmodel(model);	
+			quest.setCommandmodel(model);
 			ReguserDAO reguserDAO = new ReguserDAO();
 			Reguser logUser = reguserDAO.findById( regUserId );
 			quest.setStatus(statusDAO.findById(50));
