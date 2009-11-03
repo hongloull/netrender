@@ -59,6 +59,7 @@ public class ServerOperateImpl extends BaseOperate {
 			try {
 				Document doc = sb.build(file);
 				LOG.debug("getPortsConfig success");
+//				String result = xmlOut.outputToString(doc);
 				return xmlOut.outputToString(doc);
 			} catch (JDOMException e) {
 				LOG.error("readPortConfig fail", e);

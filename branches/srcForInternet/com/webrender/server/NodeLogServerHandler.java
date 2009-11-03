@@ -83,7 +83,6 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 					buffer = null;
 				}
 				while(lastBuffer.hasRemaining()){
-					
 					opCode = lastBuffer.get();
 //					LOG.info("CODEID:"+ opCode + "NodeId :" +nodeId);
 //					LOG.info("parse LastBuffer position:"+lastBuffer.position() +" limit:" + lastBuffer.limit()+" capacity:"+ lastBuffer.capacity());
@@ -196,6 +195,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 		if(nodeId!=null){
 			LOG.info("NodeId:"+nodeId+" connect close.");
 			NodeMachineManager.getInstance().getNodeMachine(nodeId).setSession(null);
+			NodeMachineManager.getInstance().deleteNodeMachine(nodeId);
 		}
 		HibernateSessionFactory.closeSession();
 	}

@@ -16,6 +16,7 @@ import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.Example;
 
+import com.webrender.logic.CalcOneToMany;
 import com.webrender.tool.NameMap;
 
 /**
@@ -200,17 +201,28 @@ public class QuestDAO extends BaseHibernateDAO {
 			Set set_Commands = instance.getCommands();
 			Iterator ite_Commands = instance.getCommands().iterator();
 			boolean hasGetFrame = false;
+			boolean isOneToMany = false;
 			while(ite_Commands.hasNext())
 			{
 				Command command =  (Command)ite_Commands.next();
-				if(hasGetFrame){
-					commandDAO.delete(command);
-				}else{
-					commandDAO.reinitCommand(command);
-					if( NameMap.GETFRAME.equals(command.getType()) ){
+				if(hasGetFrame == false){
+					if(command.getType()==null || NameMap.RENDER.equalsIgnoreCase(command.getType()) || NameMap.PRELIGHT.equalsIgnoreCase(command.getType())){
+						commandDAO.reinitCommand(command);
+					}
+					else if ( NameMap.ONETOMANY.equals(command.getType()) ){
+						CalcOneToMany calc = new CalcOneToMany();
+						calc.calc(instance);
+						break;
+					}
+					else if( NameMap.GETFRAME.equals(command.getType()) ){
+						commandDAO.reinitCommand(command);
 						hasGetFrame = true;
-					}					
+					}
 				}
+				else{
+					commandDAO.delete(command);
+				}
+				
 			}
 			
 			LOG.debug("reinitQuest successful questId:"+instance.getQuestId());
@@ -283,9 +295,7 @@ public class QuestDAO extends BaseHibernateDAO {
 			Statement state=con.createStatement();
 			state.execute("DELETE FROM questarg WHERE QuestID ="+quest.getQuestId());
 			state.execute("DELETE FROM command WHERE QuestID ="+quest.getQuestId());			
-			
-			
-			
+		
 		}catch(RuntimeException re){
 			LOG.error("delQuestRel failed",re);
 			throw re;
@@ -293,6 +303,26 @@ public class QuestDAO extends BaseHibernateDAO {
 			LOG.error("delQuestRel",e);
 		}	
 	}
+	public void delAllCommands(Quest quest){
+		LOG.debug("delAllCommands questId:"+quest.getQuestId());
+		try
+		{
+//			String hql = "from Questarg as o where o.quest.questId="+quest.getQuestId();
+//			getSession().delete(hql);
+//			String hql2 = "from Command as o where o.quest.questId="+quest.getQuestId();
+//			getSession().delete(hql2);
+			Connection con=getSession().connection();
+			Statement state=con.createStatement();
+			state.execute("DELETE FROM command WHERE QuestID ="+quest.getQuestId());			
+		
+		}catch(RuntimeException re){
+			LOG.error("delAllCommands failed",re);
+			throw re;
+		} catch (SQLException e) {
+			LOG.error("delAllCommands",e);
+		}
+	}
+	
 	public Quest getQuestWithFrameInfo(Quest quest,String startFrame,String endFrame,String byFrame){
 		CommandmodelargDAO cMADAO = new CommandmodelargDAO();
 		

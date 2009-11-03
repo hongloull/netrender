@@ -45,7 +45,10 @@ public final class Conversion extends Thread {
 	
 	public void run()
 	{
-		if(check()==false) LOG.error("OutOfDate!");
+		if(check()==false){
+			LOG.error("OutOfDate!");
+			return;
+		}
 		switch (flag)
 		{
 		case 1:{// MainServer
@@ -83,7 +86,7 @@ public final class Conversion extends Thread {
 				}
 				else
 				{
-					this.pauseServer();
+					this.stopServer();
 					try {
 						sleep(60000);
 					} catch (InterruptedException e) {
@@ -115,46 +118,38 @@ public final class Conversion extends Thread {
 				
 				NodeLogServer.getInstance().run();
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOG.error("Run NodeLogServer fail",e);
 			}
-//			NodeThreadServer.getInstance().start();
 			try {
-				
 				RealLogServer.getInstance().run();
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOG.error("Run RealLogServer fail",e);
 			}
 			try {
 				ExecuteLogServer.getInstance().run();
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOG.error("Run ExecuteLogServer fail",e);
 			}
-			ControlThreadServer.getInstance().start();
-//			Dispatcher.getInstance().exeCommands();
-			
-		}
-		else if (status.equals(EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_PAUSE")))
-		{
-			LOG.info("ControlThreadServer restart");
-			ControlThreadServer.getInstance().resume();
-
+			ControlThreadServer.getInstance().start();			
 		}
 		status = EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_ON");
 	}
 	
-	private void pauseServer()
+	public void stopServer()
 	{
 		if ( status.equals(EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_ON")))
 		{
-			ControlThreadServer.getInstance().threadSuspend("pauseServer");
-			status = EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_PAUSE");
+			ControlThreadServer.getInstance().stopServer();
 		}
+		NodeLogServer.getInstance().stop();
+		RealLogServer.getInstance().stop();
+		ExecuteLogServer.getInstance().stop();
 	}
 	public CODE getStatus()
 	{
 		return status;
 	}
-		
+	
 	private boolean isRun(String mainServer2) {						
 		try{
 			LOG.debug("isRun ? "+mainServer2);
@@ -163,7 +158,7 @@ public final class Conversion extends Thread {
 			org.apache.axis.client.Call call=(org.apache.axis.client.Call)service.createCall();
 			call.setTargetEndpointAddress(new java.net.URL(endpoint));
 			call.setOperationName(new javax.xml.namespace.QName("http://www.animationsp.com","isRun"));
-			call.setTimeout(2000);
+			call.setTimeout(5000);
 			Object result=call.invoke(new Object[]{});
 			if ( result.equals(EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_ON").getId()) ){
 				LOG.debug(mainServer2+" already run");

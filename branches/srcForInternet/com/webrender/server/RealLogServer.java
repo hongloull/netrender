@@ -38,6 +38,9 @@ public final class RealLogServer {
     			config);
     	LOG.info("RealLogServer Listening on port " + PORT);
     }
+    public void stop(){
+    	acceptor.unbindAll();
+    }
     public void broadCast(String message)
     {
     	( (RealLogServerHandler)ioHandler ).broadcast(message);

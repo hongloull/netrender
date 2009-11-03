@@ -1,5 +1,6 @@
 package com.webrender.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -190,6 +191,20 @@ public class NodeDAO extends BaseHibernateDAO {
 			LOG.error("RunSaveNode failed", re);
 			throw re;
 		}
+	}
+	
+	public List getNodeGroupIds(Nodegroup group)
+	{
+		LOG.debug("getting Nodegroup Ids in NodegroupName: " +group.getNodeGroupName());
+		try {
+			String queryString = "select distinct node.nodeId from Node node , Nodegroup pool where node in elements(pool.nodes) and pool.nodeGroupId="+group.getNodeGroupId() ;
+			Query queryObject = getSession().createQuery(queryString);
+			return queryObject.list();
+		} catch (RuntimeException re) {
+			LOG.error("find all failed", re);
+			throw re;
+		}
+
 	}
 //	public List getIdleNodes(Command instance)
 //	{

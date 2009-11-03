@@ -30,7 +30,7 @@ import com.webrender.tool.NameMap;
 //
 //
 public final class ControlThreadServer extends Thread {
-	private static ControlThreadServer instance = new ControlThreadServer();
+	private static ControlThreadServer instance = null; 
 	private  boolean   threadStop   =   false;   
 	private static final Log LOG = LogFactory.getLog(ControlThreadServer.class);
 
@@ -44,14 +44,19 @@ public final class ControlThreadServer extends Thread {
 	
 	public static ControlThreadServer getInstance()
 	{
+		if (instance == null){
+			instance = new ControlThreadServer();
+		}
 		return instance;
 	}
+	
 	public void run()
 	{
 		NodeDAO nodeDAO = new NodeDAO();
 		CommandDAO commandDAO = new CommandDAO();
 		StatusDAO statusDAO = new StatusDAO();
 		Command command = null;
+
 		NodeMachine nodeMachine = null;
 		Node node = null;
 		NodeMachine tempNodeMachine = null;
@@ -92,24 +97,37 @@ public final class ControlThreadServer extends Thread {
 						}
 						
 						try{
+							nodeMachine = null;
+							node = null;
 							commandDAO.attachClean(command);
 							Object[] nodeMachines = NodeMachineManager.getInstance().getIdleArray();
 							int length = nodeMachines.length;
 							if(NameMap.ONETOMANY.equalsIgnoreCase( command.getType() ) ){
 								nodeMachine = NodeMachineManager.getInstance().getNodeMachine( command.getNode().getNodeId() );
-								node = command.getNode();
-							}
-							for(int i = 0 ; i<length ; i++){
-								tempNodeMachine = (NodeMachine) nodeMachines[i];
-								tempNode = nodeDAO.findById(tempNodeMachine.getId());
-								if( command.getQuest().getNodegroup().getNodes().contains(tempNode) ){
-									// 该节点保包含在任务执行池中，可以渲染
-									nodeMachine = tempNodeMachine;
-									node = tempNode;
+								if(NodeMachineManager.getInstance().containIdles(nodeMachine))
+								{
+									node = command.getNode();
 									noUsableNode = false;
-									break;
 								}
-								noUsableNode = true;
+								else{
+									nodeMachine = null;
+									node = null;
+									noUsableNode = true;
+								}
+							}
+							else{
+								List list_NodeGroupIds = nodeDAO.getNodeGroupIds(command.getQuest().getNodegroup());
+								for(int i = 0 ; i<length ; i++){
+									tempNodeMachine = (NodeMachine) nodeMachines[i];
+									if(list_NodeGroupIds.contains(tempNodeMachine.getId()) ){
+										// 该节点保包含在任务执行池中，可以渲染
+										nodeMachine = tempNodeMachine;
+										node = nodeDAO.findById(tempNodeMachine.getId());
+										noUsableNode = false;
+										break;
+									}
+									noUsableNode = true;
+								}
 							}
 						}
 						catch(Exception e){
@@ -200,28 +218,31 @@ public final class ControlThreadServer extends Thread {
 			{
 				// 调用一次threadStop()，只停一次。
 				threadStop = false;
-				LOG.info("ControlThreadServer threadStop Suspend");
+				LOG.info("ControlThreadServer threadStop");
 				HibernateSessionFactory.closeSession();
-				this.suspend();
-				try {
-					
-					sleepUpdateVersion("ControlThreadServer resume",10000);
-					
-				}catch (InterruptedException e) {
-					LOG.error("ControlThread Sleep", e);
-				}
+				break;
+				
 			}
 		}
 	}
 	
 	
-//	暂停某Quest的时候 可能需要先将 分发线程暂停，再运行
-	public void threadSuspend(final String reason)
+	private void threadStop(final String reason)
 	{
 		LOG.info(reason);
 		threadStop = true;
 	}
-	
+	public void stopServer(){
+		threadStop("StopServer");
+		try {
+			this.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		instance = null;
+		
+	}
 	private void sleepUpdateVersion(String message,long millis) throws InterruptedException
 	{
 //		LOG.info(message);

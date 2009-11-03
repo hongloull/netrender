@@ -25,13 +25,12 @@ public class NodesState extends BaseAxis{
 
 		return (new NodesStateImpl()).getNodeStatus(nodeId);
 	}
-	public String getNodesStatus()
-	{
+	
+	public String getNodesStatus(String groupName){
 		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
 		
-		return (new NodesStateImpl()).getNodesStatus();
+		return (new NodesStateImpl()).getNodesStatus(groupName);
 	}
-	
 	public String getAllNodes(){
 		
 		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
