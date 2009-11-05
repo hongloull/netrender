@@ -2,32 +2,25 @@ package com.webrender.axis.operate;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Transaction;
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
+import com.webrender.axis.beanxml.ChunkDetailUtils;
 import com.webrender.axis.beanxml.CommandmodelUtils;
-import com.webrender.axis.beanxml.NodeUtils;
 import com.webrender.axis.beanxml.QuestUtils;
 import com.webrender.axis.beanxml.QuestargUtils;
 import com.webrender.axis.beanxml.XMLOut;
 import com.webrender.dao.Command;
 import com.webrender.dao.CommandDAO;
 import com.webrender.dao.Commandmodel;
-import com.webrender.dao.Executelog;
-import com.webrender.dao.ExecutelogDAO;
-import com.webrender.dao.Node;
 import com.webrender.dao.Nodegroup;
 import com.webrender.dao.NodegroupDAO;
 import com.webrender.dao.Operatelog;
@@ -42,10 +35,7 @@ import com.webrender.logic.CalcCommands;
 import com.webrender.logic.CalcFrame;
 import com.webrender.logic.CalcManyToMany;
 import com.webrender.logic.CalcOneToMany;
-import com.webrender.server.ControlThreadServer;
-import com.webrender.server.Dispatcher;
 import com.webrender.tool.NameMap;
-import com.webrender.axis.beanxml.ChunkDetailUtils;
 
 public class QuestOperateImpl extends BaseOperate {
 	
@@ -72,7 +62,6 @@ public class QuestOperateImpl extends BaseOperate {
 			NodegroupDAO nGDAO = new NodegroupDAO();
 			Nodegroup nG =  nGDAO.findByNodeGroupName(nodeGroupName);
 			quest.setNodegroup(nG);
-			
 			Element ele_model = ele_quest.getChild("Commandmodel");
 			Commandmodel model = commandmodelUtils.xml2bean(ele_model);
 			String modelType = model.getType();
@@ -119,6 +108,7 @@ public class QuestOperateImpl extends BaseOperate {
 						questarg = questargUtils.xml2bean(lis_questargs.get(j));
 						questarg.setQuest(quest);
 						quest.getQuestargs().add(questarg);
+						questargDAO.save(questarg);
 					}
 					calcCommands = new CalcManyToMany();
 				}
@@ -149,7 +139,6 @@ public class QuestOperateImpl extends BaseOperate {
 			}
 			catch(Exception e)
 			{
-				LOG.error("commitQuest fail",e);
 				if (tx != null) 
 				{
 					tx.rollback();

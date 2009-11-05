@@ -13,7 +13,7 @@ public class TestNodeDAO {
 	public void testGetNGIDS(){
 		QuestDAO questDAO = new QuestDAO();
 		Quest quest = questDAO.findById(33);
-		List<Integer> list =(new NodeDAO()).getNodeGroupIds(quest);
+		List<Integer> list =(new NodeDAO()).getNodeGroupIds(quest.getNodegroup());
 		for(Integer id : list){
 			System.out.println(id);
 		}

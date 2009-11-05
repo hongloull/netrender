@@ -126,7 +126,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		else if( (NameMap.GETFRAME).equalsIgnoreCase(command.getType()) ){
 			cmdType = EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_GETFRAME");
 		}
-		else if( (NameMap.ONETOMANY).equalsIgnoreCase(command.getType()) ){
+		else if( (NameMap.ONETOMANY).equalsIgnoreCase(command.getType()) || (NameMap.MANYTOMANY).equalsIgnoreCase(command.getType()) ){
 			cmdType = EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_SHELL");
 		}
 		else if( (NameMap.PRELIGHT).equalsIgnoreCase(command.getType()) ){
@@ -413,16 +413,18 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				LOG.info("CommandID: "+command.getCommandId()+" reinit");
 
 				tx.commit();
-				this.removeCommandId(commandId);
+				
 				
 //				ControlThreadServer.getInstance().resume();
 //				Dispatcher.getInstance().exeCommands();
 				
 				return true;
 			}catch(Exception e){
-				LOG.error(nodeId+": cleanCurrentCommand Error",e);
+				LOG.error("NodeId: "+nodeId+": cleanCurrentCommand Error commandId: "+commandId,e);
 				tx.rollback();
 				return false;
+			}finally{
+				this.removeCommandId(commandId);
 			}
 		}
 		return true;
@@ -497,6 +499,9 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			int exeStatusId  = isNormal?91:99;				
 			CommandDAO commandDAO = new CommandDAO();
 			Command command = commandDAO.findById(commandId);
+			if(command == null){
+				return;
+			}
 			StatusDAO statusDAO = new StatusDAO();
 			NodeDAO nodeDAO = new NodeDAO();
 			ExecutelogDAO exeDAO = new ExecutelogDAO();
@@ -542,7 +547,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		{
 			RealLogServer.getInstance().broadCast(nodeId+"***"+message);
 		}
-		if(message==null || ! this.currentCommands.contains(commandId) ){
+		if(commandId == null || commandId == 0){
 			
 			// 目前 commandId 传过来都是null
 			if(currentCommands.iterator().hasNext()){
@@ -553,16 +558,20 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				return;
 			}
 		}
+		else if(! this.currentCommands.contains(commandId) ){
+			LOG.info("NodeId:"+nodeId+" get new commandId:"+commandId);
+			this.addCommandId(commandId);
+		}
 		try{
 			if (timeOutThread == null){
-				LOG.info("timeOutThread == null startNew");
+//				LOG.info("timeOutThread == null startNew");
 				timeOutThread = new TimeoutThread(0,commandId,this);
 				timeOutThread.start();
 			}
 			realLog.append(message).append("\r\n");
 			
 			if(message.startsWith("***GOODBYE***")){
-				LOG.info("addReadlog goodBye");
+				LOG.info("addReadlog GOODBYE");
 				timeOutThread.cancel();
 				
 				setFinish(commandId); 
@@ -625,14 +634,14 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		this.configInfo = configInfo;
 	}
 
-	public void execute(CODE code, byte[] fmts, List<String> datas){
+	public void parseDatas(CODE code, byte[] fmts, List<String> datas){
 		if( fmts.length!= datas.size() ){
 			if(isConnect()){
-				// send Error Message	
+				LOG.error("nodeId:"+nodeId+" get the wrong format datas.");
 				return ;
 			}
 		}
-//		LOG.info("CODEID: "+code.getId());
+		
 		try{
 			if(code == null){
 				LOG.error("code is null");
@@ -658,11 +667,6 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 					LOG.info("commandId: "+commandId+". start: "+startFrame+". end: "+endFrame+". by: "+byFrame);
 					Quest quest = setFinish(Integer.parseInt(commandId));
 					(new DealQuest()).makeQuestFrames(quest, startFrame, endFrame, byFrame);
-					
-//					QuestDAO questDAO = new QuestDAO();
-//					questDAO.getQuestWithFrameInfo(quest, startFrame, endFrame, byFrame);
-//					CalcFrame calcFrame = new CalcFrame();
-//					int result = calcFrame.calcFrames(quest,quest.getPacketSize());
 				}
 				else{
 					LOG.error("N_FRAMEINFO need 4 arguments :"+ datas);
