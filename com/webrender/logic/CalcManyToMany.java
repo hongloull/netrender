@@ -19,22 +19,29 @@ public class CalcManyToMany implements CalcCommands {
 	private static final Log LOG = LogFactory.getLog(CalcManyToMany.class);
 	public int calc(Quest quest) {
 		LOG.debug("calc manytomany commands");
+		int packetSize = quest.getPacketSize();
 		Iterator ite_Questargs = quest.getQuestargs().iterator();
 		CommandDAO commandDAO  = new CommandDAO();
 		CommandargDAO commandargDAO = new CommandargDAO();
 		Command command = null;
 		Commandarg commandArg = null;
 		Status status = (new StatusDAO()).findById(70);
+		int i = 1;
 		while(ite_Questargs.hasNext()){
-			command = new Command(quest);
-			command.setType(NameMap.MANYTOMANY);
-			command.setStatus(status);
+			if(i==1){
+				command = new Command(quest);
+				command.setType(NameMap.MANYTOMANY);
+				command.setStatus(status);
+				commandDAO.save(command);
+			}
 			Questarg arg = (Questarg) ite_Questargs.next();
-			commandArg = new Commandarg(command,arg.getCommandmodelarg(),arg.getValue());
+			commandArg = new Commandarg(command,arg.getCommandmodelarg(),arg.getValue()+"");
 			commandargDAO.save(commandArg);
 			command.getCommandargs().add(commandArg);
-			commandDAO.save(command);
-			
+			i++;
+			if(i==packetSize || ite_Questargs.hasNext()==false){				
+				i=1;
+			}
 		}
 		return CalcCommands.SUCCESS;
 	}

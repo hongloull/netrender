@@ -46,7 +46,7 @@
             </key>
             <one-to-many class="com.webrender.dao.Command" />
         </set>
-        <set name="questargs" inverse="true">
+        <set name="questargs" inverse="true" order-by="commandModelArgId asc,questArgId asc">
             <key>
                 <column name="QuestID" not-null="true" />
             </key>

@@ -7,5 +7,5 @@ import com.webrender.protocol.enumn.EOPCODES.CODE;
 
 public interface IClientProcessor {
 
-	void execute(CODE code,byte[] fmts , List<String> datas);	
+	void parseDatas(CODE code,byte[] fmts , List<String> datas);	
 }

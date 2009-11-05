@@ -38,7 +38,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			
 			int headLength = (int)packet.get();
 			if(headLength==0 ){  // 无参数
-				processor.execute(code, new byte[0], datas);
+				processor.parseDatas(code, new byte[0], datas);
 				return null;
 			}
 		// 有参数时
@@ -74,7 +74,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			fmts.flip();
 			byte[] byteFmts = new byte[fmts.limit()];
 			fmts.get(byteFmts);
-			processor.execute(code, byteFmts, datas);
+			processor.parseDatas(code, byteFmts, datas);
 			return null;
 		} catch (java.nio.BufferUnderflowException e) {
 			//解析到不完整包 数据未完
@@ -86,31 +86,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			remainBuffer.put(bytes);
 			return remainBuffer;
 		}
-//		switch(code){
-//		case READY:
-//			processor.ready();
-//			break;
-//		case FEEDBACK:
-//			int commandId = packet.getInt();
-//			byte[] message = new byte[packet.getInt()];
-//			packet.get(message);
-//			String mesString = new String(message);
-//			processor.addFeedBack(commandId,mesString);
-//			break;
-//		case STATUSINFO:
-//			byte[] status = new byte[packet.getInt()];
-//			packet.get(status);
-//			String statusString = new String(status);
-//			processor.updateStatus(statusString);
-//			break;
-//		case CONFIGINFO:
-//			byte[] configInfo = new byte[packet.getInt()];
-//			packet.get(configInfo);
-//			String configString = new String(configInfo);
-//			processor.updateConfig(configString);
-//		default :
-//			break;
-//		}
+
 	}
 	
 	public int initialClient(ByteBuffer packet) {
