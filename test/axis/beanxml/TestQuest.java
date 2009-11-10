@@ -37,7 +37,7 @@ public class TestQuest {
 		while(ite_quests.hasNext())
 		{
 			Quest quest = (Quest) ite_quests.next();
-			Element element = QuestUtils.bean2xml(quest);
+			Element element = (new QuestUtils()).bean2xml(quest);
 			element.addAttribute("commandModelName",quest.getCommandmodel().getCommandModelName());
 			element.addAttribute("progress", "100" ) ;
 			element.addAttribute("nodeNum","3");
@@ -48,7 +48,7 @@ public class TestQuest {
 			root.addContent(element);
 		}
 		Document doc = new Document(root);
-		System.out.println( XMLOut.outputToString(doc) ); 
+		System.out.println( (new XMLOut()).outputToString(doc) ); 
 	//	System.out.println( element.toString() );
 		
 	}

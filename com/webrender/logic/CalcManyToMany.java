@@ -1,6 +1,10 @@
 package com.webrender.logic;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,30 +21,51 @@ import com.webrender.tool.NameMap;
 
 public class CalcManyToMany implements CalcCommands {
 	private static final Log LOG = LogFactory.getLog(CalcManyToMany.class);
-	public int calc(Quest quest) {
+	public int calc(Quest quest) {		
 		LOG.debug("calc manytomany commands");
+		int currentmodelArgId =0 ;
 		int packetSize = quest.getPacketSize();
-		Iterator ite_Questargs = quest.getQuestargs().iterator();
+		int currentPacketPosition =0;
+		int CommandsSize =0;
+		int currentCommandPosition =0;
+		Set set_Questargs = quest.getQuestargs();
 		CommandDAO commandDAO  = new CommandDAO();
 		CommandargDAO commandargDAO = new CommandargDAO();
 		Command command = null;
 		Commandarg commandArg = null;
+		Questarg questArg = null;
+		List<Command> list_Commands = null;
 		Status status = (new StatusDAO()).findById(70);
-		int i = 1;
-		while(ite_Questargs.hasNext()){
-			if(i==1){
+		
+		for(Object object : set_Questargs){
+			questArg = (Questarg) object;
+			if (currentmodelArgId != questArg.getCommandmodelarg().getCommandModelArgId()){
+				currentmodelArgId = questArg.getCommandmodelarg().getCommandModelArgId();
+				if(list_Commands==null){
+					list_Commands = new ArrayList<Command>();
+				}else{
+					currentCommandPosition =0;
+					currentPacketPosition = 0;
+				}
+			}
+			if( currentCommandPosition < list_Commands.size()){  // Don't need new Command
+				command=list_Commands.get(currentCommandPosition);	
+			}
+			else{ // exact Command
 				command = new Command(quest);
 				command.setType(NameMap.MANYTOMANY);
 				command.setStatus(status);
 				commandDAO.save(command);
+				list_Commands.add(command);
+				
 			}
-			Questarg arg = (Questarg) ite_Questargs.next();
-			commandArg = new Commandarg(command,arg.getCommandmodelarg(),arg.getValue()+"");
+			commandArg = new Commandarg(command,questArg.getCommandmodelarg(),questArg.getValue()+"");
 			commandargDAO.save(commandArg);
 			command.getCommandargs().add(commandArg);
-			i++;
-			if(i==packetSize || ite_Questargs.hasNext()==false){				
-				i=1;
+			currentPacketPosition++;	
+			if(currentPacketPosition==packetSize){
+				currentPacketPosition = 0;
+				currentCommandPosition++;
 			}
 		}
 		return CalcCommands.SUCCESS;

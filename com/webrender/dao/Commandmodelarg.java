@@ -20,6 +20,7 @@ public class Commandmodelarg implements java.io.Serializable {
 	private String argInstruction;
 	private String value; 
 	private Short type;
+	private Integer order;
 	private Set commandargs = new HashSet(0);
 	private Set questargs = new HashSet(0);
 
@@ -96,6 +97,20 @@ public class Commandmodelarg implements java.io.Serializable {
 
 	public void setType(Short type) {
 		this.type = type;
+	}
+
+	/**
+	 * @return the order
+	 */
+	public Integer getOrder() {
+		return order;
+	}
+
+	/**
+	 * @param order the order to set
+	 */
+	public void setOrder(Integer order) {
+		this.order = order;
 	}
 
 	public Set getCommandargs() {

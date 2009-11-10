@@ -34,6 +34,6 @@ public class StrOperate {
 	}
 	public static void main(String args[])
 	{
-//		System.out.println( StrOperate.pathReplace("/mnt/production/project/a.mb", "/mnt/production","D:\\") );
+		System.out.println( (new StrOperate()).pathReplace("/mnt/production/project/a.mb", "/mnt/production","D:\\") );
 	}
 }

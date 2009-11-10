@@ -24,7 +24,7 @@ public class TestNodeConfigUtils {
 			e1.printStackTrace();
 		}
 		 try {
-			NodeConfig config = NodeConfigUtils.xmlString2bean(XML);
+			NodeConfig config = (new NodeConfigUtils()).xmlString2bean(XML);
 			assert config.getGeneralConfig().getPriority().equals("0");
 			
 		} catch (JDOMException e) {

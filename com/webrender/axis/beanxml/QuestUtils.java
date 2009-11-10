@@ -8,7 +8,7 @@ import org.jdom.Element;
 import com.webrender.dao.Quest;
 import com.webrender.dao.QuestDAO;
 import com.webrender.dao.QuestargDAO;
-import com.webrender.logic.CalcFrame;
+
 
 public final class QuestUtils {
 	private static final Log LOG = LogFactory.getLog(QuestUtils.class);
@@ -79,15 +79,15 @@ public final class QuestUtils {
 //		 String startFrame = questargDAO.getStartFrame(quest)+"";
 //		 String endFrame   = questargDAO.getEndFrame(quest)+"";
 		 try{
-			 CalcFrame cF = new CalcFrame();
-			 root.addAttribute("totalFrames",cF.getTotalFrames(quest));
+//			 CalcFrame cF = new CalcFrame();
+			 root.addAttribute("totalFrames",quest.getCommands().size()+"");
 		 }catch(Exception e){
 			 
 		 }
 		 
-		 root.addAttribute("startFrame",questargDAO.getStartFrame(quest)+"");
-		 root.addAttribute("endFrame",questargDAO.getEndFrame(quest)+"");
-		 
+//		 root.addAttribute("startFrame",questargDAO.getStartFrame(quest)+"");
+//		 root.addAttribute("endFrame",questargDAO.getEndFrame(quest)+"");
+		 root.addAttribute("frames",questargDAO.getFramesValue(quest)+"");
 		 root.addAttribute("fileName",questargDAO.getFileName(quest)+"");
 		 LOG.debug("bean2xmlWithState success questId:"+quest.getQuestId());
 		 return root;

@@ -36,9 +36,9 @@ public final class CommandmodelUtils {
 		
 		CommandmodelDAO dao = new CommandmodelDAO();
 
-		if (commandModelId != null ){
-			commandModel = dao.findById(Integer.parseInt(commandModelId));
-		}
+//		if (commandModelId != null ){
+//			commandModel = dao.findById(Integer.parseInt(commandModelId));
+//		}
 		if (commandModel==null){
 			commandModel  = dao.findByCommandModelName(commandModelName);
 			if (commandModel==null ){

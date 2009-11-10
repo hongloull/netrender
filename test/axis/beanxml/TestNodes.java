@@ -23,10 +23,10 @@ public class TestNodes {
 		while( ite_nodes.hasNext())
 		{
 			Node node = (Node)ite_nodes.next();
-			Element ele_node = NodeUtils.bean2xml(node);
+			Element ele_node = (new NodeUtils()).bean2xml(node);
 			root.addContent(ele_node);
 		}
 		Document doc = new Document(root);
-		System.out.println( XMLOut.outputToString(doc) );
+		System.out.println( (new XMLOut()).outputToString(doc) );
 	}
 }

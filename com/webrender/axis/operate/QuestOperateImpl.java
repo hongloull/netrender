@@ -4,7 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,7 +34,7 @@ import com.webrender.dao.Reguser;
 import com.webrender.dao.ReguserDAO;
 import com.webrender.dao.StatusDAO;
 import com.webrender.logic.CalcCommands;
-import com.webrender.logic.CalcFrame;
+import com.webrender.logic.CalcFrames;
 import com.webrender.logic.CalcManyToMany;
 import com.webrender.logic.CalcOneToMany;
 import com.webrender.tool.NameMap;
@@ -100,17 +102,26 @@ public class QuestOperateImpl extends BaseOperate {
 					command.setType(NameMap.PRELIGHT);
 					command.setStatus(statusDAO.findById(70));
 					(new CommandDAO()).save(command);
-					calcCommands = new CalcFrame(); 
+					calcCommands = new CalcFrames(); 
 				}
 				else if(NameMap.MANYTOMANY.equalsIgnoreCase(modelType)){
+					LinkedHashSet questargs = new LinkedHashSet();
 					for(int j =0 ; j<questargssize ;j++)
 					{
 						questarg = questargUtils.xml2bean(lis_questargs.get(j));
 						questarg.setQuest(quest);
-						quest.getQuestargs().add(questarg);
+						LOG.info("QuestArgId: "+questarg.getQuestArgId()+" CommandModelArgId: "+questarg.getCommandmodelarg().getCommandModelArgId()+" Value: "+questarg.getValue() );
 						questargDAO.save(questarg);
+						questargs.add(questarg);
 					}
-					calcCommands = new CalcManyToMany();
+					quest.getQuestargs().addAll(questargs);
+					
+					Set<Questarg> set_Questargs = quest.getQuestargs();
+					
+					for(Questarg temparg : set_Questargs){
+						LOG.info("2:QuestArgId: "+temparg.getQuestArgId()+" CommandModelArgId: "+temparg.getCommandmodelarg().getCommandModelArgId()+" Value: "+temparg.getValue() );
+					}
+				calcCommands = new CalcManyToMany();
 				}
 				else if(NameMap.ONETOMANY.equalsIgnoreCase(modelType)){
 					for(int j =0 ; j<questargssize ;j++)
