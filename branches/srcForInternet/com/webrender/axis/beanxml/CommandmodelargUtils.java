@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jdom.Element;
 import com.webrender.dao.Commandmodelarg;
 import com.webrender.dao.CommandmodelargDAO;
+import com.webrender.dao.Status;
 import com.webrender.dao.StatusDAO;
 
 public final class CommandmodelargUtils {
@@ -17,6 +18,7 @@ public final class CommandmodelargUtils {
 		root.addAttribute("commandModelArgId", arg.getCommandModelArgId().toString());
 		root.addAttribute("argName",arg.getArgName());
 		root.addAttribute("type", (arg.getType()!=null)?arg.getType().toString():"0");
+		root.addAttribute("order", (arg.getOrder()!=null)?arg.getOrder().toString():"100");
 		root.addAttribute("argInstruction", arg.getArgInstruction());
 		LOG.debug("bean2xml(Commandmodelarg argId "+arg.getCommandModelArgId()+" ) success");
 		return root;
@@ -48,6 +50,7 @@ public final class CommandmodelargUtils {
 		String argInstruction = element.getAttributeValue("argInstruction");
 		String value = element.getAttributeValue("value");
 		String type = element.getAttributeValue("type");
+		String order = element.getAttributeValue("order");
 		String statusId = element.getAttributeValue("statusId");
 		
 		if(argName==null){
@@ -66,15 +69,19 @@ public final class CommandmodelargUtils {
 		if(argInstruction!=null)instance.setArgInstruction(argInstruction);
 		if(value!=null)instance.setValue(value);
 		if(type!=null)instance.setType(Short.parseShort(type));
-		if("61".equals(statusId) || "62".equals(statusId) || "63".equals(statusId) || "64".equals(statusId) || "65".equals(statusId))
-		{			
-			StatusDAO statusDAO = new StatusDAO();
-			instance.setStatus(statusDAO.findById(Integer.parseInt(statusId)));
+		if(order!=null)instance.setOrder(Integer.parseInt(order));
+		Status status = null;		
+		StatusDAO statusDAO = new StatusDAO();
+		try{
+			status = statusDAO.findById(Integer.parseInt(statusId));				
+		}catch(Exception e){
+			status = statusDAO.findById(60);
 		}
-		else{
-			StatusDAO statusDAO = new StatusDAO();
-			instance.setStatus(statusDAO.findById(60));
+		if(status == null){
+			status = statusDAO.findById(60);
 		}
+		instance.setStatus(status);
+		
 		LOG.debug("xml2bean success");
 		return instance;
 	}

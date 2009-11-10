@@ -36,11 +36,13 @@ public final class ChunkDetailUtils {
 				Executelog startLog = executeLogDAO.findStartLog(command);
 				Executelog endLog = executeLogDAO.findEndLog(command);
 				startTime = startLog.getLogTime();
-				endTime = endLog.getLogTime();
-				long between = (endTime.getTime()-startTime.getTime())/1000;
 				SimpleDateFormat dateFormat =new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				start = dateFormat.format(startTime);
+
+				endTime = endLog.getLogTime();
 				end   = dateFormat.format(endTime);
+
+				long between = (endTime.getTime()-startTime.getTime())/1000;
 				long day1=between/(24*3600);
 				long hour1=between%(24*3600)/3600;
 				long minute1=between%3600/60;

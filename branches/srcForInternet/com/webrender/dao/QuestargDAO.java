@@ -152,7 +152,7 @@ public class QuestargDAO extends BaseHibernateDAO {
 		}
 		
 	}
-	public String getStartFrame(Quest quest)
+	public String getFramesValue(Quest quest)
 	{
 		LOG.debug("getStartFrame questId:"+quest.getQuestId());
 		try{
@@ -174,28 +174,28 @@ public class QuestargDAO extends BaseHibernateDAO {
 			throw re;
 		}
 	}
-	public String getEndFrame(Quest quest)
-	{
-		LOG.debug("getEndFrame questId:"+quest.getQuestId());
-		try{
-			// 获取某Quest中getEndFrame;
-			Query query = getSession().createQuery("from Questarg as arg where arg.quest.questId = ? and arg.commandmodelarg.status.statusId = 62 ");
-			query.setParameter(0, quest.getQuestId());
-			List list = query.list();
-			int size = list.size();
-			if (size==1)
-			{
-				return  ( (Questarg)list.get(0) ).getValue();
-			}
-			else
-			{
-				return null;
-			}
-		} catch (RuntimeException re) {
-			LOG.error("getEndFrame failed questId:"+quest.getQuestId(), re);
-			throw re;
-		}
-	}
+//	public String getEndFrame(Quest quest)
+//	{
+//		LOG.debug("getEndFrame questId:"+quest.getQuestId());
+//		try{
+//			// 获取某Quest中getEndFrame;
+//			Query query = getSession().createQuery("from Questarg as arg where arg.quest.questId = ? and arg.commandmodelarg.status.statusId = 62 ");
+//			query.setParameter(0, quest.getQuestId());
+//			List list = query.list();
+//			int size = list.size();
+//			if (size==1)
+//			{
+//				return  ( (Questarg)list.get(0) ).getValue();
+//			}
+//			else
+//			{
+//				return null;
+//			}
+//		} catch (RuntimeException re) {
+//			LOG.error("getEndFrame failed questId:"+quest.getQuestId(), re);
+//			throw re;
+//		}
+//	}
 	public String getByFrame(Quest quest)
 	{
 		LOG.debug("getByFrame questId:"+quest.getQuestId());

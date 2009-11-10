@@ -4,26 +4,16 @@ package com.webrender.remote;
 
 import java.io.IOException;
 import java.io.StringBufferInputStream;
-
-
-import java.io.UnsupportedEncodingException;
-import java.net.ConnectException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,28 +25,20 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import com.webrender.axis.beanxml.CommmandUtils;
-import com.webrender.axis.beanxml.XMLOut;
 import com.webrender.axis.operate.ConfigOperateImpl;
 import com.webrender.dao.Command;
 import com.webrender.dao.CommandDAO;
-import com.webrender.dao.Commandarg;
-import com.webrender.dao.Commandmodelarg;
-import com.webrender.dao.CommandmodelargDAO;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
 import com.webrender.dao.HibernateSessionFactory;
 import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
 import com.webrender.dao.Quest;
-import com.webrender.dao.QuestDAO;
-import com.webrender.dao.Questarg;
 import com.webrender.dao.StatusDAO;
-import com.webrender.logic.CalcFrame;
 import com.webrender.protocol.enumn.EOPCODES;
 import com.webrender.protocol.enumn.EOPCODES.CODE;
 import com.webrender.protocol.messages.ServerMessages;
 import com.webrender.protocol.processor.IClientProcessor;
-import com.webrender.server.Dispatcher;
 import com.webrender.server.RealLogServer;
 import com.webrender.server.deal.DealQuest;
 import com.webrender.tool.NameMap;
@@ -659,14 +641,13 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				String configString = datas.get(0);
 				updateConfig(configString);
 			}else if(code.getId() == EOPCODES.getInstance().get("N_FRAMEINFO").getId()){
-				if (datas.size()==4){
+				if (datas.size()==3){
 					String commandId = datas.get(0);
-					String startFrame = datas.get(1);
-					String endFrame = datas.get(2);
-					String byFrame = datas.get(3);
-					LOG.info("commandId: "+commandId+". start: "+startFrame+". end: "+endFrame+". by: "+byFrame);
+					String frames = datas.get(1);
+					String byFrame = datas.get(2);
+					LOG.info("commandId: "+commandId+". frames: "+frames+". by: "+byFrame);
 					Quest quest = setFinish(Integer.parseInt(commandId));
-					(new DealQuest()).makeQuestFrames(quest, startFrame, endFrame, byFrame);
+					(new DealQuest()).makeQuestFrames(quest, frames, byFrame);
 				}
 				else{
 					LOG.error("N_FRAMEINFO need 4 arguments :"+ datas);

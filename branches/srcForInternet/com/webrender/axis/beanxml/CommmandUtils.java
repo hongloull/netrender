@@ -28,8 +28,11 @@ public final class CommmandUtils {
 			Commandmodelarg cMDArg = commandArg.getCommandmodelarg();
 			set_ids.add(cMDArg.getCommandModelArgId());
 			org.jdom.Element element = null;
-			if (commandArg.getCommandmodelarg().getStatus().getStatusId()==64){
+			int statusId = commandArg.getCommandmodelarg().getStatus().getStatusId();
+			if (statusId==64){
 				element = new org.jdom.Element("Endarg");
+			}else if (statusId == 61){
+				element = new org.jdom.Element("Framearg");
 			}
 			else element = new org.jdom.Element("Cmdarg");
 //			element.addAttribute("cmdModelArgId", cMDArg.getCommandModelArgId().toString());

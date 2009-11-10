@@ -15,12 +15,12 @@ public class TestNodeMachine {
 		
 //		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(2);
 //		nodeMachine.setConnect(false);
-		System.out.println(CommmandUtils.commandToXMLForExe((commandDAO.findById(10))));
+		System.out.println((new CommmandUtils()).commandToXMLForExe((commandDAO.findById(10))));
 	}
 	
 	@Test
 	public void testAddRealLog(){
-		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(3);
+		NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(3);
 		int commandId = 143;
 		nodeMachine.addCommandId(commandId);
 		for(int i = 0 ; i<5;i++){
@@ -36,7 +36,7 @@ public class TestNodeMachine {
 	
 	@Test
 	public void testGetStatus(){
-		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(11);
+		NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(11);
 //		nodeMachine.testConnect();
 		for(int i = 0 ; i<20;i++){
 			System.out.println( nodeMachine.getStatus().toString() );	

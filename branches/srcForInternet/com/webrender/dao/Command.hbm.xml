@@ -25,7 +25,7 @@
         <property name="sendTime" type="java.util.Date">
             <column name="SendTime" length="19" />
         </property>
-        <set name="commandargs" inverse="true">
+        <set name="commandargs" inverse="true" order-by="commandArgId asc">
             <key>
                 <column name="CommandID" not-null="true" />
             </key>

@@ -14,12 +14,12 @@ public class TestServerMessageCreate {
 		CODE code = EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_SHUTDOWN");
 		char charCode = (char)code.getId();
 		String[] data = {charCode+""};
-		ByteBuffer pkt = ServerMessages.createPkt(EOPCODES.getInstance().get("S_SYSTEM"), fmt, data);
+		ByteBuffer pkt = (new ServerMessages()).createPkt(EOPCODES.getInstance().get("S_SYSTEM"), fmt, data);
 		System.out.println(pkt);
 	}
 	
 	@Test
 	public void testCreateCommandPkt() throws Exception{
-		System.out.println( ServerMessages.createCommandPkt(EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_RENDER"),5,"commandInformation") ); 
+		System.out.println( (new ServerMessages()).createCommandPkt(EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_RENDER"),5,"commandInformation") ); 
 	}
 }

@@ -13,7 +13,7 @@ public class TestMessageHandlerImpl {
 	@Test
 	public void testParseMessage() throws Exception{
 		CODE code = EOPCODES.getInstance().get("S_SYSTEM");
-		ByteBuffer buffer = ServerMessages.createStatusPkt();
+		ByteBuffer buffer = (new ServerMessages()).createStatusPkt();
 		buffer.get();
 		Short pri = 0;
 		NodeMachine nodeMachine = new NodeMachine(50,pri);

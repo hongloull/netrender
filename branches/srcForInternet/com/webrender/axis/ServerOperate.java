@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.webrender.axis.operate.ServerOperateImpl;
-import com.webrender.dao.Operatelog;
 
 public class ServerOperate extends BaseAxis {
 	private static final Log LOG = LogFactory.getLog(ServerOperate.class);

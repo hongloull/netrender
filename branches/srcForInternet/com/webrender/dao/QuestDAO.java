@@ -323,26 +323,18 @@ public class QuestDAO extends BaseHibernateDAO {
 		}
 	}
 	
-	public Quest getQuestWithFrameInfo(Quest quest,String startFrame,String endFrame,String byFrame){
+	public Quest getQuestWithFrameInfo(Quest quest,String framesValue,String byFrame){
 		CommandmodelargDAO cMADAO = new CommandmodelargDAO();
 		
 		QuestargDAO questArgDAO = new QuestargDAO();
 		
-		if(questArgDAO.getStartFrame(quest)==null){
+		if(questArgDAO.getFramesValue(quest)==null){
 			Questarg startArg = new Questarg();
 			startArg.setCommandmodelarg(cMADAO.findStartArg(quest.getCommandmodel()));
-			startArg.setValue(startFrame);
+			startArg.setValue(framesValue);
 			startArg.setQuest(quest);
 			quest.getQuestargs().add(startArg);			
 			
-		}
-		
-		if(questArgDAO.getEndFrame(quest)==null){
-			Questarg endArg = new Questarg();
-			endArg.setCommandmodelarg(cMADAO.findEndArg(quest.getCommandmodel()));
-			endArg.setValue(endFrame);
-			endArg.setQuest(quest);
-			quest.getQuestargs().add(endArg);			
 		}
 		
 		if(questArgDAO.getByFrame(quest)==null){
