@@ -23,6 +23,7 @@ public class Quest implements java.io.Serializable {
 	private Date commitTime;
 	private Integer maxNodes;
 	private Short packetSize;
+	private Integer totalFrames;
 	private Set commands = new HashSet(0);
 	private Set questargs = new HashSet(0);
 
@@ -108,7 +109,7 @@ public class Quest implements java.io.Serializable {
 	/**
 	 * @return the preLight
 	 */
-	public String getPreLight() {
+	public String getPreLight(){
 		return preLight;
 	}
 
@@ -149,6 +150,20 @@ public class Quest implements java.io.Serializable {
 
 	public void setPacketSize(Short packetSize) {
 		this.packetSize = packetSize;
+	}
+
+	/**
+	 * @return the totalFrames
+	 */
+	public Integer getTotalFrames() {
+		return totalFrames;
+	}
+
+	/**
+	 * @param totalFrames the totalFrames to set
+	 */
+	public void setTotalFrames(Integer totalFrames) {
+		this.totalFrames = totalFrames;
 	}
 
 	public Set getCommands() {

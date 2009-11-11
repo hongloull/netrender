@@ -50,7 +50,7 @@ public class QuestOperateImpl extends BaseOperate {
 	public String CommitQuest(String questXML,int regUserId)
 	{
 		
-		LOG.debug("CommitQuest");		
+		LOG.debug("commitQuest begin");		
 		try{
 			
 			this.closeSession();
@@ -110,16 +110,12 @@ public class QuestOperateImpl extends BaseOperate {
 					{
 						questarg = questargUtils.xml2bean(lis_questargs.get(j));
 						questarg.setQuest(quest);
-						LOG.info("QuestArgId: "+questarg.getQuestArgId()+" CommandModelArgId: "+questarg.getCommandmodelarg().getCommandModelArgId()+" Value: "+questarg.getValue() );
 						questargDAO.save(questarg);
 						questargs.add(questarg);
 					}
 					quest.getQuestargs().addAll(questargs);
-					
 					Set<Questarg> set_Questargs = quest.getQuestargs();
-					
 					for(Questarg temparg : set_Questargs){
-						LOG.info("2:QuestArgId: "+temparg.getQuestArgId()+" CommandModelArgId: "+temparg.getCommandmodelarg().getCommandModelArgId()+" Value: "+temparg.getValue() );
 					}
 				calcCommands = new CalcManyToMany();
 				}
@@ -132,9 +128,11 @@ public class QuestOperateImpl extends BaseOperate {
 						questargDAO.save(questarg);
 					}	
 					calcCommands = new CalcOneToMany();
-				
 				}
 				int result = calcCommands.calc(quest);
+				int totalSize = calcCommands.getTotalSize();
+				quest.setTotalFrames(totalSize);
+				questDAO.save(quest);
 				switch(result){
 				case CalcCommands.SUCCESS:logOperate(regUserId,Operatelog.ADD,"Add Quest "+quest.getQuestName()+" success.");
 				break;

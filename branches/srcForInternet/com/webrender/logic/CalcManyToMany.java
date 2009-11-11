@@ -21,25 +21,25 @@ import com.webrender.tool.NameMap;
 
 public class CalcManyToMany implements CalcCommands {
 	private static final Log LOG = LogFactory.getLog(CalcManyToMany.class);
+	private int totalSize = 0;
 	public int calc(Quest quest) {		
 		LOG.debug("calc manytomany commands");
 		int currentmodelArgId =0 ;
 		int packetSize = quest.getPacketSize();
 		int currentPacketPosition =0;
-		int CommandsSize =0;
+		
 		int currentCommandPosition =0;
-		Set set_Questargs = quest.getQuestargs();
+		Set<Questarg> set_Questargs = quest.getQuestargs();
 		CommandDAO commandDAO  = new CommandDAO();
 		CommandargDAO commandargDAO = new CommandargDAO();
 		Command command = null;
 		Commandarg commandArg = null;
-		Questarg questArg = null;
 		List<Command> list_Commands = null;
 		Status status = (new StatusDAO()).findById(70);
-		
-		for(Object object : set_Questargs){
-			questArg = (Questarg) object;
+		int count = 0;
+		for(Questarg questArg : set_Questargs){
 			if (currentmodelArgId != questArg.getCommandmodelarg().getCommandModelArgId()){
+				count=0;
 				currentmodelArgId = questArg.getCommandmodelarg().getCommandModelArgId();
 				if(list_Commands==null){
 					list_Commands = new ArrayList<Command>();
@@ -48,6 +48,7 @@ public class CalcManyToMany implements CalcCommands {
 					currentPacketPosition = 0;
 				}
 			}
+			count++;
 			if( currentCommandPosition < list_Commands.size()){  // Don't need new Command
 				command=list_Commands.get(currentCommandPosition);	
 			}
@@ -57,7 +58,6 @@ public class CalcManyToMany implements CalcCommands {
 				command.setStatus(status);
 				commandDAO.save(command);
 				list_Commands.add(command);
-				
 			}
 			commandArg = new Commandarg(command,questArg.getCommandmodelarg(),questArg.getValue()+"");
 			commandargDAO.save(commandArg);
@@ -67,8 +67,14 @@ public class CalcManyToMany implements CalcCommands {
 				currentPacketPosition = 0;
 				currentCommandPosition++;
 			}
+			if(count>this.totalSize){
+				totalSize = count;
+			}
 		}
 		return CalcCommands.SUCCESS;
+	}
+	public int getTotalSize() {
+		return totalSize;
 	}
 
 }

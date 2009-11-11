@@ -15,8 +15,8 @@ import com.webrender.dao.ReguserDAO;
 
 public class BaseOperate {
 	private   static final Log LOG = LogFactory.getLog(BaseOperate.class);
-	protected static final String ACTIONSUCCESS = "Success";
-	protected static final String ACTIONFAILURE = "Failure ";
+	public static final String ACTIONSUCCESS = "Success";
+	public static final String ACTIONFAILURE = "Failure ";
 	
 	protected void logOperate(int regUserId,Short type,String information){
 		ReguserDAO regUserDAO = new ReguserDAO();

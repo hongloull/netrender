@@ -80,7 +80,7 @@ public final class QuestUtils {
 //		 String endFrame   = questargDAO.getEndFrame(quest)+"";
 		 try{
 //			 CalcFrame cF = new CalcFrame();
-			 root.addAttribute("totalFrames",quest.getCommands().size()+"");
+			 root.addAttribute("totalFrames",quest.getTotalFrames()+"");
 		 }catch(Exception e){
 			 
 		 }

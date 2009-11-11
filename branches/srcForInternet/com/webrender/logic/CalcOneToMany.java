@@ -19,7 +19,7 @@ import com.webrender.remote.NodeMachineManager;
 import com.webrender.tool.NameMap;
 public class CalcOneToMany implements CalcCommands {
 	private static final Log LOG = LogFactory.getLog(CalcOneToMany.class);
-	
+	private int totalSize = 0;
 	public int  calc(com.webrender.dao.Quest quest){
 		
 		LOG.debug("calcOneToMany questId :"+quest.getQuestId());
@@ -44,8 +44,13 @@ public class CalcOneToMany implements CalcCommands {
 				command.setType(NameMap.ONETOMANY);
 				command.setStatus(status);
 				commandDAO.save(command);
+				totalSize++;
 			}
 		}
 		return CalcCommands.SUCCESS;
+	}
+
+	public int getTotalSize() {
+		return totalSize;
 	}
 }
