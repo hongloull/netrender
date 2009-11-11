@@ -25,6 +25,9 @@
         <property name="value" type="string">
             <column name="Value" length="255" />
         </property>
+       <property name="order" type="java.lang.Integer">
+            <column name="Sequence" />
+        </property>
         <property name="type" type="java.lang.Short">
             <column name="Type">
                 <comment>file , directory or constant</comment>

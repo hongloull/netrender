@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Transaction;
 
 import com.webrender.axis.beanxml.NodeUtils;
+import com.webrender.axis.operate.BaseOperate;
 import com.webrender.axis.operate.NodeOperateImpl;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
@@ -91,11 +92,21 @@ public class NodeOperate extends BaseAxis {
 		
 	}
 	
-	public String delNode(String nodeId){
-		
+	public String delNode(String...nodeIds){
 		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
-		
-		return (new NodeOperateImpl()).delNode(nodeId,this.getLoginUserId());
+		NodeOperateImpl impl = new NodeOperateImpl();
+		StringBuffer result = new StringBuffer();
+		String subResult = null;
+		for(String nodeId:nodeIds){
+			subResult = impl.delNode(nodeId,this.getLoginUserId());
+			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
+				result.append(nodeId).append(":").append(subResult).append("\n\r");
+			}
+		}
+		if(result.length()==0){
+			result.append(BaseOperate.ACTIONSUCCESS);
+		}
+		return result.toString();
 	}
 	
 	

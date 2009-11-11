@@ -40,6 +40,9 @@
         <property name="packetSize" type="java.lang.Short">
             <column name="PacketSize" />
         </property>
+        <property name="totalFrames" type="java.lang.Integer">
+            <column name="TotalFrames"/>
+        </property>
         <set name="commands" inverse="true" order-by="commandId asc">
             <key>
                 <column name="QuestID" not-null="true" />

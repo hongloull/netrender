@@ -16,28 +16,42 @@ public class DealQuest {
 	 */
 	public void makeQuestFrames(Quest quest,String framesValue,String byFrame){
 		Transaction tx = null;
+		int totalSize = 0;
+		QuestDAO questDAO = new QuestDAO();
 		try{
-			QuestDAO questDAO = new QuestDAO();
 			quest = questDAO.getQuestWithFrameInfo(quest, framesValue, byFrame);
 			CalcFrames calcFrames = new CalcFrames();
 			tx = HibernateSessionFactory.getSession().beginTransaction();
 			
 			int result = calcFrames.calc(quest);
+			totalSize = calcFrames.getTotalSize();
 			if(result == CalcFrames.SUCCESS){
 				tx.commit();
-				return;
 			}
 			else{
 				LOG.error("quest:"+quest.getQuestName()+" deal frames fail.");
 				if(tx!=null) tx.rollback();
 			}
-			
 		}catch(Exception e){
 			if(tx !=null){
 				tx.rollback();
 			}
 			LOG.error("makeQuestFrames fail",e);
 		}
+		if(totalSize != 0){
+			try{
+				tx = HibernateSessionFactory.getSession().beginTransaction();
+				quest.setTotalFrames(totalSize);
+				questDAO.save(quest);
+				tx.commit();
+			}catch(Exception e){
+				LOG.error("makeQuestFrames save quest's totalFrames fail",e);
+				if(tx!=null){
+					tx.rollback();
+				}
+			}
+		}
+		
 	}
 	
 	public void setPreLight(Quest quest , String preLight){

@@ -9,4 +9,5 @@ public interface CalcCommands {
 	public static final int LACKFRAME = 3; // 缺少可计算查看帧数
 	public static final int ERROR = 4;
 	public int calc(Quest quest);
+	public int getTotalSize();
 }
