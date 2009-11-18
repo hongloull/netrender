@@ -13,6 +13,7 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 import com.webrender.axis.beanxml.XMLOut;
+import com.webrender.axis.operate.BaseOperate;
 import com.webrender.axis.operate.ConfigOperateImpl;
 import com.webrender.bean.nodeconfig.NodeConfig;
 import com.webrender.bean.nodeconfig.NodeConfigUtils;
@@ -50,10 +51,21 @@ public class ConfigOperate extends BaseAxis {
 		return (new ConfigOperateImpl()).getNodeConfig(nodeId);
 	}
 	
-	public String setNodeConfig(String nodeId,String config){
+	public String setNodeConfig(String[] nodeIds,String config){
 		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
-		
-		return (new ConfigOperateImpl()).setNodeConfig(nodeId,config,getLoginUserId());
+		ConfigOperateImpl configOperateImpl = new ConfigOperateImpl();
+		StringBuffer result = new StringBuffer();
+		String subResult = null;
+		for(String nodeId:nodeIds){
+			subResult = configOperateImpl.setNodeConfig(nodeId,config,this.getLoginUserId());
+			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
+				result.append(nodeId).append(":").append(subResult).append("\n\r");
+			}
+		}
+		if(result.length()==0){
+			result.append(BaseOperate.ACTIONSUCCESS);
+		}
+		return result.toString();
 	}
 	
 }

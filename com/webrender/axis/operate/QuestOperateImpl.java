@@ -37,6 +37,7 @@ import com.webrender.logic.CalcCommands;
 import com.webrender.logic.CalcFrames;
 import com.webrender.logic.CalcManyToMany;
 import com.webrender.logic.CalcOneToMany;
+import com.webrender.server.ControlThreadServer;
 import com.webrender.tool.NameMap;
 
 public class QuestOperateImpl extends BaseOperate {
@@ -156,7 +157,7 @@ public class QuestOperateImpl extends BaseOperate {
 				return ACTIONFAILURE+e.getMessage();
 			}
 		
-//			ControlThreadServer.getInstance().resume();
+			ControlThreadServer.getInstance().notifyResume();
 //			Dispatcher.getInstance().exeCommands();
 			return quest.getQuestId().toString();
 			
@@ -181,7 +182,7 @@ public class QuestOperateImpl extends BaseOperate {
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			String questName = quest.getQuestName();
 			questDAO.delete(quest);
-			logOperate(regUserId,Operatelog.DEL,"Delete quest "+questName);
+			logOperate(regUserId,Operatelog.DEL,"Delete questName "+questName);
 			tx.commit();
 			LOG.debug("deleteQuest success");
 			return ACTIONSUCCESS;
@@ -243,7 +244,7 @@ public class QuestOperateImpl extends BaseOperate {
 			questDAO.resumeQuest(quest);
 			logOperate(regUserId,Operatelog.MOD,"Resume quest "+quest.getQuestName());
 			tx.commit();
-//			ControlThreadServer.getInstance().resume();
+			ControlThreadServer.getInstance().notifyResume();
 //			Dispatcher.getInstance().exeCommands();
 			
 			LOG.debug("resumeQuest success");
@@ -277,7 +278,7 @@ public class QuestOperateImpl extends BaseOperate {
 			questDAO.reinitQuest(quest);
 			logOperate(regUserId,Operatelog.MOD,"Reinit quest "+quest.getQuestName());
 			tx.commit();
-//			ControlThreadServer.getInstance().resume();
+			ControlThreadServer.getInstance().notifyResume();
 //			Dispatcher.getInstance().exeCommands();
 			
 			LOG.debug("reinitQuest success");

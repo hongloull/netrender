@@ -39,6 +39,7 @@ import com.webrender.protocol.enumn.EOPCODES;
 import com.webrender.protocol.enumn.EOPCODES.CODE;
 import com.webrender.protocol.messages.ServerMessages;
 import com.webrender.protocol.processor.IClientProcessor;
+import com.webrender.server.ControlThreadServer;
 import com.webrender.server.RealLogServer;
 import com.webrender.server.deal.DealQuest;
 import com.webrender.tool.NameMap;
@@ -52,7 +53,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	private Set<Integer> currentCommands ;
 	private static final Log LOG = LogFactory.getLog(NodeMachine.class);
 	private String configInfo = null;
-	private StringBuffer realLog = new StringBuffer();
+	private StringBuffer realLog = null;
 	private ServerMessages serverMessages = new ServerMessages();
 	private CommmandUtils commmandUtils = new CommmandUtils();
 //	IResultStore resultStore;
@@ -65,7 +66,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	private boolean isRealTime = false;
 	private boolean isPause = false;
 	private NodeStatus status = null;
-	private TimeoutThread timeOutThread = null;
+//	private TimeoutThread timeOutThread = null;
 	
 	
 	private NodeMachine(){		
@@ -127,11 +128,11 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		{
 			addCommandId(command.getCommandId());
 			status.setJobName(command.getQuest().getQuestName());
-			if (timeOutThread == null){
-				LOG.debug("timeOutThread == null startNew");
-				timeOutThread = new TimeoutThread(0,command.getCommandId(),this);
-				timeOutThread.start();
-			}
+//			if (timeOutThread == null){
+//				LOG.debug("timeOutThread == null startNew");
+//				timeOutThread = new TimeoutThread(0,command.getCommandId(),this);
+//				timeOutThread.start();
+//			}
 			return true ;
 		}
 		else
@@ -319,6 +320,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		selfCheck();			
 	}
 	public boolean isConnect() {
+		
 		return isConnect;
 	}
 	
@@ -356,17 +358,10 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	{
 		if (isConnect() && isBusy()==false && isPause()==false )
 		{
-			if(NodeMachineManager.getInstance().containIdles(this)==false){
-				LOG.debug(nodeId +" Add to IdleMachines ");
-				NodeMachineManager.getInstance().addNodeMachines(this);
-			}
-			else{
-				LOG.debug(nodeId+" is in IdleMachines ");
-			}
+			NodeMachineManager.getInstance().addNodeMachines(this);
 		}
 		else
 		{
-			LOG.debug(nodeId+" remove from IdleMachines ");
 			NodeMachineManager.getInstance().removeIdleMachines(this);
 		}
 	}
@@ -375,11 +370,11 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	public void cleanRunCommands(String message){
 		Iterator<Integer> ite_CurrentCommands = this.currentCommands.iterator();
 		while(ite_CurrentCommands.hasNext()){
-			cleanRunCommand( ite_CurrentCommands.next(),message);
+			cleanRunCommand( ite_CurrentCommands.next(),message,true);
 		}
 	}
 	
-	private boolean cleanRunCommand(int commandId,String message)
+	private boolean cleanRunCommand(int commandId,String message,boolean isReinit)
 	{
 		LOG.debug("cleanRunCommand commandId:"+ commandId);
 		if ( this.currentCommands.contains(commandId)){
@@ -389,15 +384,26 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			CommandDAO commandDAO = new CommandDAO();
 			try{
 				tx = HibernateSessionFactory.getSession().beginTransaction();
-				saveRealLog(commandId,false,message);
 				Command command = commandDAO.findById(commandId);
-				commandDAO.reinitCommand(command);
-				LOG.info("CommandID: "+command.getCommandId()+" reinit");
+				if(command.getStatus().getStatusId()== 72 ){
+					if(realLog != null && realLog.length()>0){
+						realLog = null;
+					}
+					return true;
+				}
+				if(isReinit){
+					commandDAO.reinitCommand(command);					
+				}else{
+					commandDAO.setError(command);
+				}
+				saveRealLog(commandId,false,message);
+				
+				LOG.info("CommandID: "+command.getCommandId()+" clean from nodeId="+nodeId);
 
 				tx.commit();
 				
 				
-//				ControlThreadServer.getInstance().resume();
+				ControlThreadServer.getInstance().notifyResume();
 //				Dispatcher.getInstance().exeCommands();
 				
 				return true;
@@ -487,7 +493,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			StatusDAO statusDAO = new StatusDAO();
 			NodeDAO nodeDAO = new NodeDAO();
 			ExecutelogDAO exeDAO = new ExecutelogDAO();
-			if (realLog.length()>0) // 有则存之，无则无视
+			if (realLog!=null && realLog.length()>0) // 有则存之，无则无视
 			{
 				Executelog reallog = new Executelog(command,statusDAO.findById(realStatusId),nodeDAO.findById(nodeId),realLog.toString(),new Date());
 				exeDAO.save(reallog);		
@@ -502,10 +508,9 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			
 		}finally
 		{
-			if(realLog.length()>0){
-				LOG.info("realLog renew");
-				realLog = new StringBuffer();					
-			}
+//			LOG.info("realLog reset");
+			realLog = null;					
+			
 			
 		}
 		
@@ -515,11 +520,11 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	public void timeOutOperate(Object obj) {
 		// 超时  认为改命令执行出错
 		LOG.info("timethread timeOut! commandId: "+obj);
-		timeOutThread.cancel();
+//		timeOutThread.cancel();
 	//	saveRealLog( (Integer)obj,false);
-		this.cleanRunCommand((Integer)obj,"Timeout");
+		this.cleanRunCommand((Integer)obj,"Timeout",true);
 		if (this.currentCommands.size()==0) setBusy(false);
-		timeOutThread = null;
+//		timeOutThread = null;
 	}
 
 
@@ -545,24 +550,25 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			this.addCommandId(commandId);
 		}
 		try{
-			if (timeOutThread == null){
-//				LOG.info("timeOutThread == null startNew");
-				timeOutThread = new TimeoutThread(0,commandId,this);
-				timeOutThread.start();
-			}
-			realLog.append(message).append("\r\n");
+//			if (timeOutThread == null){
+//				timeOutThread = new TimeoutThread(0,commandId,this);
+//				timeOutThread.start();
+//			}
+			if(realLog == null) realLog = new StringBuffer();
+			
 			
 			if(message.startsWith("***GOODBYE***")){
 				LOG.info("addReadlog GOODBYE");
-				timeOutThread.cancel();
+//				timeOutThread.cancel();
 				
-				setFinish(commandId); 
-				timeOutThread = null;
+				setFinish(commandId);
+//				timeOutThread = null;
 			}
 			else{
+				realLog.append(message);
 				// 重置超时时间
 				LOG.debug("timethread reset");
-				timeOutThread.reset();
+//				timeOutThread.reset();
 			}			
 		}catch(Exception e)
 		{
@@ -646,7 +652,9 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 					String frames = datas.get(1);
 					String byFrame = datas.get(2);
 					LOG.info("commandId: "+commandId+". frames: "+frames+". by: "+byFrame);
-					Quest quest = setFinish(Integer.parseInt(commandId));
+					int intCommandId = Integer.parseInt(commandId);
+					this.addFeedBack(intCommandId,"frames: "+frames+". by: "+byFrame );
+					Quest quest = setFinish(intCommandId);
 					(new DealQuest()).makeQuestFrames(quest, frames, byFrame);
 				}
 				else{
@@ -660,14 +668,20 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				else{
 					LOG.error("send path config fail.");
 				}
-			}
-			else if( code.getId() == EOPCODES.getInstance().get("N_PRELIGHT").getId() ){
+			}else if( code.getId() == EOPCODES.getInstance().get("N_PRELIGHT").getId() ){
 				String commandId = datas.get(0);
 				String preLight = datas.get(1);
-				Quest quest = setFinish(Integer.parseInt(commandId));
+				int intCommandId = Integer.parseInt(commandId);
+				this.addFeedBack(intCommandId, preLight);
+				Quest quest = setFinish(intCommandId);
 				(new DealQuest()).setPreLight(quest, preLight);
-			}
-			else{
+			}else if(code.getId() == EOPCODES.getInstance().get("N_ERROR").getId() ){
+				int commandId =Integer.parseInt(datas.get(0));
+				String message = datas.get(1);
+				this.addFeedBack(commandId, message);
+				this.cleanRunCommand(commandId, message, false);
+				
+			}else{
 				// send not type 
 			}
 						

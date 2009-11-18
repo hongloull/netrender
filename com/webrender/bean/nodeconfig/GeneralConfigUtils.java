@@ -13,7 +13,7 @@ public class GeneralConfigUtils {
 	
 	public Element bean2xml(GeneralConfig config){
 		Element root = new Element(GENERAL);
-		root.addAttribute(PRIORITY,config.getPriority());
+		root.addAttribute(PRIORITY,config.getPriority()+"");
 		return root;
 	}
 }

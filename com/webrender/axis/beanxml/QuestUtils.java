@@ -19,7 +19,7 @@ public final class QuestUtils {
 		 root.addAttribute("questName",quest.getQuestName());
 		 root.addAttribute("pri", quest.getPri().toString()+"");
 		 root.addAttribute("regName",quest.getReguser().getRegName()+"");
-		 if (quest.getMaxNodes()!=null) root.addAttribute("maxNode",quest.getMaxNodes().toString());
+		 if (quest.getMaxNodes()!=null) root.addAttribute("maxNodes",quest.getMaxNodes().toString());
 		 SimpleDateFormat   df=new  SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");   
 		 root.addAttribute("commitTime",df.format(quest.getCommitTime())+"");
 		 if (quest.getPacketSize()!=null) root.addAttribute("packetSize",quest.getPacketSize().toString());
@@ -69,21 +69,22 @@ public final class QuestUtils {
 	 
 	 public Element bean2xmlWithState(Quest quest)
 	 {
+		 if( quest.getQuestId()==74){
+			 LOG.debug("test");
+		 }
 		 LOG.debug("bean2xmlWithState questId:"+quest.getQuestId());
 		 QuestargDAO questargDAO = new QuestargDAO();
 		 QuestDAO questDAO = new QuestDAO();
 		 Element root = bean2xml(quest);
 		 root.addAttribute("status",questDAO.getStatus(quest)+"");
 		 root.addAttribute("progress",questDAO.getProgress(quest)+"");
+		 root.addAttribute("nodeNum",questDAO.getUserInstance(quest)+"");
 		 root.addAttribute("commandModelName",quest.getCommandmodel().getCommandModelName());
 //		 String startFrame = questargDAO.getStartFrame(quest)+"";
 //		 String endFrame   = questargDAO.getEndFrame(quest)+"";
-		 try{
+		 
 //			 CalcFrame cF = new CalcFrame();
-			 root.addAttribute("totalFrames",quest.getTotalFrames()+"");
-		 }catch(Exception e){
-			 
-		 }
+		 root.addAttribute("totalFrames",quest.getTotalFrames()+"");
 		 
 //		 root.addAttribute("startFrame",questargDAO.getStartFrame(quest)+"");
 //		 root.addAttribute("endFrame",questargDAO.getEndFrame(quest)+"");

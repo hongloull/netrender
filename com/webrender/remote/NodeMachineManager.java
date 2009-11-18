@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import com.webrender.dao.Command;
 import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
+import com.webrender.server.ControlThreadServer;
 import com.webrender.server.Dispatcher;
 
 public final  class  NodeMachineManager {
@@ -35,7 +36,7 @@ public final  class  NodeMachineManager {
 			Node node = nodeDAO.findById(nodeId);
 			if (node == null) return null;
 			else{
-				LOG.info("New Machine nodeId:"+nodeId);
+//				LOG.info("New Machine nodeId:"+nodeId);
 				NodeMachine nodeMachine =new NodeMachine(nodeId,node.getPri());
 				machines.put(nodeId,nodeMachine );				
 			}
@@ -55,8 +56,8 @@ public final  class  NodeMachineManager {
 	}
 	
 	public void addNodeMachines(NodeMachine nodeMachine){
+		ControlThreadServer.getInstance().notifyResume();
 		idleMachines.add(nodeMachine);
-//		Dispatcher.getInstance().exeCommands();
 	}
 	
 	public boolean containIdles(NodeMachine nodeMachine){
@@ -67,14 +68,20 @@ public final  class  NodeMachineManager {
 //		for (NodeMachine machine : idleMachines){
 //			System.out.println("machineId:"+machine.getId()+" pri:"+machine.getPri() );
 //		}
+//		LOG.info("IdleSize:"+this.idleMachines.size());
 		return idleMachines.isEmpty();
 	}
 	public void removeIdleMachines(NodeMachine nodeMachine){
+		
 		idleMachines.remove(nodeMachine);
+		
 	}
 	public Object[] getIdleArray(){
 //		Collections.sort(list)
-		
+//		LOG.info("IdlesMachine:");
+//		for(NodeMachine temp : idleMachines){
+//			LOG.info("ID: "+ temp.getId()+" PRI:"+temp.getPri() );
+//		}
 		return idleMachines.toArray();
 	}
 	

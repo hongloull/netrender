@@ -16,6 +16,7 @@ import com.webrender.dao.CommandDAO;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
 import com.webrender.dao.Operatelog;
+import com.webrender.server.ControlThreadServer;
 import com.webrender.server.Dispatcher;
 
 public class CommandOperateImpl extends BaseOperate {
@@ -64,10 +65,10 @@ public class CommandOperateImpl extends BaseOperate {
 			commandDAO.reinitCommand(command );
 			logOperate(regUserId,Operatelog.MOD,"ReInit Command: "+commandDAO.getNoteWithID(command));
 			tx.commit();
-//			ControlThreadServer.getInstance().resume();
 //			Dispatcher.getInstance().exeCommands();
-			
 			LOG.debug("reinitCommand success");
+			
+			ControlThreadServer.getInstance().notifyResume();
 			return ACTIONSUCCESS;
 		}catch(Exception e){
 			LOG.error("reinitCommand fail",e);

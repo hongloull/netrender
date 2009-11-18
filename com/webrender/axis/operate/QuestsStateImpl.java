@@ -8,15 +8,18 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Transaction;
 import org.jdom.Document;
 import org.jdom.Element;
 
 import com.webrender.axis.beanxml.QuestUtils;
 import com.webrender.axis.beanxml.XMLOut;
+import com.webrender.dao.HibernateSessionFactory;
 import com.webrender.dao.Quest;
 import com.webrender.dao.QuestDAO;
 import com.webrender.dao.Reguser;
 import com.webrender.dao.ReguserDAO;
+import com.webrender.dao.StatusDAO;
 
 public class QuestsStateImpl extends BaseOperate {
 	private static final Log LOG = LogFactory.getLog(QuestsStateImpl.class);
@@ -67,18 +70,22 @@ public class QuestsStateImpl extends BaseOperate {
 	{
 		LOG.debug("getQuestsStatus");
 		
-//		try{
-//			if (!this.canVisit(7) ){
-//				return  RIGHTERROR;
-//			}			
-//		}catch(Exception e){
-//			LOG.error("RightVisit error",e);
-//			return  RIGHTERROR;
-//		}
-//		MessageContext mc = MessageContext.getCurrentContext();
-//		String remoteAdd = ( (HttpServletRequest) mc.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST)).getRemoteAddr();
+// 很郁闷，为了解决删除或添加后，数据显示不更新的问题，修改下数据库刷新。
+		StatusDAO statusDAO = new StatusDAO();
+		Transaction tx = null;
+		try {
+			tx = getSession().beginTransaction();
+			statusDAO.updateSystemVersion();
+			tx.commit();							
+		}catch (Exception e){					
+			LOG.error("UpdateSystemVersion Error", e);
+			if(tx!=null){
+				tx.rollback();
+			}
+		}finally{		
+		}
+		
 		try{
-//			getSession().flush();
 			
 			Element root = new Element("Quests");
 			Document doc = new Document(root);

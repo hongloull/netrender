@@ -27,54 +27,134 @@ public class NodeOperate extends BaseAxis {
 	
 	private static final Log LOG = LogFactory.getLog(NodeOperate.class);
 	
-	public String pauseNode(String nodeId)
+	public String pauseNode(String[] nodeIds)
 	{
 
 		if ( !this.canVisit(0) && !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
+		NodeOperateImpl nodeOperateImpl = new NodeOperateImpl();
+		StringBuffer result = new StringBuffer();
+		String subResult = null;
+		for(String nodeId:nodeIds){
+			subResult = nodeOperateImpl.pauseNode(nodeId,this.getLoginUserId());
+			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
+				result.append(nodeId).append(":").append(subResult).append("\n\r");
+			}
+		}
+		if(result.length()==0){
+			result.append(BaseOperate.ACTIONSUCCESS);
+		}
+		return result.toString();
 		
-		return (new NodeOperateImpl()).pauseNode(nodeId,this.getLoginUserId());
 	}
-	public String resumeNode(String nodeId)
+	public String resumeNode(String[] nodeIds)
 	{
 
 		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
 		
-		return (new NodeOperateImpl()).resumeNode(nodeId,this.getLoginUserId());
+		NodeOperateImpl nodeOperateImpl = new NodeOperateImpl();
+		StringBuffer result = new StringBuffer();
+		String subResult = null;
+		for(String nodeId:nodeIds){
+			subResult = nodeOperateImpl.resumeNode(nodeId,this.getLoginUserId());
+			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
+				result.append(nodeId).append(":").append(subResult).append("\n\r");
+			}
+		}
+		if(result.length()==0){
+			result.append(BaseOperate.ACTIONSUCCESS);
+		}
+		return result.toString();
 	}
-	public String setRealLog(String nodeId,String isOpen){
+	public String setRealLog(String[] nodeIds,String isOpen){
 		
 		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
-		
-		return (new NodeOperateImpl()).setRealLog(nodeId,isOpen,this.getLoginUserId());
+		NodeOperateImpl nodeOperateImpl = new NodeOperateImpl();
+		StringBuffer result = new StringBuffer();
+		String subResult = null;
+		for(String nodeId:nodeIds){
+			subResult = nodeOperateImpl.setRealLog(nodeId,isOpen,this.getLoginUserId());
+			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
+				result.append(nodeId).append(":").append(subResult).append("\n\r");
+			}
+		}
+		if(result.length()==0){
+			result.append(BaseOperate.ACTIONSUCCESS);
+		}
+		return result.toString();
 	}
 	public String getPriority(String nodeId){
 		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
 		
 		return (new NodeOperateImpl()).getPriority(nodeId);
 	}
-	public String setPriority(String nodeId,String priority){
+	public String setPriority(String[] nodeIds,String priority){
 		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
-		
-		return (new NodeOperateImpl()).setPriority(nodeId, priority, this.getLoginUserId());
+		NodeOperateImpl nodeOperateImpl = new NodeOperateImpl();
+		StringBuffer result = new StringBuffer();
+		String subResult = null;
+		for(String nodeId:nodeIds){
+			subResult = nodeOperateImpl.setPriority(nodeId,priority,this.getLoginUserId());
+			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
+				result.append(nodeId).append(":").append(subResult).append("\n\r");
+			}
+		}
+		if(result.length()==0){
+			result.append(BaseOperate.ACTIONSUCCESS);
+		}
+		return result.toString();
 	}
 	
-	public String killCommand(String nodeId)
+	public String killCommand(String[] nodeIds)
 	{
 		
 		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
 		
-		return (new NodeOperateImpl()).killCommand(nodeId, this.getLoginUserId());
+		NodeOperateImpl nodeOperateImpl = new NodeOperateImpl();
+		StringBuffer result = new StringBuffer();
+		String subResult = null;
+		for(String nodeId:nodeIds){
+			subResult = nodeOperateImpl.killCommand(nodeId,this.getLoginUserId());
+			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
+				result.append(nodeId).append(":").append(subResult).append("\n\r");
+			}
+		}
+		if(result.length()==0){
+			result.append(BaseOperate.ACTIONSUCCESS);
+		}
+		return result.toString();
 	}
-	public String  shutdownNode(String nodeId ,String isReboot)
+	public String  shutdownNode(String[] nodeIds ,String isReboot)
 	{
 		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
-		
-		return (new NodeOperateImpl()).shutdownNode(nodeId, isReboot, this.getLoginUserId());
+		NodeOperateImpl nodeOperateImpl = new NodeOperateImpl();
+		StringBuffer result = new StringBuffer();
+		String subResult = null;
+		for(String nodeId:nodeIds){
+			subResult = nodeOperateImpl.shutdownNode(nodeId,isReboot,this.getLoginUserId());
+			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
+				result.append(nodeId).append(":").append(subResult).append("\n\r");
+			}
+		}
+		if(result.length()==0){
+			result.append(BaseOperate.ACTIONSUCCESS);
+		}
+		return result.toString();
 	}
-	public String  softRestart(String nodeId){
+	public String  softRestart(String[] nodeIds){
 		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
-		
-		return (new NodeOperateImpl()).softRestart(nodeId,this.getLoginUserId());
+		NodeOperateImpl nodeOperateImpl = new NodeOperateImpl();
+		StringBuffer result = new StringBuffer();
+		String subResult = null;
+		for(String nodeId:nodeIds){
+			subResult = nodeOperateImpl.softRestart(nodeId,this.getLoginUserId());
+			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
+				result.append(nodeId).append(":").append(subResult).append("\n\r");
+			}
+		}
+		if(result.length()==0){
+			result.append(BaseOperate.ACTIONSUCCESS);
+		}
+		return result.toString();
 	}
 	
 	/**
@@ -84,21 +164,33 @@ public class NodeOperate extends BaseAxis {
 	 * @param needFeedBack  0 notNeed  1 need
 	 * @return
 	 */
-	public String exeSystemCommand(String nodeId,String FLAG,String needFeedBack)
+	public String exeSystemCommand(String[] nodeIds,String FLAG,String needFeedBack)
 	{
 		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
-		
-		return (new NodeOperateImpl()).exeSystemCommand(nodeId, FLAG, needFeedBack, this.getLoginUserId()); 
-		
-	}
-	
-	public String delNode(String...nodeIds){
 		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
-		NodeOperateImpl impl = new NodeOperateImpl();
+		NodeOperateImpl nodeOperateImpl = new NodeOperateImpl();
 		StringBuffer result = new StringBuffer();
 		String subResult = null;
 		for(String nodeId:nodeIds){
-			subResult = impl.delNode(nodeId,this.getLoginUserId());
+			subResult = nodeOperateImpl.exeSystemCommand(nodeId, FLAG, needFeedBack, this.getLoginUserId()); 
+			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
+				result.append(nodeId).append(":").append(subResult).append("\n\r");
+			}
+		}
+		if(result.length()==0){
+			result.append(BaseOperate.ACTIONSUCCESS);
+		}
+		return result.toString();
+		
+	}
+	
+	public String delNode(String[] nodeIds){
+		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
+		NodeOperateImpl nodeOperateImpl = new NodeOperateImpl();
+		StringBuffer result = new StringBuffer();
+		String subResult = null;
+		for(String nodeId:nodeIds){
+			subResult = nodeOperateImpl.delNode(nodeId,this.getLoginUserId());
 			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
 				result.append(nodeId).append(":").append(subResult).append("\n\r");
 			}

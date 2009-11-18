@@ -206,7 +206,7 @@ public class QuestDAO extends BaseHibernateDAO {
 			{
 				Command command =  (Command)ite_Commands.next();
 				if(hasGetFrame == false){
-					if(command.getType()==null || NameMap.RENDER.equalsIgnoreCase(command.getType()) || NameMap.PRELIGHT.equalsIgnoreCase(command.getType())){
+					if(command.getType()==null || NameMap.RENDER.equalsIgnoreCase(command.getType()) || NameMap.PRELIGHT.equalsIgnoreCase(command.getType()) || NameMap.MANYTOMANY.equalsIgnoreCase(command.getType()) ){
 						commandDAO.reinitCommand(command);
 					}
 					else if ( NameMap.ONETOMANY.equals(command.getType()) ){
@@ -347,6 +347,9 @@ public class QuestDAO extends BaseHibernateDAO {
 		
 		return quest;
 	}
-
+	public int getUserInstance(Quest quest){
+		CommandDAO commandDAO = new CommandDAO();
+		return commandDAO.getInProgress(quest).size();
+	}
 	
 }
