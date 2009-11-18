@@ -28,6 +28,7 @@ import com.webrender.dao.Reguser;
 import com.webrender.dao.ReguserDAO;
 import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
+import com.webrender.server.ControlThreadServer;
 import com.webrender.tool.FileCopy;
 
 public class PoolOperateImpl extends BaseOperate {
@@ -97,6 +98,7 @@ public class PoolOperateImpl extends BaseOperate {
 			tx = getTransaction();
 			logOperate(regUserId,Operatelog.MOD,"ModPool:"+name);
 			tx.commit();
+			ControlThreadServer.getInstance().notifyResume();
 			return ACTIONSUCCESS;
 		}catch(JDOMException e){
 			LOG.warn("modPool fail: XMLParseError name: "+name);

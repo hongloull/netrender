@@ -95,9 +95,10 @@ public class ConfigOperateImpl extends BaseOperate {
 				if( configInfo==null) {
 					return ACTIONFAILURE+"configInfo=null";
 				}else{
-					NodeConfig config = nodeConfigUtils.xmlString2bean(configInfo);
-					config.getGeneralConfig().setPriority(pri.toString());
-					return nodeConfigUtils.bean2xmlString(config);
+//					NodeConfig config = nodeConfigUtils.xmlString2bean(configInfo);
+//					config.getGeneralConfig().setPriority(pri.toString());
+//					return nodeConfigUtils.bean2xmlString(config);
+					return nodeConfigUtils.setPriorityToConfig(configInfo, pri);	
 				}
 			}
 			else{
@@ -116,11 +117,13 @@ public class ConfigOperateImpl extends BaseOperate {
 			int id = Integer.parseInt(nodeId);
 			NodeMachine nodeMachine  = NodeMachineManager.getInstance().getNodeMachine(id);
 			
-			NodeConfig nodeConfig = nodeConfigUtils.xmlString2bean(config);
+//			NodeConfig nodeConfig = nodeConfigUtils.xmlString2bean(config);
+			Short pri = nodeConfigUtils.getPrioritFromConfig(config);
 			tx = HibernateSessionFactory.getSession().beginTransaction();
 			NodeDAO nodeDAO = new NodeDAO();
 			Node node =nodeDAO.findById(id);
-			short pri = Short.parseShort(nodeConfig.getGeneralConfig().getPriority());
+//			short pri = Short.parseShort(nodeConfig.getGeneralConfig().getPriority());
+			
 			node.setPri(pri);
 			tx.commit();
 			nodeMachine.setPri(pri);

@@ -184,12 +184,29 @@ public class CommandDAO extends BaseHibernateDAO {
 			throw re;
 		}	
 	}
+	
+	public void setError(Command instance){
+		LOG.debug("setError commandId:"+instance.getCommandId());
+		try
+		{
+			StatusDAO statusDAO = new StatusDAO();
+			instance.setStatus(statusDAO.findById(73));
+			this.attachDirty(instance);
+			LOG.debug("setError successful commandId:"+instance.getCommandId());
+			
+		}catch(RuntimeException re){
+			LOG.error("setError failed commandId:"+instance.getCommandId(),re);
+			throw re;
+		}
+	}
+	
 	public void setFinish(Command instance) {
-		LOG.debug("setFinish");
+		LOG.debug("setFinish commandId:"+instance.getCommandId());
 		try
 		{
 			StatusDAO statusDAO = new StatusDAO();
 			instance.setStatus(statusDAO.findById(72));
+			instance.setSendTime(new Date());
 			this.attachDirty(instance);
 			LOG.debug("setFinish successful");
 			
@@ -198,7 +215,7 @@ public class CommandDAO extends BaseHibernateDAO {
 			throw re;
 		}	
 	}
-	private List getInProgress(Quest quest) {
+	public List getInProgress(Quest quest) {
 		LOG.debug("getInProgress  questId:"+quest.getQuestId());
 		try
 		{
@@ -237,7 +254,9 @@ public class CommandDAO extends BaseHibernateDAO {
 				if(ite_Finish.hasNext()) 
 				{
 					Command temp = (Command) ite_Finish.next();
-					long endTime = temp.getSendTime().getTime();
+					Date date = temp.getSendTime();
+					if(date== null) return false;
+					long endTime = date.getTime();
 					long nowTime = (new Date()).getTime();
 					double mins = (double)(nowTime-endTime)/1000/60;
 					LOG.debug("finishCommand happened before "+mins+" mins" );

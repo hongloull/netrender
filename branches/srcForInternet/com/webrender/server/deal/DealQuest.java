@@ -8,6 +8,7 @@ import com.webrender.dao.HibernateSessionFactory;
 import com.webrender.dao.Quest;
 import com.webrender.dao.QuestDAO;
 import com.webrender.logic.CalcFrames;
+import com.webrender.server.ControlThreadServer;
 
 public class DealQuest {
 	private static final Log LOG = LogFactory.getLog(DealQuest.class);
@@ -51,6 +52,7 @@ public class DealQuest {
 				}
 			}
 		}
+		ControlThreadServer.getInstance().notifyResume();
 		
 	}
 	

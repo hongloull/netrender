@@ -32,12 +32,13 @@ public final class HibernateSessionFactory {
 
 	static {
     	try {
-    		LOG.info("read database config file");
 			configuration.configure(configFile);
 			String databaseServer = GenericConfig.getInstance().getDatabaseServer();
+//			LOG.info("Config file databaseServer："+databaseServer);
 			configuration.setProperty("hibernate.connection.url", "jdbc:mysql://"+databaseServer+":3306/distributedmanagement?useUnicode=true&characterEncoding=UTF-8");
 			sessionFactory = configuration.buildSessionFactory();
-			sessionFactory.getStatistics().setStatisticsEnabled(true);
+			LOG.info("SessionFactory build finish");
+//			sessionFactory.getStatistics().setStatisticsEnabled(true);
 		} catch (Exception e) {
 			System.err
 					.println("%%%% Error Creating SessionFactory %%%%");

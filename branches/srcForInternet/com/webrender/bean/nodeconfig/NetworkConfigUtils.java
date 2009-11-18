@@ -14,7 +14,7 @@ public class NetworkConfigUtils {
 	
 	public Element bean2xml(NetworkConfig config ){
 		Element root = new Element(NETWORK);
-		root.addAttribute(SERVERPORT,config.getServerport());
+		root.addAttribute(SERVERPORT,config.getServerport()+"");
 		return root;
 	}
 }

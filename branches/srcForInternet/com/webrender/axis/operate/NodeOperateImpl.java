@@ -19,6 +19,7 @@ import com.webrender.protocol.enumn.EOPCODES.CODE;
 import com.webrender.protocol.messages.ServerMessages;
 import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
+import com.webrender.server.ControlThreadServer;
 import com.webrender.server.Dispatcher;
 
 public class NodeOperateImpl extends BaseOperate {
@@ -182,7 +183,7 @@ public class NodeOperateImpl extends BaseOperate {
 			}
 			
 			nodeMachine.setBusy(false);
-//			ControlThreadServer.getInstance().resume();
+			ControlThreadServer.getInstance().notifyResume();
 //			Dispatcher.getInstance().exeCommands();
 			
 			LOG.debug("killCommand success");

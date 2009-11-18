@@ -38,6 +38,7 @@ public class FramesOperate {
 					}
 					if(tempFrame==-1){
 						//数据格式错误 忽视。
+						startValue = endValue = byValue = -1;
 						break;
 					}
 					if(startValue != -1 ){
@@ -48,14 +49,18 @@ public class FramesOperate {
 							byValue = tempFrame;
 							calcFramesOperate(startValue,endValue,byValue,frames);
 						}
-						startValue = endValue = byValue = -1;
-					}else{
+					}else if(endValue != -1){
+						// 10*4
+						frames.add(endValue);
+					}
+					else{
 						frames.add(tempFrame);
 					}
 					buffer = new StringBuffer();					
 				}else{
-					startValue = endValue = byValue = -1;
+					if(startValue!=-1) frames.add(startValue);
 				}
+				startValue = endValue = byValue = -1;
 				break;
 				
 			case '-':
@@ -67,11 +72,11 @@ public class FramesOperate {
 							throw new NumberFormatException("Frames is not a valid data");
 						}
 					}else{
-						throw new NumberFormatException("Frames is not a valid data");
+						// 1-4-15
 					}
 					buffer = new StringBuffer();					
 				}else{
-					throw new NumberFormatException("Frames is not a valid data");
+					// 1--7 -7
 				}
 				break;
 				
@@ -86,12 +91,12 @@ public class FramesOperate {
 							throw new NumberFormatException("Frames is not a valid data");
 						}
 					}else{
-						throw new NumberFormatException("Frames is not a valid data");
+//						throw new NumberFormatException("Frames is not a valid data");
 					}
 					buffer = new StringBuffer();					
 				}
 				else{
-					throw new NumberFormatException("Frames is not a valid data");
+					
 				}
 				break;
 			default:

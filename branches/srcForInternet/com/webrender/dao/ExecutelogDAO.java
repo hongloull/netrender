@@ -169,16 +169,7 @@ public class ExecutelogDAO extends BaseHibernateDAO {
 		}
 	}
 	public boolean hasError(Command command){
-		LOG.debug("hasError commandId: "+command.getCommandId());
-		try{
-			String queryString = "from Executelog as model where model.command.commandId= ? and model.status.statusId=81 ";
-			Query queryObject = getSession().createQuery(queryString);
-			queryObject.setParameter(0, command.getCommandId());
-			return queryObject.list().size()==0?false:true;
-		}catch(RuntimeException re){
-			LOG.error("getRealLog",re);
-			throw re;
-		}
+		return this.getRealLog(command).getStatus().getStatusId()==80? false:true;
 	}
 	
 	public Executelog findStartLog(Command command) {

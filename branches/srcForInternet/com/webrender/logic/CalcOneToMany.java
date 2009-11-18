@@ -15,6 +15,7 @@ import com.webrender.dao.QuestDAO;
 import com.webrender.dao.Questarg;
 import com.webrender.dao.Status;
 import com.webrender.dao.StatusDAO;
+import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
 import com.webrender.tool.NameMap;
 public class CalcOneToMany implements CalcCommands {
@@ -37,7 +38,8 @@ public class CalcOneToMany implements CalcCommands {
 		Node node = null;
 		while(ite_NodeIds.hasNext()){
 			int nodeId = (Integer) ite_NodeIds.next();
-			if ( NodeMachineManager.getInstance().getNodeMachine(nodeId).isConnect() ){
+			NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(nodeId);
+			if ( nodeMachine.isConnect() && nodeMachine.isPause()==false){
 				node = nodeDAO.findById(nodeId);
 				command = new Command(quest);
 				command.setNode(node);

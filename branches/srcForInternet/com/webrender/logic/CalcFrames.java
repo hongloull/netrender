@@ -97,13 +97,15 @@ public class CalcFrames implements CalcCommands {
 		
 		double prePreFrame=-1,preFrame=-1;
 		
-		int pktNum = 0;
+		int pktNum = 1;
 		String commandFrameValue = null;
 		double commandCurrentEndFrame=-1;
 		
 		BigDecimal commandByFrame = null;
 		BigDecimal preDelta=new BigDecimal(0,mc),delta=new BigDecimal(0,mc);
-		
+		double lastFrame = frames.last();
+		frames.add(lastFrame+0.00000001);
+		frames.add(lastFrame+0.00000002);
 		for (double currentFrame : frames){
 			if(preDelta.doubleValue()==0){
 				if(preFrame == -1){
@@ -118,7 +120,7 @@ public class CalcFrames implements CalcCommands {
 					preFrame = currentFrame;
 					delta = new BigDecimal(preFrame-prePreFrame,mc);
 					commandByFrame = delta;
-					commandCurrentEndFrame=preFrame;
+//					commandCurrentEndFrame=preFrame;
 					continue;
 				}
 				else{
@@ -157,8 +159,8 @@ public class CalcFrames implements CalcCommands {
 						commandArg.setValue(commandByFrame.toString());
 						commandargDAO.save(commandArg);
 						
-						commandFrameValue = prePreFrame+"-";
-						commandCurrentEndFrame = prePreFrame;
+						commandFrameValue = preFrame+"-";
+						commandCurrentEndFrame = preFrame;
 						commandByFrame = preDelta;
 						pktNum=1;
 					}
@@ -195,42 +197,14 @@ public class CalcFrames implements CalcCommands {
 			preFrame = currentFrame;
 			preDelta = delta;
 		}
+		if(commandCurrentEndFrame>lastFrame){
+			return CalcCommands.SUCCESS;
+		}
+		commandFrameValue = commandFrameValue+commandCurrentEndFrame;
 		
-		
-		if(pktNum<packetSize){
-			if(commandByFrame.doubleValue() == preDelta.doubleValue() &&  (packetSize-pktNum)>1) {
-				
-				commandCurrentEndFrame = preFrame;
-				commandFrameValue = commandFrameValue+commandCurrentEndFrame;
-
-			}
-			else{
-				commandFrameValue = commandFrameValue+commandCurrentEndFrame;
-				
-				LOG.info("CommandFrames:"+commandFrameValue+" byFrame:"+commandByFrame);
-				command = new Command(quest);
-				command.setStatus(status);
-				commandDAO.save(command);
-				
-				commandArg = new Commandarg();
-				commandArg.setCommand(command);
-				commandArg.setCommandmodelarg(frameTag);
-				commandArg.setValue(commandFrameValue);
-				commandargDAO.save(commandArg);
-				
-				commandArg = new Commandarg();
-				commandArg.setCommand(command);
-				commandArg.setCommandmodelarg(byTag);
-				commandArg.setValue(commandByFrame.toString());
-				commandargDAO.save(commandArg);
-				
-				commandFrameValue = prePreFrame+"-"+preFrame;
-				commandByFrame = preDelta;
-				
-			}
-		}else{
-			commandFrameValue = commandFrameValue+commandCurrentEndFrame;
-			
+		if( commandByFrame.doubleValue()==0.00000001){
+			commandByFrame= new BigDecimal(1,mc);
+		}
 			LOG.info("CommandFrames:"+commandFrameValue+" byFrame:"+commandByFrame);
 			command = new Command(quest);
 			command.setStatus(status);
@@ -247,30 +221,6 @@ public class CalcFrames implements CalcCommands {
 			commandArg.setCommandmodelarg(byTag);
 			commandArg.setValue(commandByFrame.toString());
 			commandargDAO.save(commandArg);
-			
-			commandFrameValue = prePreFrame+"-"+preFrame;
-			commandByFrame = preDelta;
-		}
-		
-		if( commandByFrame.doubleValue()!=0){
-			
-			LOG.info("CommandFrames:"+commandFrameValue+" byFrame:"+commandByFrame);
-			command = new Command(quest);
-			command.setStatus(status);
-			commandDAO.save(command);
-			
-			commandArg = new Commandarg();
-			commandArg.setCommand(command);
-			commandArg.setCommandmodelarg(frameTag);
-			commandArg.setValue(commandFrameValue);
-			commandargDAO.save(commandArg);
-			
-			commandArg = new Commandarg();
-			commandArg.setCommand(command);
-			commandArg.setCommandmodelarg(byTag);
-			commandArg.setValue(commandByFrame.toString());
-			commandargDAO.save(commandArg);
-		}
 		
 		return CalcCommands.SUCCESS;
 	}

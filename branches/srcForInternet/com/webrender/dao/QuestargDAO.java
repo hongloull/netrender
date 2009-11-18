@@ -165,8 +165,10 @@ public class QuestargDAO extends BaseHibernateDAO {
 			{
 				return  ( (Questarg)list.get(0) ).getValue();
 			}
-			else
-			{
+			else if (size>1){
+				LOG.error("QuestId:"+quest.getQuestId()+"has more than one frames value");
+				return null;
+			}else{
 				return null;
 			}
 		} catch (RuntimeException re) {
@@ -227,9 +229,13 @@ public class QuestargDAO extends BaseHibernateDAO {
 			query.setParameter(0, quest.getQuestId());
 			List list = query.list();
 			int size = list.size();
-			if (size==1)
+			if (size>=1)
 			{
-				return  ( (Questarg)list.get(0) ).getValue();
+				String result = ( (Questarg)list.get(0) ).getValue();
+				if(result.length()>65){
+					result = result.substring(0,65)+"...";
+				}
+				return result;
 			}
 			else
 			{

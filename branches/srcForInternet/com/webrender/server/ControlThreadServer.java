@@ -33,7 +33,7 @@ public final class ControlThreadServer extends Thread {
 	private static ControlThreadServer instance = null; 
 	private  boolean   threadStop   =   false;   
 	private static final Log LOG = LogFactory.getLog(ControlThreadServer.class);
-
+	private int  NewNotify = 0; // 防止有新的节点插入Idles中，或新的Command加入到WaitingCommands中，二次建议。
 	private boolean noUsableNode = true;
 	private ControlThreadServer()
 	{
@@ -45,6 +45,7 @@ public final class ControlThreadServer extends Thread {
 	public static ControlThreadServer getInstance()
 	{
 		if (instance == null){
+			LOG.warn("A new controlthread server");
 			instance = new ControlThreadServer();
 		}
 		return instance;
@@ -60,7 +61,6 @@ public final class ControlThreadServer extends Thread {
 		NodeMachine nodeMachine = null;
 		Node node = null;
 		NodeMachine tempNodeMachine = null;
-		Node tempNode = null;
 		Executelog executelog = null;
 		while(true)
 		{
@@ -68,18 +68,34 @@ public final class ControlThreadServer extends Thread {
 			{
 //				根据优先级获取未完成的Quest
 //				将其子命令中待执行的命令取出来
+//				LOG.info("ControlThread run..");
 				try
 				{
-					List<Command> waitingCommands = commandDAO.getWaitingCommands();
-
-					Iterator ite_Commands =waitingCommands.iterator();
+					Iterator ite_Commands  = commandDAO.getWaitingCommands().iterator();
 					
-					
-					if (!ite_Commands.hasNext()) 
+					if(!ite_Commands.hasNext()) 
 					{
-						sleepUpdateVersion("NoWaitingCommand",30000);
-						noUsableNode = false;
+//						LOG.info("NoWaitingCommands...");
+						if( NewNotify >= 5){
+							noUsableNode = false;
+							synchronized(this){
+								try {
+									LOG.info("Dispather server waiting: no commands");
+									wait();
+								} catch (InterruptedException e) {
+									throw new RuntimeException(e);
+								}							
+							}
+//						sleepUpdateVersion("NoWaitingCommand",30000);
+							continue;
+						}
+						else{
+							NewNotify++;
+							continue;
+						}
 					}
+					
+					
 					while(ite_Commands.hasNext())
 					{
 						if (threadStop){
@@ -147,14 +163,14 @@ public final class ControlThreadServer extends Thread {
 									
 									if(result==true) executelog = new  Executelog(command,statusDAO.findById(90),node,commandDAO.getNoteWithID(command).toString(),new Date()); 
 									else { // onetomany 执行错误
-										command.setStatus(statusDAO.findById(72));
+										command.setStatus(statusDAO.findById(73));
 										command.setSendTime(new Date());
 										executelog = new  Executelog(command,statusDAO.findById(99),node,commandDAO.getNoteWithID(command).toString(),new Date());
 									}
 									ExecutelogDAO exeDAO = new ExecutelogDAO();
 									exeDAO.save(executelog);
 									tx.commit();
-									LOG.debug(node.getNodeId()+" :executeOperate Success save to database");									
+									LOG.debug("NodeId: "+ node.getNodeId()+" :execute commandId:"+command.getCommandId()+ " Success save to database");									
 								}
 								catch(Exception e){
 									LOG.error("save commandStatus fail",e);
@@ -190,7 +206,20 @@ public final class ControlThreadServer extends Thread {
 						} // end If 1111111111
 					} // end while commands
 					if(noUsableNode){
-						sleepUpdateVersion("NoUsabelNode",20000);
+						if(NewNotify >=5){
+							synchronized(this){
+								try {
+									LOG.info("Dispather server waiting: no idle nodes");
+									wait();
+								} catch (InterruptedException e) {
+									throw new RuntimeException(e);
+								}							
+							}
+//							sleepUpdateVersion("NoUsableNode",20000);
+						}
+						else{
+							NewNotify ++;
+						}
 					}
 //				循环上述操作：到所有任务全部完成  停止该线程
 				}
@@ -237,7 +266,6 @@ public final class ControlThreadServer extends Thread {
 		try {
 			this.join();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		instance = null;
@@ -245,7 +273,7 @@ public final class ControlThreadServer extends Thread {
 	}
 	private void sleepUpdateVersion(String message,long millis) throws InterruptedException
 	{
-//		LOG.info(message);
+		LOG.debug(message);
 		HibernateSessionFactory.closeSession();	
 		Thread.sleep(millis);
 		StatusDAO statusDAO = new StatusDAO();
@@ -263,5 +291,13 @@ public final class ControlThreadServer extends Thread {
 			HibernateSessionFactory.closeSession();			
 		}
 	}
-	
+	public void notifyResume(){
+		if (this.getState() == Thread.State.WAITING){
+			synchronized(this){
+				NewNotify = 0;
+				notify();
+			}
+			LOG.info("Dispather server notify..");
+		}
+	}
 }
