@@ -114,11 +114,10 @@ public class QuestOperateImpl extends BaseOperate {
 						questargDAO.save(questarg);
 						questargs.add(questarg);
 					}
-					quest.getQuestargs().addAll(questargs);
-					Set<Questarg> set_Questargs = quest.getQuestargs();
-					for(Questarg temparg : set_Questargs){
-					}
-				calcCommands = new CalcManyToMany();
+					
+					quest.setQuestargs(questargs);
+					
+					calcCommands = new CalcManyToMany();
 				}
 				else if(NameMap.ONETOMANY.equalsIgnoreCase(modelType)){
 					for(int j =0 ; j<questargssize ;j++)
@@ -127,7 +126,7 @@ public class QuestOperateImpl extends BaseOperate {
 						questarg.setQuest(quest);
 						quest.getQuestargs().add(questarg);
 						questargDAO.save(questarg);
-					}	
+					}
 					calcCommands = new CalcOneToMany();
 				}
 				int result = calcCommands.calc(quest);

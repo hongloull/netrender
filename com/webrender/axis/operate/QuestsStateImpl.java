@@ -76,7 +76,7 @@ public class QuestsStateImpl extends BaseOperate {
 		try {
 			tx = getSession().beginTransaction();
 			statusDAO.updateSystemVersion();
-			tx.commit();							
+			tx.commit();					
 		}catch (Exception e){					
 			LOG.error("UpdateSystemVersion Error", e);
 			if(tx!=null){

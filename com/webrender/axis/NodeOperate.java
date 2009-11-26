@@ -125,7 +125,7 @@ public class NodeOperate extends BaseAxis {
 	}
 	public String  shutdownNode(String[] nodeIds ,String isReboot)
 	{
-		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
+		if (  !this.canVisit(0) &&  !this.canVisit(21) ) return BaseAxis.RIGHTERROR;
 		NodeOperateImpl nodeOperateImpl = new NodeOperateImpl();
 		StringBuffer result = new StringBuffer();
 		String subResult = null;
@@ -166,8 +166,7 @@ public class NodeOperate extends BaseAxis {
 	 */
 	public String exeSystemCommand(String[] nodeIds,String FLAG,String needFeedBack)
 	{
-		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
-		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
+		if (  !this.canVisit(0) &&  !this.canVisit(21) ) return BaseAxis.RIGHTERROR;
 		NodeOperateImpl nodeOperateImpl = new NodeOperateImpl();
 		StringBuffer result = new StringBuffer();
 		String subResult = null;

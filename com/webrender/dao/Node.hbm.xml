@@ -28,6 +28,9 @@
         <property name="fileBase" type="string">
             <column name="FileBase" />
         </property>
+        <property name="threadsNum" type="java.lang.Short">
+            <column name="ThreadsNum" />
+        </property>
         <property name="coreNum" type="java.lang.Short">
             <column name="CoreNum" />
         </property>

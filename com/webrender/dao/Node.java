@@ -20,6 +20,7 @@ public class Node implements java.io.Serializable {
 	private Short pri;
 	private String os;
 	private String fileBase;
+	private Short threadsNum;
 	private Short coreNum;
 	private boolean realTime = false;
 	private Set commands = new HashSet(0);
@@ -40,13 +41,14 @@ public class Node implements java.io.Serializable {
 
 	/** full constructor */
 	public Node(Status status, String nodeName, String nodeIp, String os,
-			String fileBase, Short coreNum, boolean realTime, Set commands,
+			String fileBase,Short threadsNum, Short coreNum, boolean realTime, Set commands,
 			 Set nodegroups, Set executelogs) {
 		this.status = status;
 		this.nodeName = nodeName;
 		this.nodeIp = nodeIp;
 		this.os = os;
 		this.fileBase = fileBase;
+		this.threadsNum = threadsNum;
 		this.coreNum = coreNum;
 		this.realTime = realTime;
 		this.commands = commands;
@@ -102,6 +104,20 @@ public class Node implements java.io.Serializable {
 
 	public void setFileBase(String fileBase) {
 		this.fileBase = fileBase;
+	}
+
+	/**
+	 * @return the threadsNum
+	 */
+	public Short getThreadsNum() {
+		return threadsNum;
+	}
+
+	/**
+	 * @param threadsNum the threadsNum to set
+	 */
+	public void setThreadsNum(Short threadsNum) {
+		this.threadsNum = threadsNum;
 	}
 
 	public Short getCoreNum() {

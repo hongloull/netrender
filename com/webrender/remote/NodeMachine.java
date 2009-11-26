@@ -662,12 +662,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				}
 			}else if(code.getId() == EOPCODES.getInstance().get("N_GETPATHCONFIG").getId()){
 				LOG.info("send path config");
-				if( sendPathCongfigToNode()){
-					LOG.info("send path config success");
-				}
-				else{
-					LOG.error("send path config fail.");
-				}
+				sendPathCongfigToNode();
 			}else if( code.getId() == EOPCODES.getInstance().get("N_PRELIGHT").getId() ){
 				String commandId = datas.get(0);
 				String preLight = datas.get(1);

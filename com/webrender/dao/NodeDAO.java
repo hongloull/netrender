@@ -172,7 +172,7 @@ public class NodeDAO extends BaseHibernateDAO {
 		}
 	}
 	
-	public Node runNode(int nodeId,String ip,String name){
+	public Node runNode(int nodeId,String ip,String name,String pri,String threads){
 		LOG.debug("RunSaveNode nodeId:"+nodeId + " nodeName:"+name+" ip:"+ip);
 		try{
 			Node node = findById(nodeId);
@@ -181,9 +181,19 @@ public class NodeDAO extends BaseHibernateDAO {
 			}
 			if(name!=null && !("".equals(name)) ) node.setNodeName(name);
 			if(ip!=null && !("".equals(ip)) ) node.setNodeIp(ip);
-			if(node.getPri()==null){
-				short s = 0;
-				node.setPri(s);
+			if(pri!=null && !("".equals(pri))){
+				try{
+					node.setPri( Short.parseShort(pri) );
+				}catch(Exception e){
+					LOG.error("runNode nodeId="+nodeId+" pri="+pri,e);					
+				}
+			}
+			if(threads!=null && !("".equals(threads))){
+				try{
+					node.setThreadsNum( Short.parseShort(threads) );
+				}catch(Exception e){
+					LOG.error("runNode nodeId="+nodeId+" threadsNum="+threads,e);				
+				}
 			}
 			save(node);
 			return node;

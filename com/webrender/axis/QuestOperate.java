@@ -30,6 +30,7 @@ public class QuestOperate extends BaseAxis {
 		for(String questId:questIds){
 			if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) ){
 				result.append(questId).append(":").append(BaseAxis.RIGHTERROR).append("\n\r");
+				continue;
 			}
 			subResult = questOperateImpl.deleteQuest(questId,this.getLoginUserId());
 			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
@@ -51,6 +52,7 @@ public class QuestOperate extends BaseAxis {
 		for(String questId:questIds){
 			if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) ){
 				result.append(questId).append(":").append(BaseAxis.RIGHTERROR).append("\n\r");
+				continue;
 			}
 			subResult = questOperateImpl.pauseQuest(questId,this.getLoginUserId());
 			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
@@ -72,6 +74,7 @@ public class QuestOperate extends BaseAxis {
 		for(String questId:questIds){
 			if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) ){
 				result.append(questId).append(":").append(BaseAxis.RIGHTERROR).append("\n\r");
+				continue;
 			}
 			subResult = questOperateImpl.resumeQuest(questId,this.getLoginUserId());
 			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
@@ -94,6 +97,7 @@ public class QuestOperate extends BaseAxis {
 		for(String questId:questIds){
 			if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) ){
 				result.append(questId).append(":").append(BaseAxis.RIGHTERROR).append("\n\r");
+				continue;
 			}
 			subResult = questOperateImpl.reinitQuest(questId,this.getLoginUserId());
 			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
@@ -116,6 +120,7 @@ public class QuestOperate extends BaseAxis {
 		for(String questId:questIds){
 			if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) ){
 				result.append(questId).append(":").append(BaseAxis.RIGHTERROR).append("\n\r");
+				continue;
 			}
 			subResult = questOperateImpl.setFinish(questId,this.getLoginUserId());
 			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
@@ -138,6 +143,7 @@ public class QuestOperate extends BaseAxis {
 		for(String questId:questIds){
 			if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) ){
 				result.append(questId).append(":").append(BaseAxis.RIGHTERROR).append("\n\r");
+				continue;
 			}
 			subResult = questOperateImpl.changeName(questId,name,this.getLoginUserId());
 			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
@@ -160,6 +166,7 @@ public class QuestOperate extends BaseAxis {
 		for(String questId:questIds){
 			if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) ){
 				result.append(questId).append(":").append(BaseAxis.RIGHTERROR).append("\n\r");
+				continue;
 			}
 			subResult = questOperateImpl.changePriority(questId,pri,this.getLoginUserId());
 			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
@@ -181,6 +188,7 @@ public class QuestOperate extends BaseAxis {
 		for(String questId:questIds){
 			if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) ){
 				result.append(questId).append(":").append(BaseAxis.RIGHTERROR).append("\n\r");
+				continue;
 			}
 			subResult = questOperateImpl.changeMaxNodes(questId,maxNodes,this.getLoginUserId());
 			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
@@ -203,6 +211,7 @@ public class QuestOperate extends BaseAxis {
 		for(String questId:questIds){
 			if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) ){
 				result.append(questId).append(":").append(BaseAxis.RIGHTERROR).append("\n\r");
+				continue;
 			}
 			subResult = questOperateImpl.changePool(questId,poolName,this.getLoginUserId());
 			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
