@@ -40,7 +40,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
             return;
         }
 //		LOG.info( "getnewmessage:: " + message );
-		
+		ByteBuffer lastBuffer = null;
 		byte opCode = -1 ;
 		try{
 			MessageHandler handler = MessageHandlerImpl.getInstance();
@@ -49,7 +49,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 			if (buffer.limit() >= buffer.capacity())
 			{
 //				LOG.info(buffer);
-				ByteBuffer lastBuffer = (ByteBuffer) session.getAttribute("HalfPacket");
+				lastBuffer = (ByteBuffer) session.getAttribute("HalfPacket");
 				
 				if ( lastBuffer == null ) {
 					LOG.debug("first add HalfPkt to session attribute");
@@ -67,7 +67,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 			}
 			else  // 没有不完整的包
 			{
-				ByteBuffer lastBuffer = (ByteBuffer) session.getAttribute("HalfPacket");
+				lastBuffer = (ByteBuffer) session.getAttribute("HalfPacket");
 				if ( lastBuffer != null ) {
 //					LOG.info(buffer);
 					LOG.debug("get LastBuffer parse");
@@ -93,7 +93,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 						}
 						nodeId = handler.initialClient(lastBuffer);
 						if(nodeId == 0){
-							LOG.warn("N_RUN initialClient fail nodeId=0");
+							LOG.warn("N_RUN server initial node  fail");
 						}else{
 							session.setAttribute("nodeId",nodeId);
 							LOG.info("nodeId:"+nodeId + " run success.");
@@ -113,7 +113,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 						}
 					}
 					else{
-						LOG.error("messageReceived nodeId error:"+nodeId);
+						LOG.error("messageReceived error:nodeId="+nodeId+" CODE="+opCode);
 					}	
 					
 				}
@@ -122,12 +122,14 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 		}catch(Exception e){
 			LOG.info("Error CODEID:"+ opCode);
 			ByteBuffer result = (ByteBuffer) message;
-			int remaining = result.remaining();
-			byte[] bytes = new byte[remaining];
-			result.get(bytes);
-			String data = new String(bytes);
-			LOG.info("remaining: " +data);			
-			LOG.error("messageReceived parse failed : "+message,e);
+			String data = new String(result.array());
+			if(lastBuffer!=null){
+				String lastData = new String(lastBuffer.array()); 
+				LOG.error("messageReceived parse failed: "+lastData);
+			}
+			LOG.error("messageReceived parse failed: " +data,e);			
+			
+			session.setAttribute("HalfPacket",null);
 //			LOG.error(message.toString());
 		}
 //		String ip = ((InetSocketAddress)session.getRemoteAddress()).getAddress().getHostAddress();

@@ -37,7 +37,7 @@ public class CalcManyToMany implements CalcCommands {
 		List<Command> list_Commands = null;
 		Status status = (new StatusDAO()).findById(70);
 		int count = 0;
-		for(Questarg questArg : set_Questargs){
+		for(Questarg questArg : set_Questargs){			
 			if (currentmodelArgId != questArg.getCommandmodelarg().getCommandModelArgId()){
 				count=0;
 				currentmodelArgId = questArg.getCommandmodelarg().getCommandModelArgId();
@@ -62,6 +62,7 @@ public class CalcManyToMany implements CalcCommands {
 			commandArg = new Commandarg(command,questArg.getCommandmodelarg(),questArg.getValue()+"");
 			commandargDAO.save(commandArg);
 			command.getCommandargs().add(commandArg);
+			
 			currentPacketPosition++;	
 			if(currentPacketPosition==packetSize){
 				currentPacketPosition = 0;

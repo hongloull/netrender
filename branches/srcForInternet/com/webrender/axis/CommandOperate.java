@@ -44,6 +44,7 @@ public class CommandOperate extends BaseAxis {
 		for(String commandId:commandIds){
 			if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(commandId)) ) ){
 				result.append(commandId).append(":").append(BaseAxis.RIGHTERROR).append("\n\r");
+				continue;
 			}
 			subResult = commandOperateImpl.reinitCommand(commandId,this.getLoginUserId());
 			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
@@ -65,6 +66,7 @@ public class CommandOperate extends BaseAxis {
 		for(String commandId:commandIds){
 			if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(commandId)) ) ){
 				result.append(commandId).append(":").append(BaseAxis.RIGHTERROR).append("\n\r");
+				continue;
 			}
 			subResult = commandOperateImpl.setFinish(commandId,this.getLoginUserId());
 			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){

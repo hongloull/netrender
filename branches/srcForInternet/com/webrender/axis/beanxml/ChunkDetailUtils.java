@@ -73,8 +73,10 @@ public final class ChunkDetailUtils {
 		root.addAttribute("errorResult", errorResult);
 		root.addAttribute("frames",commandDAO.getNote(command).toString());
 		root.addAttribute("renderedBy", nodeName);
-		root.addAttribute("nodeIp",nodeIp);
-		root.addAttribute("startingTime",start);
+		if(statusId!=70){
+			root.addAttribute("nodeIp",nodeIp);
+			root.addAttribute("startingTime",start);			
+		}
 		if(statusId==72){
 			root.addAttribute("endingTime", end);
 			root.addAttribute("timeSpan",timeSpan);				

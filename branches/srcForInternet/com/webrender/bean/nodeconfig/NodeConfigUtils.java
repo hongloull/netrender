@@ -88,6 +88,7 @@ public class NodeConfigUtils {
 		}
 		return (new XMLOut()).outputToString(doc);
 	}
+	
 	public Short getPrioritFromConfig(String configXML) throws JDOMException{
 		SAXBuilder builder = new SAXBuilder();
 		InputStream inputStream = new ByteArrayInputStream(configXML.getBytes());
@@ -96,6 +97,5 @@ public class NodeConfigUtils {
 		Element general = root.getChild(GENERAL);
 		String priority = general.getAttributeValue(PRIORITY);
 		return Short.parseShort(priority);
-		
 	}
 }

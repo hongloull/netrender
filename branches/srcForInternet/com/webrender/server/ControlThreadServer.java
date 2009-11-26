@@ -271,26 +271,26 @@ public final class ControlThreadServer extends Thread {
 		instance = null;
 		
 	}
-	private void sleepUpdateVersion(String message,long millis) throws InterruptedException
-	{
-		LOG.debug(message);
-		HibernateSessionFactory.closeSession();	
-		Thread.sleep(millis);
-		StatusDAO statusDAO = new StatusDAO();
-		Transaction tx = null;
-		try {
-			tx = HibernateSessionFactory.getSession().beginTransaction();
-			statusDAO.updateSystemVersion();
-			tx.commit();							
-		}catch (Exception e){					
-			LOG.error(message+" UpdateSystemVersion Error", e);
-			if(tx!=null){
-				tx.rollback();
-			}
-		}finally{
-			HibernateSessionFactory.closeSession();			
-		}
-	}
+//	private void sleepUpdateVersion(String message,long millis) throws InterruptedException
+//	{
+//		LOG.debug(message);
+//		HibernateSessionFactory.closeSession();	
+//		Thread.sleep(millis);
+//		StatusDAO statusDAO = new StatusDAO();
+//		Transaction tx = null;
+//		try {
+//			tx = HibernateSessionFactory.getSession().beginTransaction();
+//			statusDAO.updateSystemVersion();
+//			tx.commit();							
+//		}catch (Exception e){					
+//			LOG.error(message+" UpdateSystemVersion Error", e);
+//			if(tx!=null){
+//				tx.rollback();
+//			}
+//		}finally{
+//			HibernateSessionFactory.closeSession();			
+//		}
+//	}
 	public void notifyResume(){
 		if (this.getState() == Thread.State.WAITING){
 			synchronized(this){
