@@ -40,6 +40,7 @@ public final class ExecuteLogServer {
     }
     public void stop(){
     	acceptor.unbindAll();
+    	LOG.info("EventServer  port " + PORT + " is closed");
     }
     public void broadCast(String message)
     {

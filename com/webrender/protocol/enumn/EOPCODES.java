@@ -74,9 +74,10 @@ public final class EOPCODES{
 		return null;
 	}
 	
-	public CODE get(String code){
-		return codes.get(code);
+	public CODE get(String name){
+		return codes.get(name);
 	}
+	
 	public CODE get(int id){
 		Iterator<CODE> ite = codes.values().iterator();
 		while(ite.hasNext()){

@@ -40,6 +40,7 @@ public final class RealLogServer {
     }
     public void stop(){
     	acceptor.unbindAll();
+    	LOG.info("RealLogServer  port " + PORT + " is closed");
     }
     public void broadCast(String message)
     {

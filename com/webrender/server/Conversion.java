@@ -76,9 +76,8 @@ public final class Conversion extends Thread {
 						}
 					}
 					i++;
-					if (i>=5)
+					if (i>=6)
 					{
-						LOG.info("SubServer Run");
 						this.runServer();
 						i = 0;
 					}
@@ -131,19 +130,22 @@ public final class Conversion extends Thread {
 				LOG.error("Run ExecuteLogServer fail",e);
 			}
 			ControlThreadServer.getInstance().start();			
+			status = EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_ON");
 		}
-		status = EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_ON");
 	}
 	
 	public void stopServer()
 	{
 		if ( status.equals(EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_ON")))
 		{
+			LOG.info("Server stop!");
 			ControlThreadServer.getInstance().stopServer();
+			NodeLogServer.getInstance().stop();
+			RealLogServer.getInstance().stop();
+			ExecuteLogServer.getInstance().stop();
+			status = EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_OFF");
 		}
-		NodeLogServer.getInstance().stop();
-		RealLogServer.getInstance().stop();
-		ExecuteLogServer.getInstance().stop();
+		
 	}
 	public CODE getStatus()
 	{
@@ -158,7 +160,7 @@ public final class Conversion extends Thread {
 			org.apache.axis.client.Call call=(org.apache.axis.client.Call)service.createCall();
 			call.setTargetEndpointAddress(new java.net.URL(endpoint));
 			call.setOperationName(new javax.xml.namespace.QName("http://www.animationsp.com","isRun"));
-			call.setTimeout(5000);
+			call.setTimeout(10000);
 			Object result=call.invoke(new Object[]{});
 			if ( result.equals(EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_ON").getId()) ){
 				LOG.info(mainServer2+" already run");
