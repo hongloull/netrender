@@ -42,10 +42,11 @@ public final class NodeLogServer {
     }
     public void stop(){
     	acceptor.unbindAll();
-    }
-    public void close(){
-    	acceptor.unbindAll();
     	LOG.info("NodeLogServer  port " + PORT + " is closed");
     }
+//    public void close(){
+//    	acceptor.unbindAll();
+//    	LOG.info("NodeLogServer  port " + PORT + " is closed");
+//    }
 
 }

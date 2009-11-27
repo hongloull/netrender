@@ -154,7 +154,7 @@ public class UserXMLConfig extends XMLConfig {
 			while(ite_Users.hasNext()){
 				Reguser user= (Reguser)ite_Users.next();
 				LOG.info("ConfigServer delete user: "+user.getRegName());
-				regUserDAO.delete( ite_Users.next());
+				regUserDAO.delete(user);
 			}
 			tx.commit();
 			LOG.debug("deleteExtraUsers success");
