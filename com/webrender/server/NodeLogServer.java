@@ -18,7 +18,7 @@ import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 import com.webrender.config.GenericConfig;
 
 public final class NodeLogServer {
-	private static NodeLogServer instance = new NodeLogServer();
+	private static NodeLogServer instance = null;
     private int PORT = GenericConfig.getInstance().getNodePort();
     private static final Log LOG = LogFactory.getLog(NodeLogServer.class);
     private IoAcceptor acceptor = new SocketAcceptor();
@@ -29,6 +29,9 @@ public final class NodeLogServer {
     {
     }
     public static NodeLogServer getInstance(){
+    	if(instance==null){
+    		instance = new NodeLogServer();
+    	}
     	return instance;
     }
     
@@ -42,6 +45,7 @@ public final class NodeLogServer {
     }
     public void stop(){
     	acceptor.unbindAll();
+    	instance = null;
     	LOG.info("NodeLogServer  port " + PORT + " is closed");
     }
 //    public void close(){

@@ -17,7 +17,7 @@ import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 import com.webrender.config.GenericConfig;
 
 public final class ExecuteLogServer {
-    private static ExecuteLogServer instance = new ExecuteLogServer();
+    private static ExecuteLogServer instance = null;
     private int PORT = GenericConfig.getInstance().getEventLogPort();
     private static final Log LOG = LogFactory.getLog(ExecuteLogServer.class);
     private IoAcceptor acceptor = new SocketAcceptor();
@@ -28,6 +28,9 @@ public final class ExecuteLogServer {
     {
     }
     public static ExecuteLogServer getInstance(){
+    	if(instance == null ){
+    		instance = new ExecuteLogServer();
+    	}
     	return instance;
     }
     
@@ -40,6 +43,7 @@ public final class ExecuteLogServer {
     }
     public void stop(){
     	acceptor.unbindAll();
+    	instance = null;
     	LOG.info("EventServer  port " + PORT + " is closed");
     }
     public void broadCast(String message)

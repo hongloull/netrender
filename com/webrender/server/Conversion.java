@@ -163,7 +163,7 @@ public final class Conversion extends Thread {
 			call.setTimeout(10000);
 			Object result=call.invoke(new Object[]{});
 			if ( result.equals(EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_ON").getId()) ){
-				LOG.info(mainServer2+" already run");
+				LOG.debug(mainServer2+" already run");
 				return true;
 			}
 			else 
