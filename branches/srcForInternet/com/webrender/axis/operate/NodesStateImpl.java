@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Transaction;
 import org.jdom.Document;
 import org.jdom.Element;
 
@@ -15,6 +16,7 @@ import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
 import com.webrender.dao.Nodegroup;
 import com.webrender.dao.NodegroupDAO;
+import com.webrender.dao.StatusDAO;
 import com.webrender.remote.NodeMachineManager;
 
 
@@ -127,6 +129,22 @@ public class NodesStateImpl extends BaseOperate{
 	
 	
 	public String getAllNodes(){
+		
+		StatusDAO statusDAO = new StatusDAO();
+		Transaction tx = null;
+		try {
+			tx = getSession().beginTransaction();
+			statusDAO.updateSystemVersion();
+			tx.commit();					
+		}catch (Exception e){					
+			LOG.error("UpdateSystemVersion Error", e);
+			if(tx!=null){
+				tx.rollback();
+			}
+		}finally{		
+		}
+		
+		
 		try{
 			LOG.debug("getAllNodes");
 			Element root = new Element("Nodes");
@@ -138,7 +156,7 @@ public class NodesStateImpl extends BaseOperate{
 				root.addContent(nodeUtils.bean2xml(node));
 			}
 			String result = xmlOut.outputToString(doc);
-			LOG.debug("getAllNodes success");
+//			LOG.info("getAllNodes success:"+result);
 			return result;
 		}catch(Exception e)
 		{

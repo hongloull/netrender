@@ -28,6 +28,9 @@ public final class RealLogServer {
     {
     }
     public static RealLogServer getInstance(){
+    	if(instance==null){
+    		instance = new RealLogServer();
+    	}
     	return instance;
     }
     
@@ -40,6 +43,7 @@ public final class RealLogServer {
     }
     public void stop(){
     	acceptor.unbindAll();
+    	instance = null;
     	LOG.info("RealLogServer  port " + PORT + " is closed");
     }
     public void broadCast(String message)

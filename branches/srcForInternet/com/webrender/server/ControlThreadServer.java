@@ -260,11 +260,13 @@ public final class ControlThreadServer extends Thread {
 	{
 		LOG.info(reason);
 		threadStop = true;
+		this.notifyResume();
 	}
 	public void stopServer(){
 		threadStop("StopServer");
 		try {
 			this.join();
+			LOG.info("end!");
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
