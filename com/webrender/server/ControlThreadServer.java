@@ -161,7 +161,7 @@ public final class ControlThreadServer extends Thread {
 									command.setStatus(statusDAO.findById(71));
 									commandDAO.attachDirty(command);
 									
-									if(result==true) executelog = new  Executelog(command,statusDAO.findById(90),node,commandDAO.getNoteWithID(command).toString(),new Date()); 
+									if(result==true) executelog = new  Executelog(command,statusDAO.findById(90),node,commandDAO.getNoteWithID(command).toString()+" is executed. ",new Date()); 
 									else { // onetomany 执行错误
 										command.setStatus(statusDAO.findById(73));
 										command.setSendTime(new Date());
@@ -225,7 +225,7 @@ public final class ControlThreadServer extends Thread {
 				}
 				catch(org.hibernate.exception.JDBCConnectionException e)
 				{
-					LOG.info("Cann't connect database !");
+					LOG.error("Cann't connect database !");
 					try {
 						Thread.sleep(20000);
 					} catch (InterruptedException e1) {

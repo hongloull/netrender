@@ -96,7 +96,7 @@ public class NodeOperateImpl extends BaseOperate {
 			nodeMachine.setRealTime(Integer.parseInt(isOpen)==1?true:false);
 			LOG.debug("setRealLog success");
 			tx = getTransaction();
-			logOperate(regUserId,Operatelog.MOD,"SetRealTime "+(Integer.parseInt(isOpen)==1?"open":"close") );
+			logOperate(regUserId,Operatelog.MOD,"NodeId:"+nodeId+" setRealTime "+(Integer.parseInt(isOpen)==1?"open":"close") );
 			tx.commit();
 			return ACTIONSUCCESS;
 		}catch(Exception e)

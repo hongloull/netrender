@@ -245,6 +245,23 @@ public class CommandDAO extends BaseHibernateDAO {
 			throw re;
 		}	
 	}
+	
+	public List getError(Quest quest) {
+		LOG.debug("getError questId:"+quest.getQuestId());
+		try
+		{
+			Query query = getSession().createQuery("from Command as command where command.status.statusId=73 and command.quest.questId=? order by command.sendTime desc");
+			query.setParameter(0,quest.getQuestId());
+			LOG.debug("getError successful questId:"+quest.getQuestId());
+			return  query.list();
+			
+			
+		}catch(RuntimeException re){
+			LOG.error("getError failed questId:"+quest.getQuestId(),re);
+			throw re;
+		}	
+	}
+	
 	public boolean isInProgress(Quest quest){
 		LOG.debug("isInProgress questId:"+quest.getQuestId());
 		try{

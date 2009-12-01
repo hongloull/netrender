@@ -262,9 +262,11 @@ public class QuestDAO extends BaseHibernateDAO {
 			CommandDAO commandDAO = new CommandDAO();
 			boolean isProgress = commandDAO.isInProgress(quest);
 			int finish = commandDAO.getFinish(quest).size();
+			int error  = commandDAO.getError(quest).size();
 			int total = quest.getCommands().size() ;	
 			LOG.debug("getStatus successful");
 			if (finish ==total) return "Complete";
+			else if ( finish+error == total) return "Error";
 			else if (isPause==1) return "Pause";
 			else if (isProgress == true) return "InProgress";
 			else return "Waiting"; 
