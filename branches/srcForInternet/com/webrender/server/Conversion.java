@@ -61,6 +61,7 @@ public final class Conversion extends Thread {
 		}
 		case 2:{ //SubServer
 			// 判断MainServer是否正常运行，若MainServer启动了，做心动检测，等到检测出错（MainServer运行有问题时） 启动SubServer
+			LOG.info("SubServer Run");
 			int i = 0 ;
 			while (true)
 			{

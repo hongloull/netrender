@@ -165,6 +165,10 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		LOG.debug("execute bytebuffer");
 		LOG.debug(nodeId +": "+ command);
 		if (this.isConnect==false) return false;
+		else if (session==null) {
+			LOG.warn("NodeId:"+nodeId+" IoSession is null");
+			return false;
+		}
 		session.setAttribute("StartFlag",null);
 		session.write(command);
     	for (int i = 0 ; i<500 ; i++)
@@ -407,9 +411,18 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 //				Dispatcher.getInstance().exeCommands();
 				
 				return true;
-			}catch(Exception e){
+			}catch(NullPointerException e){
+				LOG.info("NodeId: "+nodeId+": cleanCurrentCommand Null commandId: "+commandId);
+				if(tx!=null){
+					tx.rollback();
+				}
+				return false;
+			}
+			catch(Exception e){
 				LOG.error("NodeId: "+nodeId+": cleanCurrentCommand Error commandId: "+commandId,e);
-				tx.rollback();
+				if(tx!=null){
+					tx.rollback();
+				}
 				return false;
 			}finally{
 				this.removeCommandId(commandId);
@@ -459,6 +472,10 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				LOG.debug("setFinish success");
 				removeCommandId(commandId);
 				return command.getQuest();
+			}
+			catch(NullPointerException e){
+				LOG.info("finishCommand Null id:"+commandId);
+				return null;
 			}
 			catch(Exception e)
 			{
