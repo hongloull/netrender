@@ -195,7 +195,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 //		LOG.info("Total " + session.getReadBytes() + " byte(s)");
 		Integer  nodeId = (Integer)session.getAttribute("nodeId");
 		if(nodeId!=null){
-			LOG.info("NodeId:"+nodeId+" connect close.");
+			LOG.info("NodeId:"+nodeId+" disconnect .");
 			NodeMachineManager.getInstance().getNodeMachine(nodeId).setSession(null);
 			NodeMachineManager.getInstance().deleteNodeMachine(nodeId);
 		}

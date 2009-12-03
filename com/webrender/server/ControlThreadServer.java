@@ -102,7 +102,7 @@ public final class ControlThreadServer extends Thread {
 							break;
 						}
 						command = (Command)ite_Commands.next();
-						
+//						LOG.info("Waiting commandId: "+command.getCommandId());
 						if(NodeMachineManager.getInstance().isIdleEmpty())
 						{
 							if (threadStop){
@@ -299,7 +299,7 @@ public final class ControlThreadServer extends Thread {
 				NewNotify = 0;
 				notify();
 			}
-			LOG.info("Dispather server notify..");
+//			LOG.info("Dispather server notify..");
 		}
 	}
 }

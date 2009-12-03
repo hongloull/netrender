@@ -6,13 +6,11 @@ import java.io.File;
 
 import java.io.InputStream;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-
 import com.webrender.axis.beanxml.XMLOut;
 import com.webrender.config.GenericConfig;
 import com.webrender.dao.Operatelog;
@@ -24,13 +22,19 @@ public class ServerOperateImpl extends BaseOperate {
 		LOG.debug("restart Server");
 		
 		try {
-						
-			String path = ServerOperateImpl.class.getResource("/").getPath();
-			int index = path.indexOf("webapps");
-			String tomcatHome =  path.substring(0,index) ;
-			Process process = Runtime.getRuntime().exec(tomcatHome+"bin/restart.bat");
-			logOperate(regUserId,Operatelog.MOD,"restart success");
-			return  ACTIONSUCCESS;
+			String osName = System.getProperty("os.name");
+			if( osName.startsWith("Windows")){
+				String path = ServerOperateImpl.class.getResource("/").getPath();
+				int index = path.indexOf("webapps");
+				String tomcatHome =  path.substring(0,index) ;
+				
+				
+				Process process = Runtime.getRuntime().exec(tomcatHome+"bin/restart.bat");
+				logOperate(regUserId,Operatelog.MOD,"restart success");
+				return  ACTIONSUCCESS;				
+			}else{
+				return BaseOperate.ACTIONFAILURE+"LinuxNotSupport";
+			}
 			
 			
 //			
