@@ -101,7 +101,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 
 	public boolean execute(Command command)
 	{
-		LOG.info("nodeId: "+nodeId + " execute commandId: "+command.getCommandId());
+//		LOG.info("nodeId: "+nodeId + " execute commandId: "+command.getCommandId());
 		CODE cmdType = null;
 		if( command.getType()==null || NameMap.RENDER.equalsIgnoreCase(command.getType())){
 			cmdType = EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_RENDER");
@@ -314,7 +314,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 
 
 	public void setConnect(boolean isConnect) {
-		LOG.info(nodeId +":setConnect("+isConnect+")");
+//		LOG.info(nodeId +":setConnect("+isConnect+")");
 		this.isConnect = isConnect;
 		if (isConnect==false)
 		{
@@ -466,7 +466,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 					command.setStatus(statusDAO.findById(72)); //72->Finish
 					command.setSendTime(new Date());
 					commandDAO.attachDirty(command);							
-					LOG.info(nodeId+" finish command "+command.getCommandId());
+//					LOG.info(nodeId+" finish command "+command.getCommandId());
 				}
 				tx.commit();
 				LOG.debug("setFinish success");
@@ -563,7 +563,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			}
 		}
 		else if(! this.currentCommands.contains(commandId) ){
-			LOG.info("NodeId:"+nodeId+" get new commandId:"+commandId);
+			LOG.warn("NodeId:"+nodeId+" get new commandId:"+commandId+ " message:"+message);
 			this.addCommandId(commandId);
 		}
 		try{

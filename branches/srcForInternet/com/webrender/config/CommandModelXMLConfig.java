@@ -33,6 +33,7 @@ public class CommandModelXMLConfig extends XMLConfig {
 			return;
 		}
 		Transaction tx = null;
+		Commandmodel cM = null;
 		try{
 			SAXBuilder sb =  new SAXBuilder();
 			Document doc = sb.build(file);
@@ -53,14 +54,14 @@ public class CommandModelXMLConfig extends XMLConfig {
 			else{
 				element.getAttribute("commandModelName").setValue(commandModelName);
 			}
-			Commandmodel cM = (new CommandmodelUtils()).xml2bean(element);
+			cM = (new CommandmodelUtils()).xml2bean(element);
 			
 			cMDAO.save(cM);
 //			if ( ! cM.getCommandModelId().toString().equals(  element.getAttributeValue("commandModelId") ) ){ // 保存后的CommandModelId 与XML内的Id不同。需要将数据库中ID存入XML中
 //				if (element.getAttribute("commandModelId")!=null )element.getAttribute("commandModelId").setValue(cM.getCommandModelId().toString());
 //				else element.addAttribute("commandModelId", cM.getCommandModelId().toString());
 //			}
-			element.removeAttribute("commandModelName");
+//			element.removeAttribute("commandModelName");
 			List<Element> lis_args = element.getChildren("Commandmodelarg");
 			int argsSize = lis_args.size();
 			Set set_CMAs = cM.getCommandmodelargs();
@@ -82,7 +83,6 @@ public class CommandModelXMLConfig extends XMLConfig {
 			}
 			tx.commit();
 //			XMLOut.outputToFile(doc,file);
-			lisCMs.remove(cM);
 		}
 		catch(Exception e)
 		{
@@ -91,7 +91,11 @@ public class CommandModelXMLConfig extends XMLConfig {
 			{
 				tx.rollback();
 			}
-		}			
+		}finally{
+			if(cM!=null){
+				lisCMs.remove(cM);				
+			}
+		}
 		LOG.debug("loadFromXML "+file.getName()+ "success");
 		return;
 	}

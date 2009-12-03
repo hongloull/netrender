@@ -91,31 +91,49 @@ public class CommandmodelargDAO extends BaseHibernateDAO {
 		}
 	}
 
-	public Commandmodelarg findByArgName(Object argName,int commandModelId) throws Exception {
-//		return findByProperty(, argName);
+//	public Commandmodelarg findByArgName(Object argName,int commandModelId) throws Exception {
+////		return findByProperty(, argName);
+//		try {
+//			String queryString = "from Commandmodelarg as model where model."
+//					+ ARG_NAME + "= ?" + " and commandmodel.commandModelId = "+ commandModelId;
+//			Query queryObject = getSession().createQuery(queryString);
+//			queryObject.setParameter(0, argName);
+//			List list = queryObject.list();
+//			if(list.size()==1) return (Commandmodelarg) list.get(0);
+//			else if(list.size()==0){
+//				return null;
+//			}
+//			else{
+//				LOG.error("finding more than one Commandmodelarg instance with argName: "
+//				+ argName +" commandModelId: "+commandModelId + ". Please check model error!");
+//				throw new java.lang.Exception("CommandmodelargError");
+//			}
+//		} catch (RuntimeException re) {
+//			LOG.error("find by property name failed", re);
+//			throw re;
+//		}
+//	}
+
+	public Commandmodelarg findByArgInstruction(Object argInstruction,int commandModelId) throws Exception {
 		try {
 			String queryString = "from Commandmodelarg as model where model."
-					+ ARG_NAME + "= ?" + " and commandmodel.commandModelId = "+ commandModelId;
+					+ ARG_INSTRUCTION + "= ?" + " and commandmodel.commandModelId = "+ commandModelId;
 			Query queryObject = getSession().createQuery(queryString);
-			queryObject.setParameter(0, argName);
+			queryObject.setParameter(0, argInstruction);
 			List list = queryObject.list();
 			if(list.size()==1) return (Commandmodelarg) list.get(0);
 			else if(list.size()==0){
 				return null;
 			}
 			else{
-				LOG.error("finding more than one Commandmodelarg instance with argName: "
-				+ argName +" commandModelId: "+commandModelId + ". Please check model error!");
+				LOG.error("finding more than one Commandmodelarg instance with argInstruction: "
+				+ argInstruction +" commandModelId: "+commandModelId + ". Please check model error!");
 				throw new java.lang.Exception("CommandmodelargError");
 			}
 		} catch (RuntimeException re) {
 			LOG.error("find by property name failed", re);
 			throw re;
 		}
-	}
-
-	public List findByArgInstruction(Object argInstruction) {
-		return findByProperty(ARG_INSTRUCTION, argInstruction);
 	}
 
 	public List findByType(Object type) {

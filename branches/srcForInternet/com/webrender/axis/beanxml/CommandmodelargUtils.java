@@ -46,29 +46,36 @@ public final class CommandmodelargUtils {
 //		}
 		
 		String argName = element.getAttributeValue("argName");
-		
 		String argInstruction = element.getAttributeValue("argInstruction");
 		String value = element.getAttributeValue("value");
 		String type = element.getAttributeValue("type");
 		String order = element.getAttributeValue("order");
 		String statusId = element.getAttributeValue("statusId");
 		
-		if(argName==null){
-			LOG.error("commandmodelarg lack argName; argInstruction: "+argInstruction+" value:"+value );
+		if(argInstruction==null){
+			LOG.error("commandmodelarg lack argInstruction; argName: "+argName+" value:"+value );
 			return null;
 		}		
 		
 		if(cMId != null){
-			instance = dao.findByArgName(argName,cMId);
+			instance = dao.findByArgInstruction(argInstruction, cMId);
 		}
 		if(instance==null){
 			instance = new Commandmodelarg();
 			LOG.info("xml2bean new commandModelArgName:"+argName+" argInstruction:"+argInstruction);
 		}
-		instance.setArgName(argName);
-		if(argInstruction!=null)instance.setArgInstruction(argInstruction);
+		
+		instance.setArgInstruction(argInstruction);
+		
+		if(argName!=null) instance.setArgName(argName);
+		else instance.setArgName("");
+
 		if(value!=null)instance.setValue(value);
 		if(type!=null)instance.setType(Short.parseShort(type));
+		else{
+			short short_Type = 0 ;
+			instance.setType(short_Type);
+		}
 		if(order!=null)instance.setOrder(Integer.parseInt(order));
 		Status status = null;		
 		StatusDAO statusDAO = new StatusDAO();
