@@ -208,7 +208,7 @@ public class NodeOperateImpl extends BaseOperate {
 	{
 		// isReboot  0 shutdown  1 reboot 
 		
-		LOG.info("shutdownNode nodeId:"+nodeId +" isReboot:"+isReboot);
+//		LOG.info("shutdownNode nodeId:"+nodeId +" isReboot:"+isReboot);
 		Transaction tx =null;
 		boolean exeFlag = false;
 		String message = "";
@@ -220,20 +220,20 @@ public class NodeOperateImpl extends BaseOperate {
 				if( nodeMachine.execute(serverMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_SHUTDOWN"))))
 				{
 					exeFlag =true;
-					message = "shutdown "+nodeId;
+					message = "shutdown nodId: "+nodeId;
 				}
 				else{
-					message = "shutdown "+nodeId+" fail!";
+					message = "shutdown nodeId: "+nodeId+" fail!";
 				}
 			}
 			else if (Integer.parseInt(isReboot)==1) // reboot
 			{
 				if( nodeMachine.execute(serverMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_RESTART")))){
 					exeFlag = true;
-					message = "reboot "+nodeId;
+					message = "reboot nodId: "+nodeId;
 				}
 				else{
-					message = "reboot "+nodeId+" fail!";
+					message = "reboot nodId: "+nodeId+" fail!";
 				}
 			}
 			logOperate(regUserId,exeFlag?Operatelog.MOD:Operatelog.ERROR,message);

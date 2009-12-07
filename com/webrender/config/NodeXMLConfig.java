@@ -27,6 +27,7 @@ import com.webrender.dao.TimegroupDAO;
 public class NodeXMLConfig extends XMLConfig {
 	private static List lisNGs = null;
 	private static final Log LOG = LogFactory.getLog(NodeXMLConfig.class);
+	private NodegroupDAO nGDAO = new NodegroupDAO();
 	static {
 		NodegroupDAO nodeGroupDAO = new  NodegroupDAO();
 		lisNGs  = nodeGroupDAO.findAll();
@@ -41,18 +42,19 @@ public class NodeXMLConfig extends XMLConfig {
 			LOG.debug("not xml return");
 			return;
 		}
+		String nodeGroupName = file.getName().substring(0, index);
+		Nodegroup nodeGroup = null;
 		Transaction tx = null;
 		try{
 			SAXBuilder sb =  new SAXBuilder();
 			Document doc = sb.build(file);
-			String nodeGroupName = file.getName().substring(0, index);
 			if(nodeGroupName.equalsIgnoreCase("All")){
 				file.delete();
 				LOG.info("delete all.xml file.");
 				return;
 			}
 			NodegroupDAO nodeGroupDAO = new NodegroupDAO();
-			Nodegroup nodeGroup = nodeGroupDAO.findByNodeGroupName(nodeGroupName);
+			nodeGroup = nodeGroupDAO.findByNodeGroupName(nodeGroupName);
 			NodeDAO nodeDAO 	= new NodeDAO();
 			TimegroupDAO tGroupDAO = new TimegroupDAO();
 			Element root = doc.getRootElement();
@@ -102,7 +104,6 @@ public class NodeXMLConfig extends XMLConfig {
 			set_Nodes.retainAll(set_RetainNodes);
 			
 			tx.commit();
-			lisNGs.remove(nodeGroup);
 			(new XMLOut()).outputToFile(doc,file);
 			LOG.debug("loadFromXML success "+file.getName());
 		}
@@ -113,6 +114,13 @@ public class NodeXMLConfig extends XMLConfig {
 			{
 				tx.rollback();
 			}
+		}finally{
+			if(nodeGroup!=null){
+				lisNGs.remove(nodeGroup);
+			}else{
+				lisNGs.remove(nGDAO.findByNodeGroupName(nodeGroupName));
+				
+			}
 		}
 	}
 	
@@ -122,7 +130,7 @@ public class NodeXMLConfig extends XMLConfig {
 		try{
 			tx = getTransaction();
 			Iterator ite_NGs = lisNGs.iterator();
-			NodegroupDAO nGDAO = new NodegroupDAO();
+		
 			while(ite_NGs.hasNext()){
 				Nodegroup ng = (Nodegroup)ite_NGs.next();
 				LOG.info("delete Nodegroup name: "+ng.getNodeGroupName());

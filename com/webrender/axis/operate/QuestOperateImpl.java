@@ -368,10 +368,12 @@ public class QuestOperateImpl extends BaseOperate {
 		Transaction tx = null;
 		try
 		{
+			short priValue = Short.parseShort(pri);
+			if(priValue<0) return ACTIONFAILURE;		
 			tx = getTransaction();
 			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
-			quest.setPri(Short.parseShort(pri));
+			quest.setPri(priValue);
 			questDAO.attachDirty(quest);
 			logOperate(regUserId,Operatelog.MOD,"Change quest "+quest.getQuestName()+"'s priority to "+pri);
 			tx.commit();
@@ -404,6 +406,7 @@ public class QuestOperateImpl extends BaseOperate {
 			questDAO.attachDirty(quest);
 			logOperate(regUserId,Operatelog.MOD,"Change quest "+quest.getQuestName()+"'s maxNodes to "+maxNodes);
 			tx.commit();
+			ControlThreadServer.getInstance().notifyResume();
 			return  ACTIONSUCCESS;
 		}
 		catch(Exception e)
@@ -438,6 +441,7 @@ public class QuestOperateImpl extends BaseOperate {
 			questDAO.attachDirty(quest);
 			logOperate(regUserId,Operatelog.MOD,"Change quest "+quest.getQuestName()+"'s pool to "+poolName);
 			tx.commit();
+			ControlThreadServer.getInstance().notifyResume();
 			return  ACTIONSUCCESS;
 		}
 		catch(Exception e)

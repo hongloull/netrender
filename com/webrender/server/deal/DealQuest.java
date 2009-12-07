@@ -4,6 +4,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Transaction;
 
+import com.webrender.dao.Command;
+import com.webrender.dao.CommandDAO;
 import com.webrender.dao.HibernateSessionFactory;
 import com.webrender.dao.Quest;
 import com.webrender.dao.QuestDAO;
@@ -20,6 +22,8 @@ public class DealQuest {
 		int totalSize = 0;
 		QuestDAO questDAO = new QuestDAO();
 		try{
+			questDAO.attachClean(quest);
+			
 			quest = questDAO.getQuestWithFrameInfo(quest, framesValue, byFrame);
 			CalcFrames calcFrames = new CalcFrames();
 			tx = HibernateSessionFactory.getSession().beginTransaction();
@@ -43,7 +47,7 @@ public class DealQuest {
 			try{
 				tx = HibernateSessionFactory.getSession().beginTransaction();
 				quest.setTotalFrames(totalSize);
-				questDAO.save(quest);
+				questDAO.attachDirty(quest);
 				tx.commit();
 			}catch(Exception e){
 				LOG.error("makeQuestFrames save quest's totalFrames fail",e);
@@ -59,11 +63,13 @@ public class DealQuest {
 	public void setPreLight(Quest quest , String preLight){
 		Transaction tx = null;
 		try{
+//			LOG.info("setPreLight before save questId:"+quest.getQuestId());
 			tx = HibernateSessionFactory.getSession().beginTransaction();
 			QuestDAO questDAO = new QuestDAO();
 			quest.setPreLight(preLight);
-			questDAO.save(quest);
+			questDAO.attachDirty(quest);
 			tx.commit();
+//			LOG.info("setPreLight after save questId:"+quest.getQuestId());
 			return;
 		}catch(Exception e){
 			if(tx !=null){
@@ -71,5 +77,10 @@ public class DealQuest {
 			}
 			LOG.error("setPreLight fail",e);
 		}
+	}
+	public void setPreLight(int commandId , String preLight){
+		CommandDAO commandDAO = new CommandDAO();
+		Command command = commandDAO.findById(commandId);
+		this.setPreLight(command.getQuest(), preLight);
 	}
 }
