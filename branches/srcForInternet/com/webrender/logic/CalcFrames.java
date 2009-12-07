@@ -142,7 +142,7 @@ public class CalcFrames implements CalcCommands {
 					}
 					else{
 						commandFrameValue = commandFrameValue+commandCurrentEndFrame;
-						LOG.info("CommandFrames:"+commandFrameValue+" byFrame:"+commandByFrame);
+//						LOG.info("CommandFrames:"+commandFrameValue+" byFrame:"+commandByFrame);
 						command = new Command(quest);
 						command.setStatus(status);
 						commandDAO.save(command);
@@ -167,7 +167,7 @@ public class CalcFrames implements CalcCommands {
 				}else{
 					commandFrameValue = commandFrameValue+commandCurrentEndFrame;
 					
-					LOG.info("CommandFrames:"+commandFrameValue+" byFrame:"+commandByFrame);
+//					LOG.info("CommandFrames:"+commandFrameValue+" byFrame:"+commandByFrame);
 					command = new Command(quest);
 					command.setStatus(status);
 					commandDAO.save(command);

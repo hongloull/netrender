@@ -58,7 +58,7 @@ public final  class  NodeMachineManager {
 	public void addNodeMachines(NodeMachine nodeMachine){
 		if(!idleMachines.contains(nodeMachine)){
 			idleMachines.add(nodeMachine);
-			LOG.info("Node "+nodeMachine.getId()+ " is idle");
+//			LOG.info("Node "+nodeMachine.getId()+ " is idle");
 		}
 		ControlThreadServer.getInstance().notifyResume();
 	}
@@ -77,7 +77,7 @@ public final  class  NodeMachineManager {
 	public void removeIdleMachines(NodeMachine nodeMachine){
 		if(idleMachines.contains(nodeMachine)){
 			idleMachines.remove(nodeMachine);
-			LOG.info("Node "+nodeMachine.getId()+ " is not idle!");
+//			LOG.info("Node "+nodeMachine.getId()+ " is not idle!");
 		}
 		
 	}
@@ -87,6 +87,7 @@ public final  class  NodeMachineManager {
 //		for(NodeMachine temp : idleMachines){
 //			LOG.info("ID: "+ temp.getId()+" PRI:"+temp.getPri() );
 //		}
+		
 		return idleMachines.toArray();
 	}
 	

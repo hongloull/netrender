@@ -24,8 +24,8 @@ import com.webrender.dao.CommandmodelargDAO;
 public class CommandModelXMLConfig extends XMLConfig {
 	private static List lisCMs = (new CommandmodelDAO()).findAll();
 	private static final Log LOG = LogFactory.getLog(CommandModelXMLConfig.class);
-	
-	public void loadFromXML(File file) throws JDOMException {
+	private CommandmodelDAO commandModelDAO = new CommandmodelDAO(); 
+	public void loadFromXML(File file) {
 		LOG.debug("loadFromXML "+file.getName());
 		int index = file.getName().lastIndexOf(".xml");
 		if (index == -1){
@@ -34,10 +34,10 @@ public class CommandModelXMLConfig extends XMLConfig {
 		}
 		Transaction tx = null;
 		Commandmodel cM = null;
+		String commandModelName = file.getName().substring(0, index);
 		try{
 			SAXBuilder sb =  new SAXBuilder();
 			Document doc = sb.build(file);
-			String commandModelName = file.getName().substring(0, index);
 			if(file.canWrite()) LOG.debug(file.getAbsoluteFile()+": canWrite");
 			else{
 				LOG.error(file.getAbsoluteFile()+": cannot Write");
@@ -94,6 +94,8 @@ public class CommandModelXMLConfig extends XMLConfig {
 		}finally{
 			if(cM!=null){
 				lisCMs.remove(cM);				
+			}else{
+				lisCMs.remove( commandModelDAO.findByCommandModelName(commandModelName) );
 			}
 		}
 		LOG.debug("loadFromXML "+file.getName()+ "success");
@@ -106,11 +108,11 @@ public class CommandModelXMLConfig extends XMLConfig {
 		try{
 			tx = getTransaction();
 			Iterator ite_CMs = lisCMs.iterator();
-			CommandmodelDAO cmDAO = new CommandmodelDAO();
+//			CommandmodelDAO cmDAO = new CommandmodelDAO();
 			while(ite_CMs.hasNext()){
 				Commandmodel model = (Commandmodel)ite_CMs.next();
 				LOG.info("delete commandmodel: "+model.getCommandModelName());
-				cmDAO.delete( model );
+				commandModelDAO.delete( model );
 			}
 			tx.commit();
 			LOG.debug("deleteExtraModel success");

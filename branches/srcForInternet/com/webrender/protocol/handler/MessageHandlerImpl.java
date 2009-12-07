@@ -146,7 +146,8 @@ public class MessageHandlerImpl implements MessageHandler {
 		NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(nodeId);
 		if( nodeMachine != null && nodeMachine.isConnect()==true){
 //				已经有nodeId节点连接到服务器上了。需要重新分配
-			nodeId=0;
+			LOG.info("nodeId: "+nodeId+" connected.runs again.");
+			return 0;
 		}
 		NodeDAO nodeDAO = new NodeDAO();
 		Transaction tx = null;

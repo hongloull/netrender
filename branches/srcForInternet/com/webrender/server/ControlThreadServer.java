@@ -132,16 +132,18 @@ public final class ControlThreadServer extends Thread {
 								}
 							}
 							else{
-								List list_NodeGroupIds = nodeDAO.getNodeGroupIds(command.getQuest().getNodegroup());
+								List list_NodeGroupIds = nodeDAO.getNodeGroupIds(commandDAO.getNodegroup(command));
 								for(int i = 0 ; i<length ; i++){
 									tempNodeMachine = (NodeMachine) nodeMachines[i];
 									if(list_NodeGroupIds.contains(tempNodeMachine.getId()) ){
 										// 该节点保包含在任务执行池中，可以渲染
+										LOG.debug("command:"+command.getCommandId()+" 's nodegroup contains nodeId:"+tempNodeMachine.getId());
 										nodeMachine = tempNodeMachine;
 										node = nodeDAO.findById(tempNodeMachine.getId());
 										noUsableNode = false;
 										break;
 									}
+									LOG.debug("NoUsableNode for commandId:"+command.getCommandId());
 									noUsableNode = true;
 								}
 							}
@@ -149,7 +151,7 @@ public final class ControlThreadServer extends Thread {
 						catch(Exception e){
 							LOG.error("getIdleMaichine fail",e);
 						}
-						if(nodeMachine!=null && node!=null){ ///   111111111111
+						if(nodeMachine!=null && node!=null){ ///   has node
 //							commandDAO.attachClean(command);
 							boolean result = nodeMachine.execute(command);
 							if (result || NameMap.ONETOMANY.equalsIgnoreCase(command.getType()) ){// ONETOMANY 无论执行结果对错都算完成
@@ -170,7 +172,7 @@ public final class ControlThreadServer extends Thread {
 									ExecutelogDAO exeDAO = new ExecutelogDAO();
 									exeDAO.save(executelog);
 									tx.commit();
-									LOG.debug("NodeId: "+ node.getNodeId()+" :execute commandId:"+command.getCommandId()+ " Success save to database");									
+									LOG.debug("NodeId: "+ node.getNodeId()+" :execute commandId:"+command.getCommandId()+ " Success");									
 								}
 								catch(Exception e){
 									LOG.error("save commandStatus fail",e);
@@ -180,7 +182,7 @@ public final class ControlThreadServer extends Thread {
 								}finally{
 									HibernateSessionFactory.closeSession();
 								}
-								break; //跳出此循环，分发下一个命令
+								break; //跳出此循环，重新分发命令
 							}
 							else{
 								Transaction tx = null;
@@ -203,7 +205,7 @@ public final class ControlThreadServer extends Thread {
 								}
 								continue; //
 							}
-						} // end If 1111111111
+						} // end If has node
 					} // end while commands
 					if(noUsableNode){
 						if(NewNotify >=5){
@@ -219,6 +221,7 @@ public final class ControlThreadServer extends Thread {
 						}
 						else{
 							NewNotify ++;
+							
 						}
 					}
 //				循环上述操作：到所有任务全部完成  停止该线程
@@ -296,6 +299,7 @@ public final class ControlThreadServer extends Thread {
 	public void notifyResume(){
 		if (this.getState() == Thread.State.WAITING){
 			synchronized(this){
+				HibernateSessionFactory.closeSession();	
 				NewNotify = 0;
 				notify();
 			}

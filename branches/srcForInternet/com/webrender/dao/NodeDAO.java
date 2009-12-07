@@ -104,11 +104,11 @@ public class NodeDAO extends BaseHibernateDAO {
 		return findByProperty(NODE_NAME, nodeName);
 	}
 	
-//	public Node findByNodeIp(Object nodeIp) {
-//		List lis_IPs =  findByProperty(NODE_IP, nodeIp);
-//		if ( lis_IPs.size()==1 ) return (Node)lis_IPs.get(0);
-//		else return null;
-//	}
+	public Node findByNodeIp(Object nodeIp) {
+		List lis_IPs =  findByProperty(NODE_IP, nodeIp);
+		if ( lis_IPs.size()>=1 ) return (Node)lis_IPs.get(0);
+		else return null;
+	}
 
 	public List findByOs(Object os) {
 		return findByProperty(OS, os);
@@ -175,8 +175,13 @@ public class NodeDAO extends BaseHibernateDAO {
 	public Node runNode(int nodeId,String ip,String name,String pri,String threads){
 		LOG.debug("RunSaveNode nodeId:"+nodeId + " nodeName:"+name+" ip:"+ip);
 		try{
-			Node node = findById(nodeId);
-			if(node==null){
+//			 For Internet
+//			Node node = findById(nodeId);
+			
+//			For Lan
+			Node node = findByNodeIp(ip);
+			
+			if(node==null){				
 				node = new Node();
 			}
 			if(name!=null && !("".equals(name)) ) node.setNodeName(name);
@@ -205,10 +210,15 @@ public class NodeDAO extends BaseHibernateDAO {
 	
 	public List getNodeGroupIds(Nodegroup group)
 	{
-		LOG.debug("getting Nodegroup Ids in NodegroupName: " +group.getNodeGroupName());
+//		LOG.info("getting Nodegroup Ids in NodegroupName: " +group.getNodeGroupName());
 		try {
 			String queryString = "select distinct node.nodeId from Node node , Nodegroup pool where node in elements(pool.nodes) and pool.nodeGroupId="+group.getNodeGroupId() ;
 			Query queryObject = getSession().createQuery(queryString);
+//			LOG.info("BEGIN");
+//			for(Object id : queryObject.list()){
+//				LOG.info("Id : "+ id);
+//			}
+//			LOG.info("END");
 			return queryObject.list();
 		} catch (RuntimeException re) {
 			LOG.error("find all failed", re);

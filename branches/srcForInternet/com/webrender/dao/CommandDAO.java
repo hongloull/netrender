@@ -145,7 +145,13 @@ public class CommandDAO extends BaseHibernateDAO {
 		LOG.debug("getWaitingCommands ");
 		try
 		{
-			return getSession().createQuery("from Command as command where command.status.statusId =70 and command.quest.status.statusId=50 order by command.quest.pri desc , command.commandId asc").list();
+			List list = getSession().createQuery("from Command as command where command.status.statusId =70 and command.quest.status.statusId=50 order by command.quest.pri desc , command.commandId asc").list();
+//			LOG.info("WaitingCommands");
+//			for (Object command : list){
+//				LOG.info("waiting commandId:"+((Command)command).getCommandId());
+//			}
+//			LOG.info("WaitingCommands finish");
+			return list;
 			
 		}catch(RuntimeException re){
 			LOG.error("getWaitingCommands failed",re);
@@ -310,6 +316,23 @@ public class CommandDAO extends BaseHibernateDAO {
 		}
 		LOG.debug("getNote success commandId: "+command.getCommandId()+" note:"+note.toString());
 		return note;
+	}
+	public Nodegroup getNodegroup(Command command){
+		LOG.debug("get command"+command.getCommandId()+" 's nodegroup ");
+		try{
+			String queryString = "select command.quest.nodegroup from Command as command where commandId="+command.getCommandId();
+			Query queryObject = getSession().createQuery(queryString);
+			List list = queryObject.list();
+			if(list.size()==1){
+				return (Nodegroup)list.get(0);				
+			}
+			else{
+				return null;
+			}
+		}catch (RuntimeException re) {
+			LOG.error("find all failed", re);
+			throw re;
+		}
 	}
 	private void reinitInProgressCommand(){
 		LOG.debug("reinitInProgressCommand ");

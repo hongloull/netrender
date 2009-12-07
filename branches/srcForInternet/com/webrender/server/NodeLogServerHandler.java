@@ -7,6 +7,7 @@ import org.apache.mina.common.ByteBuffer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.mina.common.IdleStatus;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
 
@@ -30,10 +31,14 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 	  }
 	
 	public void sessionOpened(IoSession session) throws Exception{
-		//  System.out.println("New Session" );
+		
+		session.setIdleTime(IdleStatus.READER_IDLE, 60);
 				
 	  }
-	
+	public void sessionIdle(IoSession session, IdleStatus status) {
+        LOG.info("nodeId:"+session.getAttribute("nodeId")+"*** IDLE ***");
+        session.close();
+    }
 	public void messageReceived(IoSession session, Object message) {
 		if (!(message instanceof ByteBuffer)){
 			LOG.info(message + "'type isn't ByteBuffer!");
@@ -94,9 +99,10 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 						nodeId = handler.initialClient(lastBuffer);
 						if(nodeId == 0){
 							LOG.warn("N_RUN server initial node  fail");
+							session.close();
 						}else{
 							session.setAttribute("nodeId",nodeId);
-							LOG.info("nodeId:"+nodeId + " run success.");
+							LOG.debug("nodeId:"+nodeId + " run success.");
 							NodeMachine processor = NodeMachineManager.getInstance().getNodeMachine(nodeId);
 							processor.setSession(session);
 							session.write(serverMessages.createConnectFlagPkt(nodeId));					
@@ -194,10 +200,15 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 	public void sessionClosed(IoSession session) throws Exception {
 //		LOG.info("Total " + session.getReadBytes() + " byte(s)");
 		Integer  nodeId = (Integer)session.getAttribute("nodeId");
-		if(nodeId!=null){
-			LOG.info("NodeId:"+nodeId+" disconnect .");
-			NodeMachineManager.getInstance().getNodeMachine(nodeId).setSession(null);
-			NodeMachineManager.getInstance().deleteNodeMachine(nodeId);
+		if(nodeId!=null && nodeId!=0){
+			//LOG.info("NodeId:"+nodeId+" session closed ."+" createTime: "+session.getCreationTime());
+//			LOG.info("NodeId: "+nodeId + "  closed  old session isClosed:"+session.isClosing()+" isConnected: "+session.isConnected()+" createTime:"+session.getCreationTime());
+			IoSession nodeSession = NodeMachineManager.getInstance().getNodeMachine(nodeId).getSession();
+			if(nodeSession == session){
+				LOG.info("NodeId: "+nodeId + " set session null");
+				NodeMachineManager.getInstance().getNodeMachine(nodeId).setSession(null);
+				NodeMachineManager.getInstance().deleteNodeMachine(nodeId);				
+			}
 		}
 		HibernateSessionFactory.closeSession();
 	}

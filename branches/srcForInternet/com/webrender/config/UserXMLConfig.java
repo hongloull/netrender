@@ -27,6 +27,7 @@ import com.webrender.dao.RightDAO;
 public class UserXMLConfig extends XMLConfig {
 	private static final Log LOG = LogFactory.getLog(UserXMLConfig.class);
 	private static List lisUsers = null ;
+	private ReguserDAO regUserDAO = new ReguserDAO();
 	static{
 		ReguserDAO regUserDAO = new ReguserDAO();
 		lisUsers = regUserDAO.findAll();
@@ -41,22 +42,23 @@ public class UserXMLConfig extends XMLConfig {
 			LOG.debug(file.getName()+" isn't xml. Return. ");
 			return;
 		}
+		String regName = file.getName().substring(0, index);
+		Reguser reguser = null;
 		Transaction tx = null;
 		try{
 			SAXBuilder sb =  new SAXBuilder();
 			Document doc = sb.build(file);
-			String regName = file.getName().substring(0, index);
 			if(regName.equalsIgnoreCase("admin")){
 				file.delete();
 				LOG.info("Server delete admin.xml");
 				return;
 			}
-			ReguserDAO regUserDAO = new ReguserDAO();
+			
 			RightDAO rightDAO = new RightDAO();
 			CommandmodelDAO modelDAO = new CommandmodelDAO();
 			NodegroupDAO nodeGroupDAO = new NodegroupDAO(); 
 			tx = getTransaction();
-			Reguser reguser = regUserDAO.findByRegName(regName);
+			reguser = regUserDAO.findByRegName(regName);
 			if(reguser==null){
 				LOG.info("a new user name: "+regName);
 				reguser = new Reguser(regName,"");
@@ -139,6 +141,12 @@ public class UserXMLConfig extends XMLConfig {
 				tx.rollback();
 			}
 			LOG.error("loadFromXML fail fileName: "+file.getName(),e);
+		}finally{
+			if(reguser!=null){
+				lisUsers.remove(reguser);
+			}else{
+				lisUsers.remove(regUserDAO.findByRegName(regName));
+			}
 		}
 		
 	}
@@ -150,7 +158,6 @@ public class UserXMLConfig extends XMLConfig {
 		try{
 			tx = getTransaction();
 			Iterator<Reguser> ite_Users = lisUsers.iterator();
-			ReguserDAO regUserDAO = new ReguserDAO();
 			while(ite_Users.hasNext()){
 				Reguser user= (Reguser)ite_Users.next();
 				LOG.info("ConfigServer delete user: "+user.getRegName());
