@@ -157,6 +157,24 @@ public class NodeOperate extends BaseAxis {
 		return result.toString();
 	}
 	
+	public String softStop(String[] nodeIds){
+		if (  !this.canVisit(0) &&  !this.canVisit(21) ) return BaseAxis.RIGHTERROR;
+		NodeOperateImpl nodeOperateImpl = new NodeOperateImpl();
+		StringBuffer result = new StringBuffer();
+		String subResult = null;
+		for(String nodeId:nodeIds){
+			subResult = nodeOperateImpl.exeSystemCommand(nodeId, "S_SOFTSTOP", "0", this.getLoginUserId()); 
+			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
+				result.append(nodeId).append(":").append(subResult).append("\n\r");
+			}
+		}
+		if(result.length()==0){
+			result.append(BaseOperate.ACTIONSUCCESS);
+		}
+		return result.toString();
+		
+	}
+	
 	/**
 	 * 
 	 * @param nodeId 

@@ -26,7 +26,6 @@ public final class CommandmodelUtils {
 	{
 		LOG.debug("xml2bean");
 		Commandmodel commandModel = null;
-		String commandModelId = element.getAttributeValue("commandModelId");
 		String commandModelName = element.getAttributeValue("commandModelName");
 		String type = element.getAttributeValue("type");
 		if (commandModelName == null){

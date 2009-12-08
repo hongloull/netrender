@@ -36,7 +36,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 				
 	  }
 	public void sessionIdle(IoSession session, IdleStatus status) {
-        LOG.info("nodeId:"+session.getAttribute("nodeId")+"*** IDLE ***");
+        LOG.info("nodeId:"+session.getAttribute("nodeId")+"*** IDLE *** "+session.getRemoteAddress());
         session.close();
     }
 	public void messageReceived(IoSession session, Object message) {
@@ -98,7 +98,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 						}
 						nodeId = handler.initialClient(lastBuffer);
 						if(nodeId == 0){
-							LOG.warn("N_RUN server initial node  fail");
+							LOG.warn("N_RUN fail nodeInfo:"+session.getRemoteAddress());
 							session.close();
 						}else{
 							session.setAttribute("nodeId",nodeId);
@@ -119,7 +119,8 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 						}
 					}
 					else{
-						LOG.error("messageReceived error:nodeId="+nodeId+" CODE="+opCode);
+						//TODO 错误处理，是否清空HalfPacket；是否跳出while(lastBuffer.hasRemaining())循环
+//						LOG.error("messageReceived error:nodeId="+nodeId+" CODE="+opCode);
 					}	
 					
 				}

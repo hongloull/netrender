@@ -50,12 +50,14 @@ public class QuestOperateImpl extends BaseOperate {
 	private XMLOut xmlOut = new XMLOut();
 	public String CommitQuest(String questXML,int regUserId)
 	{
-		
+		//TODO  没权限的人不能提交Edit其他人的任务
 		LOG.debug("commitQuest begin");		
 		try{
 			
 			this.closeSession();
 			StatusDAO statusDAO = new StatusDAO();
+			ReguserDAO reguserDAO = new ReguserDAO();
+			Reguser logUser = reguserDAO.findById( regUserId );
 			SAXBuilder builder = new SAXBuilder();
 			InputStream inputStream = new ByteArrayInputStream(questXML.getBytes());
 			Document doc = builder.build(inputStream);
@@ -64,13 +66,19 @@ public class QuestOperateImpl extends BaseOperate {
 			String nodeGroupName = ele_quest.getAttributeValue("Nodes");
 			NodegroupDAO nGDAO = new NodegroupDAO();
 			Nodegroup nG =  nGDAO.findByNodeGroupName(nodeGroupName);
+			if( !logUser.getNodegroups().contains(nG)){
+				LOG.warn(BaseOperate.ACTIONFAILURE+"Not permitted to use Pool '"+nodeGroupName+"' ");
+				return BaseOperate.ACTIONFAILURE+"Not permitted to use Pool '"+nodeGroupName+"' ";
+			}
 			quest.setNodegroup(nG);
 			Element ele_model = ele_quest.getChild("Commandmodel");
 			Commandmodel model = commandmodelUtils.xml2bean(ele_model);
+			if( !logUser.getModels().contains(model)){
+				LOG.warn(BaseOperate.ACTIONFAILURE+"Not permitted to use Model '"+model.getCommandModelName()+"' ");
+				return BaseOperate.ACTIONFAILURE+"Not permitted to use Model '"+model.getCommandModelName()+"' ";
+			}
 			String modelType = model.getType();
 			quest.setCommandmodel(model);
-			ReguserDAO reguserDAO = new ReguserDAO();
-			Reguser logUser = reguserDAO.findById( regUserId );
 			quest.setStatus(statusDAO.findById(50));
 			quest.setReguser(logUser);
 			

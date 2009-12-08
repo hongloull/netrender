@@ -81,10 +81,10 @@ public final class CommandmodelargUtils {
 		StatusDAO statusDAO = new StatusDAO();
 		try{
 			status = statusDAO.findById(Integer.parseInt(statusId));				
+			if(status == null){
+				status = statusDAO.findById(60);
+			}
 		}catch(Exception e){
-			status = statusDAO.findById(60);
-		}
-		if(status == null){
 			status = statusDAO.findById(60);
 		}
 		instance.setStatus(status);
