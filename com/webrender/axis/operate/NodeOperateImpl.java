@@ -313,18 +313,18 @@ public class NodeOperateImpl extends BaseOperate {
 				}
 				else if( nodeMachine.execute(serverMessages.createSystemPkt(code)) || !feedBackFlag ){
 					exeFlag = true;
-					message = FLAG + " "+nodeId;
+					message = FLAG + " nodeId:"+nodeId;
 				}else{
-					message = FLAG + " "+nodeId+" fail!";
+					message = FLAG + " nodeId:"+nodeId+" fail!";
 				}				
 			}catch(NullPointerException e)
 			{
 				if(feedBackFlag == false){
 					exeFlag = true;
-					message = FLAG + " "+nodeId;					
+					message = FLAG + " nodeId:"+nodeId;					
 				}
 				else{
-					message = FLAG + " "+nodeId+" fail !";
+					message = FLAG + " nodeId:"+nodeId+" fail !";
 				}				
 			}
 			

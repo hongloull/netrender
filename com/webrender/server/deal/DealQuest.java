@@ -59,7 +59,11 @@ public class DealQuest {
 		ControlThreadServer.getInstance().notifyResume();
 		
 	}
-	
+	public void makeQuestFrames(int commandId,String framesValue,String byFrame){
+		CommandDAO commandDAO = new CommandDAO();
+		Command command = commandDAO.findById(commandId);
+		this.makeQuestFrames(command.getQuest(), framesValue, byFrame);
+	}
 	public void setPreLight(Quest quest , String preLight){
 		Transaction tx = null;
 		try{

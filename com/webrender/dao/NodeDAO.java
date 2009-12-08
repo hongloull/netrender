@@ -175,11 +175,8 @@ public class NodeDAO extends BaseHibernateDAO {
 	public Node runNode(int nodeId,String ip,String name,String pri,String threads){
 		LOG.debug("RunSaveNode nodeId:"+nodeId + " nodeName:"+name+" ip:"+ip);
 		try{
-//			 For Internet
-//			Node node = findById(nodeId);
 			
-//			For Lan
-			Node node = findByNodeIp(ip);
+			Node node = findById(nodeId);
 			
 			if(node==null){				
 				node = new Node();

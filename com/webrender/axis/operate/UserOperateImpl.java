@@ -232,7 +232,7 @@ public class UserOperateImpl extends BaseOperate {
 			}
 			regUser.setPassWord(passWord);
 			regUserDAO.save(regUser);
-			logOperate(regUserId,Operatelog.MOD,"changePassWord:"+passWord+ " success.");
+			logOperate(regUserId,Operatelog.MOD,"changePassWord: success.");
 			tx.commit();
 			LOG.debug("setPassWord success Name: "+regName);
 			return  ACTIONSUCCESS;

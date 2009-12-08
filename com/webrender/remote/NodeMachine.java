@@ -695,10 +695,9 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 					String byFrame = datas.get(2);
 					LOG.info("commandId: "+commandId+". frames: "+frames+". by: "+byFrame);
 					int intCommandId = Integer.parseInt(commandId);
-					this.addFeedBack(intCommandId,"frames: "+frames+". by: "+byFrame );
-					Quest quest = setFinish(intCommandId);
-					
-					(new DealQuest()).makeQuestFrames(quest, frames, byFrame);
+//					this.addFeedBack(intCommandId,"frames: "+frames+". by: "+byFrame );
+//					Quest quest = setFinish(intCommandId);
+					(new DealQuest()).makeQuestFrames(intCommandId, frames, byFrame);
 				}
 				else{
 					LOG.error("N_FRAMEINFO need 4 arguments :"+ datas);
@@ -710,13 +709,13 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				String commandId = datas.get(0);
 				String preLight = datas.get(1);
 				int intCommandId = Integer.parseInt(commandId);
+				(new DealQuest()).setPreLight(intCommandId, preLight);
 				
 //				LOG.info("GetPreLight from nodeId: "+ nodeId +" commandId: "+commandId + " preLight:"+preLight);
 //				this.addFeedBack(intCommandId, preLight);
 ////				LOG.info("addPreLight to realLog from nodeId: "+ nodeId);
 //				Quest quest = setFinish(intCommandId);
 //				LOG.info("setFinish from nodeId: "+ nodeId);
-				(new DealQuest()).setPreLight(intCommandId, preLight);
 			}else if(code.getId() == EOPCODES.getInstance().get("N_ERROR").getId() ){
 				int commandId =Integer.parseInt(datas.get(0));
 				String message = datas.get(1);

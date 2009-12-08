@@ -143,11 +143,11 @@ public class MessageHandlerImpl implements MessageHandler {
 			strName = new String(name);
 			e.printStackTrace();
 		}
+//				判断是否有nodeId节点连接到服务器上，如果有重新分配
 		NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(nodeId);
 		if( nodeMachine != null && nodeMachine.isConnect()==true){
-//				已经有nodeId节点连接到服务器上了。需要重新分配
-			LOG.info("nodeId: "+nodeId+" connected.runs again.");
-			return 0;
+			LOG.info("nodeId: "+nodeId+" has run.");
+			nodeId = 0;
 		}
 		NodeDAO nodeDAO = new NodeDAO();
 		Transaction tx = null;
