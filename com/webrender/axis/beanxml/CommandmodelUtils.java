@@ -42,14 +42,14 @@ public final class CommandmodelUtils {
 			commandModel  = dao.findByCommandModelName(commandModelName);
 			if (commandModel==null ){
 				LOG.info("New Model Name: "+commandModelName);
-				commandModel = new Commandmodel();
+				commandModel = new Commandmodel(commandModelName);
 			}
 			
 		}
 		if( type!=null){
 			commandModel.setType(type);
 		}
-		commandModel.setCommandModelName(commandModelName);
+//		commandModel.setCommandModelName(commandModelName);
 		LOG.debug("xml2bean success");
 		return commandModel;
 	}

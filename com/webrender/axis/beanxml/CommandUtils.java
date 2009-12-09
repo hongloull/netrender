@@ -9,7 +9,7 @@ import com.webrender.dao.Commandmodelarg;
 import com.webrender.dao.CommandmodelargDAO;
 import com.webrender.dao.Questarg;
 
-public final class CommmandUtils {
+public final class CommandUtils {
 	public String commandToXMLForExe(Command command)
 	{
 		org.jdom.Element root = new org.jdom.Element("Cmd");
