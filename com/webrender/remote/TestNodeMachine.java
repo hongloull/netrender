@@ -2,7 +2,7 @@ package com.webrender.remote;
 
 import org.junit.Test;
 
-import com.webrender.axis.beanxml.CommmandUtils;
+import com.webrender.axis.beanxml.CommandUtils;
 import com.webrender.dao.CommandDAO;
 import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
@@ -15,7 +15,7 @@ public class TestNodeMachine {
 		
 //		NodeMachine nodeMachine = NodeMachineManager.getNodeMachine(2);
 //		nodeMachine.setConnect(false);
-		System.out.println((new CommmandUtils()).commandToXMLForExe((commandDAO.findById(10))));
+		System.out.println((new CommandUtils()).commandToXMLForExe((commandDAO.findById(10))));
 	}
 	
 	@Test
