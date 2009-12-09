@@ -62,12 +62,12 @@ public class CommandmodelargUtilsTest {
 	}
 	@Test
 	public void testxml2bean() throws Exception{
-		SAXBuilder builder = new SAXBuilder();
 		String xml ="<Test>" +
 				"<Commandmodelarg argName=\"-r\" type=\"0\" order=\"100\" argInstruction=\"EngineType\" />" +
 				"<Commandmodelarg argName=\"\" type=\"1\" order=\"0\" argInstruction=\"frames\" />" +
 				"<Commandmodelarg argName=\"-r\" type=\"0\" order=\"100\" argInstruction=\"12\" />" +
 				"</Test>";
+		SAXBuilder builder = new SAXBuilder();
 		InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
 		Document doc = builder.build(inputStream);
 		Element root = doc.getRootElement();
