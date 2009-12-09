@@ -24,7 +24,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import com.webrender.axis.beanxml.CommmandUtils;
+import com.webrender.axis.beanxml.CommandUtils;
 import com.webrender.axis.operate.ConfigOperateImpl;
 import com.webrender.dao.Command;
 import com.webrender.dao.CommandDAO;
@@ -55,7 +55,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	private String configInfo = null;
 	private StringBuffer realLog = null;
 	private ServerMessages serverMessages = new ServerMessages();
-	private CommmandUtils commmandUtils = new CommmandUtils();
+	private CommandUtils commmandUtils = new CommandUtils();
 //	IResultStore resultStore;
 
 
