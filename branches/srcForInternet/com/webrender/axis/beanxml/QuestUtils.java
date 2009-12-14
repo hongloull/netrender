@@ -69,9 +69,6 @@ public final class QuestUtils {
 	 
 	 public Element bean2xmlWithState(Quest quest)
 	 {
-		 if( quest.getQuestId()==74){
-			 LOG.debug("test");
-		 }
 		 LOG.debug("bean2xmlWithState questId:"+quest.getQuestId());
 		 QuestargDAO questargDAO = new QuestargDAO();
 		 QuestDAO questDAO = new QuestDAO();

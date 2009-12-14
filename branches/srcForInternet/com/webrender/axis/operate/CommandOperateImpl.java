@@ -39,7 +39,12 @@ public class CommandOperateImpl extends BaseOperate {
 			LOG.debug("getRealLog success");
 		//	XMLOut.outputToFile(doc,new File("d:/reallog.xml") );
 			return (new XMLOut()).outputToString(doc);
-		}catch(Exception e)
+		}catch(NullPointerException e){
+			return ACTIONFAILURE+e.getMessage();
+		}catch(java.lang.NumberFormatException e){
+			return ACTIONFAILURE+e.getMessage();
+		}
+		catch(Exception e)
 		{
 			LOG.error("getRealLog fail",e);
 			return ACTIONFAILURE+e.getMessage();

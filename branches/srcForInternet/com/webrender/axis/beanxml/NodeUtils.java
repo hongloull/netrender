@@ -57,10 +57,10 @@ public final class NodeUtils {
 	public Element bean2xmlWithState(Node node)
 	{
 		LOG.debug("bean2xml_State nodeId: "+node.getNodeId());
-		Element root = bean2xml(node);
 		NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(node.getNodeId());
 		if (nodeMachine.isConnect())
 		{
+			Element root = bean2xml(node);
 			if (nodeMachine.isBusy())
 			{
 				root.addAttribute("status","InProgress");

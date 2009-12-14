@@ -23,6 +23,7 @@ public class BaseOperate {
 		Reguser regUser = regUserDAO.findById(regUserId);
 		LOG.info("ReguserID: "+regUserId+" Information: " + information);
 		if(regUser==null){
+			LOG.error("ReguserID: "+regUserId+" not exist error! ");
 		}
 		else{
 			OperatelogDAO operateLogDAO = new OperatelogDAO();
