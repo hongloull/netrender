@@ -57,7 +57,6 @@ public class ChunkDetailUtilsTest {
 			command = (Command) ite.next();
 			Element root = new Element("Test");
 			Document doc = new Document(root);
-			
 			root.addContent(chunkDetailUtils.getElement(command));
 			assertTrue( xmlOut.outputToString(doc).startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") );
 		}		
