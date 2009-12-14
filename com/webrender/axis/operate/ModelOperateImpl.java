@@ -43,7 +43,11 @@ public class ModelOperateImpl extends BaseOperate {
 			}
 			LOG.debug("getCommandModel success");
 			return xmlOut.outputToString(doc);
-		}catch(Exception e)
+		}catch(NumberFormatException e){
+			LOG.error("getModel NumberFormatException ModelId:"+commandModelId);
+			return ACTIONFAILURE+e.getMessage(); 
+		}
+		catch(Exception e)
 		{
 			LOG.error("getCommandModel error",e);
 			return ACTIONFAILURE+e.getMessage();

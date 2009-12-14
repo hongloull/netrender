@@ -69,9 +69,12 @@ public class ConfigOperateImpl extends BaseOperate {
 			logOperate(regUserId,Operatelog.MOD,"configMapDir");
 			tx.commit();
 			return ACTIONSUCCESS;
-		} catch (JDOMException e) {
-			LOG.error("setPathConfig ParseError",e);
-			return ACTIONFAILURE+"XMLParseError"+e.getMessage();
+		}catch(NullPointerException e){
+			LOG.debug("setPathConfig NullPointerException questXML:"+questXML);
+			return ACTIONFAILURE+e.getMessage();
+		}catch (JDOMException e) {
+			LOG.error("setPathConfig JDOMException questXML:"+questXML);
+			return ACTIONFAILURE+e.getMessage();
 		}catch(Exception e){
 			if(tx!=null){
 				tx.rollback();
@@ -134,7 +137,17 @@ public class ConfigOperateImpl extends BaseOperate {
 			else{
 				return ACTIONFAILURE+"setNodeConfig fail: node not response";
 			}
-		} catch (Exception e) {
+		}catch(NumberFormatException e){
+			LOG.error("setNodeConfig NumberFormatException nodeId:"+nodeId+" config:"+config);
+			return ACTIONFAILURE+e.getMessage();
+		}catch(NullPointerException e){
+			LOG.error("setNodeConfig NullPointerException nodeId:"+nodeId+" config:"+config);
+			return ACTIONFAILURE+e.getMessage();
+		}catch(org.jdom.JDOMException e){
+			LOG.error("setNodeConfig org.jdom.JDOMException nodeId:"+nodeId+" config:"+config);
+			return ACTIONFAILURE+e.getMessage();
+		}
+		catch (Exception e) {
 			LOG.error("setNodeConfig fail "+ config ,e);
 			if(tx!=null){
 				tx.rollback();

@@ -40,8 +40,10 @@ public class CommandOperateImpl extends BaseOperate {
 		//	XMLOut.outputToFile(doc,new File("d:/reallog.xml") );
 			return (new XMLOut()).outputToString(doc);
 		}catch(NullPointerException e){
+			LOG.error("getRealLog null commandId:"+commandId);
 			return ACTIONFAILURE+e.getMessage();
-		}catch(java.lang.NumberFormatException e){
+		}catch(NumberFormatException e){
+			LOG.error("getRealLog NumberFormatException commandId:"+commandId);
 			return ACTIONFAILURE+e.getMessage();
 		}
 		catch(Exception e)
@@ -75,6 +77,12 @@ public class CommandOperateImpl extends BaseOperate {
 			
 			ControlThreadServer.getInstance().notifyResume();
 			return ACTIONSUCCESS;
+		}catch(NullPointerException e){
+			LOG.error("reinitCommand null commandId:"+commandId);
+			return ACTIONFAILURE+e.getMessage(); 
+		}catch(NumberFormatException e){
+			LOG.error("reinitCommand NumberFormatException commandId:"+commandId);
+			return ACTIONFAILURE+e.getMessage();
 		}catch(Exception e){
 			LOG.error("reinitCommand fail",e);
 			if (tx != null) 
@@ -104,6 +112,12 @@ public class CommandOperateImpl extends BaseOperate {
 		
 			LOG.debug("finishCommand success");
 			return ACTIONSUCCESS;
+		}catch(NullPointerException e){
+			LOG.error("setFinish null commandId:"+commandId);
+			return ACTIONFAILURE+e.getMessage(); 
+		}catch(NumberFormatException e){
+			LOG.error("setFinish NumberFormatException commandId:"+commandId);
+			return ACTIONFAILURE+e.getMessage();
 		}catch(Exception e){
 			LOG.error("finishCommand fail",e);
 			if (tx != null)
