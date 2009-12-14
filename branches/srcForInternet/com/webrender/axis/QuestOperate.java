@@ -16,7 +16,7 @@ public class QuestOperate extends BaseAxis {
 	{
 		if (  !this.canVisit(0) &&  !this.canVisit(10) ) return BaseAxis.RIGHTERROR;
 		
-		return (new QuestOperateImpl()).CommitQuest(questXML,this.getLoginUserId());
+		return (new QuestOperateImpl()).CommitQuest(questXML,this.getLoginUserId(),this.canVisit(0));
 				
 	}
 

@@ -48,7 +48,7 @@ public class QuestOperateImpl extends BaseOperate {
 	private CommandmodelUtils commandmodelUtils = new CommandmodelUtils();
 	private QuestargUtils questargUtils = new QuestargUtils();
 	private XMLOut xmlOut = new XMLOut();
-	public String CommitQuest(String questXML,int regUserId)
+	public String CommitQuest(String questXML,int regUserId,boolean isAdmin)
 	{
 		//TODO  没权限的人不能提交Edit其他人的任务
 		LOG.debug("commitQuest begin");		
@@ -66,14 +66,14 @@ public class QuestOperateImpl extends BaseOperate {
 			String nodeGroupName = ele_quest.getAttributeValue("Nodes");
 			NodegroupDAO nGDAO = new NodegroupDAO();
 			Nodegroup nG =  nGDAO.findByNodeGroupName(nodeGroupName);
-			if( !logUser.getNodegroups().contains(nG)){
+			if( !logUser.getNodegroups().contains(nG) && !isAdmin){
 				LOG.warn(BaseOperate.ACTIONFAILURE+"Not permitted to use Pool '"+nodeGroupName+"' ");
 				return BaseOperate.ACTIONFAILURE+"Not permitted to use Pool '"+nodeGroupName+"' ";
 			}
 			quest.setNodegroup(nG);
 			Element ele_model = ele_quest.getChild("Commandmodel");
 			Commandmodel model = commandmodelUtils.xml2bean(ele_model);
-			if( !logUser.getModels().contains(model)){
+			if( !logUser.getModels().contains(model)&& !isAdmin){
 				LOG.warn(BaseOperate.ACTIONFAILURE+"Not permitted to use Model '"+model.getCommandModelName()+"' ");
 				return BaseOperate.ACTIONFAILURE+"Not permitted to use Model '"+model.getCommandModelName()+"' ";
 			}
