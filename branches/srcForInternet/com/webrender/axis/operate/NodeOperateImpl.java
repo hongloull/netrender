@@ -165,10 +165,7 @@ public class NodeOperateImpl extends BaseOperate {
 			StatusDAO statusDAO = new StatusDAO();
 			if (flag)
 			{
-				nodeMachine.cleanRunCommands("Service kill "+nodeId+"'s Commands");
-				tx = getTransaction();
-				logOperate(regUserId,Operatelog.MOD,"kill Commands in nodeId:"+nodeId );
-				tx.commit();
+				nodeMachine.cleanRunCommands("Server kill "+nodeId+" 's Commands");
 			}
 			
 			else
@@ -182,7 +179,7 @@ public class NodeOperateImpl extends BaseOperate {
 				return ACTIONFAILURE+"kill commands error: node not response.";
 			}
 			
-			nodeMachine.setBusy(false);
+//			nodeMachine.setBusy(false);
 			ControlThreadServer.getInstance().notifyResume();
 //			Dispatcher.getInstance().exeCommands();
 			

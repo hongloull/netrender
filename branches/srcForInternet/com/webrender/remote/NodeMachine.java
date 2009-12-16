@@ -56,6 +56,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	private StringBuffer realLog = null;
 	private ServerMessages serverMessages = new ServerMessages();
 	private CommandUtils commmandUtils = new CommandUtils();
+	private CommandDAO commandDAO = new CommandDAO();
 //	IResultStore resultStore;
 
 
@@ -129,6 +130,8 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		{
 			addCommandId(command.getCommandId());
 			status.setJobName(command.getQuest().getQuestName());
+			
+			status.setFrames(commandDAO.getNote(command).toString());
 //			if (timeOutThread == null){
 //				LOG.debug("timeOutThread == null startNew");
 //				timeOutThread = new TimeoutThread(0,command.getCommandId(),this);
@@ -345,7 +348,10 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	public void setBusy(boolean isBusy) {
 		
 		LOG.debug(nodeId +":setBusy("+isBusy+")");
-		if (isBusy==false) status.setJobName("");
+		if (isBusy==false){
+			status.setJobName("");
+			status.setFrames("");
+		}
 		this.isBusy = isBusy;
 		selfCheck();
 	}
@@ -414,7 +420,6 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				LOG.info("CommandID: "+command.getCommandId()+" clean from nodeId="+nodeId +" message:"+message);
 
 				tx.commit();
-				
 				
 				ControlThreadServer.getInstance().notifyResume();
 //				Dispatcher.getInstance().exeCommands();
@@ -505,7 +510,12 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 //		setBusy(false);
 		
 	}
-	
+	/**
+	 * 
+	 * @param commandId  
+	 * @param isNormal  true:Normal false:Error
+	 * @param message
+	 */
 	private synchronized void  saveRealLog(int commandId ,boolean isNormal,String message){
 		LOG.debug("saveRealLog");
 		
