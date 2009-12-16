@@ -75,7 +75,7 @@ public final class NodeUtils {
 			NodeStatus nodeStatus = nodeMachine.getStatus();
 			root.addAttribute("cpu",nodeStatus.getCpuUsage()+"");
 			root.addAttribute("ramUsage", nodeStatus.getRamUsage()+"");
-			root.addAttribute("frames", "null");
+			root.addAttribute("frames", nodeStatus.getFrames()+"");
 //			root.addAttribute("priority","1");
 			root.addAttribute("procNum","1");
 			root.addAttribute("platform", nodeStatus.getPlatform()+"");
