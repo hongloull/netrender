@@ -17,6 +17,7 @@ public final class QuestargUtils {
 		Element root = new Element("Questarg");
 		root.addAttribute("questArgId", questarg.getQuestArgId().toString());
 		root.addAttribute("commandModelArgId",questarg.getCommandmodelarg().getCommandModelArgId().toString() );
+		root.addAttribute("argInstruction",questarg.getCommandmodelarg().getArgInstruction());
 		if (questarg.getValue()!=null) root.addAttribute("value", questarg.getValue());
 		root.addAttribute("type",questarg.getCommandmodelarg().getType()+"");
 		LOG.debug("bean2xml success questArgId:"+questarg.getQuestArgId());

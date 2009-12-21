@@ -242,6 +242,10 @@ public class QuestOperate extends BaseAxis {
 		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
 		return (new QuestOperateImpl()).getPreLight(questId); 
 	}
+	public String getFrame(String questId){
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+		return (new QuestOperateImpl()).getFrame(questId);
+	}
 	
 	
 	@Override

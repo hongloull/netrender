@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,6 +38,7 @@ import com.webrender.logic.CalcFrames;
 import com.webrender.logic.CalcManyToMany;
 import com.webrender.logic.CalcOneToMany;
 import com.webrender.server.ControlThreadServer;
+import com.webrender.tool.FramesOperate;
 import com.webrender.tool.NameMap;
 
 public class QuestOperateImpl extends BaseOperate {
@@ -53,7 +54,7 @@ public class QuestOperateImpl extends BaseOperate {
 		//TODO  没权限的人不能提交Edit其他人的任务
 		LOG.debug("commitQuest begin");		
 		try{
-			
+//			LOG.info(questXML);
 			this.closeSession();
 			StatusDAO statusDAO = new StatusDAO();
 			ReguserDAO reguserDAO = new ReguserDAO();
@@ -548,10 +549,73 @@ public class QuestOperateImpl extends BaseOperate {
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			
 			return quest.getPreLight()+"";
-		} catch (Exception e) {
+		}catch(NullPointerException e){
+			LOG.error("getPreLight NullPointerException questId:"+questId);
+			return ACTIONFAILURE+e.getMessage();
+		}catch(NumberFormatException e){
+			LOG.error("getPreLight NumberFormatException questId:"+questId);
+			return ACTIONFAILURE+e.getMessage();
+		}catch (Exception e) {
 			LOG.error("getPreLight fail questId:" + questId, e);
 			return ACTIONFAILURE+e.getMessage();
 		} finally {
+			this.closeSession();
+		}
+	}
+
+	public String getFrame(String questId) {
+		LOG.debug("getFrames questId:"+questId);
+		try{
+			String framesValue = null;
+			Double byFrame = null;
+			QuestDAO questDAO = new QuestDAO();
+			Quest quest = questDAO.findById(Integer.parseInt(questId));
+			Iterator questArgs = quest.getQuestargs().iterator();
+			while( questArgs.hasNext() )
+			{
+				Questarg questArg = (Questarg)questArgs.next();
+				int typeValue = questArg.getCommandmodelarg().getStatus().getStatusId();
+				switch (typeValue)
+				{
+				case 61:	framesValue  = questArg.getValue();
+							break;
+				case 63:    byFrame   = Double.parseDouble( questArg.getValue() );
+							break;
+				}
+			}
+			if(framesValue==null || byFrame==null){
+				return ACTIONFAILURE+"Lack FrameInfo";
+			}
+			TreeSet<Double> frames = new TreeSet<Double>();
+			FramesOperate framesOperate = new FramesOperate();
+			framesOperate.framesOperate(framesValue, byFrame, frames);
+			if(frames.size()!=0){
+				StringBuffer result = new StringBuffer();
+				for(Double frame : frames){
+					double doubleFrame = frame.doubleValue();
+					int intFrame = frame.intValue();
+					if(doubleFrame - intFrame == 0)
+						result.append(intFrame).append(",");
+					else
+						result.append(doubleFrame).append(",");
+					
+				}
+				return result.toString();
+			}
+			else{
+				return ACTIONFAILURE+"No Frame";
+			}
+			 
+		}catch(NullPointerException e){
+			LOG.error("getFrames NullPointerException questId:"+questId);
+			return ACTIONFAILURE+e.getMessage();
+		}catch(NumberFormatException e){
+			LOG.error("getFrames NumberFormatException questId:"+questId);
+			return ACTIONFAILURE+e.getMessage();
+		}catch(Exception e){
+			LOG.error("getPreLight fail questId:" + questId, e);
+			return ACTIONFAILURE+e.getMessage();
+		}finally{
 			this.closeSession();
 		}
 	}

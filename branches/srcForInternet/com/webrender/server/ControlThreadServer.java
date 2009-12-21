@@ -166,7 +166,7 @@ public final class ControlThreadServer extends Thread {
 									if(result==true) executelog = new  Executelog(command,statusDAO.findById(90),node,commandDAO.getNoteWithID(command).toString()+" is executed. ",new Date()); 
 									else { // onetomany 执行错误
 										command.setStatus(statusDAO.findById(73));
-										command.setSendTime(new Date());
+//										command.setSendTime(new Date());
 										executelog = new  Executelog(command,statusDAO.findById(99),node,commandDAO.getNoteWithID(command).toString(),new Date());
 									}
 									ExecutelogDAO exeDAO = new ExecutelogDAO();

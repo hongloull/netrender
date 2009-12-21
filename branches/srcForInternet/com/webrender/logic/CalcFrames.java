@@ -55,6 +55,7 @@ public class CalcFrames implements CalcCommands {
 		MathContext mc = new MathContext(2,RoundingMode.HALF_UP);
 		Iterator questArgs = quest.getQuestargs().iterator();
 		try {
+			if(packetSize==null) packetSize = 1;
 			while( questArgs.hasNext() )
 			{
 				Questarg questArg = (Questarg)questArgs.next();
@@ -69,10 +70,11 @@ public class CalcFrames implements CalcCommands {
 							break;
 				}
 			}
-			if(packetSize==null) packetSize = 1;
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 			return CalcCommands.NumberFormatException;
+		} catch(NullPointerException e){
+			
 		}
 		StatusDAO statusDAO = new StatusDAO();
 		Status status = statusDAO.findById(70);
