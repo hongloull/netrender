@@ -1,7 +1,11 @@
 package com.webrender.axis.operate;
 
 
-import java.util.Iterator;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,25 +15,24 @@ import org.jdom.Element;
 
 import com.webrender.axis.beanxml.ExecutelogUtils;
 import com.webrender.axis.beanxml.XMLOut;
+import com.webrender.config.NetRenderLogFactory;
 import com.webrender.dao.Command;
 import com.webrender.dao.CommandDAO;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
 import com.webrender.dao.Operatelog;
 import com.webrender.server.ControlThreadServer;
-import com.webrender.server.Dispatcher;
 
 public class CommandOperateImpl extends BaseOperate {
 	private static final Log LOG = LogFactory.getLog(CommandOperateImpl.class);
-	
+	private CommandDAO commandDAO = new CommandDAO();
 	public String getRealLogs(String commandId){
 		
 		LOG.debug("getRealLogs");
 		
 		try{
-			CommandDAO commandDAO = new CommandDAO();
 			ExecutelogDAO exeLogDAO = new ExecutelogDAO();
-			Command command = (Command)commandDAO.findById(Integer.parseInt(commandId) );
+			Command command = commandDAO.findById(Integer.parseInt(commandId) );
 			Element root = new Element("Reallogs");
 			Document doc =new Document(root);
 			Executelog log  = exeLogDAO.getRealLog(command);
@@ -56,8 +59,51 @@ public class CommandOperateImpl extends BaseOperate {
 			this.closeSession();
 		}
 	}
-	public String getRealLogFile(String commandId){		
-		return ACTIONFAILURE;
+	public String getRealLogFile(String commandId){	
+		LOG.debug("getRealLogFile");
+		try{
+			File file = NetRenderLogFactory.getInstance().getFile(Integer.parseInt(commandId));
+			if(file != null && file.exists()){
+				StringBuffer buffer = new StringBuffer();
+				FileInputStream in=new FileInputStream (file); 
+				InputStreamReader inReader=new InputStreamReader (in); 
+				BufferedReader bufReader=new BufferedReader(inReader);
+				String line = null;
+				while(true){
+					line = bufReader.readLine();
+					if(line!=null){
+						if(line.length()==0) continue;
+						buffer.append(line).append("\n");
+					}
+					else break;
+				}
+//				LOG.info(buffer.toString());				
+//				return buffer.toString();
+				ExecutelogUtils utils = new ExecutelogUtils();
+				Element element = utils.arg2xml(buffer.toString(),"","", "");
+				Element root = new Element("Reallogs");
+				Document doc =new Document(root);
+				root.addContent(element);
+				String result = (new XMLOut()).outputToString(doc);
+				return result;
+			}else{
+				LOG.error("Log file does not exist! for commandId "+commandId);
+				return BaseOperate.ACTIONFAILURE+"Log file does not exist! for commandId "+commandId;
+			}
+		}catch(NullPointerException e){
+			LOG.error("getRealLogFile null commandId:"+commandId);
+			return ACTIONFAILURE+e.getMessage();
+		}catch(NumberFormatException e){
+			LOG.error("getRealLogFile NumberFormatException commandId:"+commandId);
+			return ACTIONFAILURE+e.getMessage();
+		}catch(Exception e){
+			LOG.error("getRealLogFile fail ",e);
+			return ACTIONFAILURE+e.getMessage();
+		}finally
+		{
+			this.closeSession();
+		}
+		
 	}
 	
 	public String reinitCommand(String commandId,int regUserId){
@@ -67,7 +113,6 @@ public class CommandOperateImpl extends BaseOperate {
 		Transaction tx = null;
 		try{
 			tx = getTransaction();
-			CommandDAO commandDAO = new CommandDAO();
 			Command command = commandDAO.findById(Integer.parseInt(commandId));
 			commandDAO.reinitCommand(command );
 			logOperate(regUserId,Operatelog.MOD,"ReInit Command: "+commandDAO.getNoteWithID(command));
@@ -104,7 +149,6 @@ public class CommandOperateImpl extends BaseOperate {
 		Transaction tx = null;
 		try{
 			tx = getTransaction();
-			CommandDAO commandDAO = new CommandDAO();
 			Command command = commandDAO.findById(Integer.parseInt(commandId));
 			commandDAO.setFinish(command );
 			logOperate(regUserId,Operatelog.MOD,"setFinish Command: "+commandDAO.getNoteWithID(command));

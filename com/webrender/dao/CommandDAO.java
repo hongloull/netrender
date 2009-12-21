@@ -212,7 +212,7 @@ public class CommandDAO extends BaseHibernateDAO {
 		{
 			StatusDAO statusDAO = new StatusDAO();
 			instance.setStatus(statusDAO.findById(72));
-			instance.setSendTime(new Date());
+//			instance.setSendTime(new Date());
 			this.attachDirty(instance);
 			LOG.debug("setFinish successful");
 			

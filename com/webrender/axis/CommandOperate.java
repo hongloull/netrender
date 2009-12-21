@@ -27,7 +27,7 @@ public class CommandOperate extends BaseAxis {
 		
 		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
 		
-		return  (new CommandOperateImpl()).getRealLogs(commandId);
+		return  (new CommandOperateImpl()).getRealLogFile(commandId);
 	}
 	public String getRealLogFile(String commandId){
 		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;

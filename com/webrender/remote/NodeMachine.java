@@ -2,6 +2,9 @@ package com.webrender.remote;
 
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringBufferInputStream;
 import java.util.Collections;
@@ -26,6 +29,7 @@ import org.xml.sax.SAXException;
 
 import com.webrender.axis.beanxml.CommandUtils;
 import com.webrender.axis.operate.ConfigOperateImpl;
+import com.webrender.config.NetRenderLogFactory;
 import com.webrender.dao.Command;
 import com.webrender.dao.CommandDAO;
 import com.webrender.dao.Executelog;
@@ -53,7 +57,8 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	private Set<Integer> currentCommands ;
 	private static final Log LOG = LogFactory.getLog(NodeMachine.class);
 	private String configInfo = null;
-	private StringBuffer realLog = null;
+//	private StringBuffer realLog = null;
+	private FileOutputStream realLogS = null;
 	private ServerMessages serverMessages = new ServerMessages();
 	private CommandUtils commmandUtils = new CommandUtils();
 	private CommandDAO commandDAO = new CommandDAO();
@@ -72,6 +77,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	
 	private NodeMachine(){		
 	}
+	
 	public NodeMachine(Integer nodeId,Short pri)
 	{
 		this.nodeId = nodeId;
@@ -128,6 +134,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		}
 		if( this.execute(cmdBuffer))
 		{
+			command.setSendTime(new Date());
 			addCommandId(command.getCommandId());
 			status.setJobName(command.getQuest().getQuestName());
 			
@@ -405,8 +412,9 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				tx = HibernateSessionFactory.getSession().beginTransaction();
 				Command command = commandDAO.findById(commandId);
 				if(command.getStatus().getStatusId()== 72 ){
-					if(realLog != null && realLog.length()>0){
-						realLog = null;
+					if(realLogS != null){
+						realLogS.close();
+						realLogS = null;
 					}
 					return true;
 				}
@@ -441,8 +449,9 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			}finally{
 				this.removeCommandId(commandId);
 			}
+		}else{
+			return true;			
 		}
-		return true;
 	}
 	
 	
@@ -478,7 +487,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				{
 					command.setNode(node);
 					command.setStatus(statusDAO.findById(72)); //72->Finish
-					command.setSendTime(new Date());
+//					command.setSendTime(new Date());
 					commandDAO.attachDirty(command);							
 //					LOG.info(nodeId+" finish command "+command.getCommandId());
 				}
@@ -520,7 +529,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		LOG.debug("saveRealLog");
 		
 		try{
-			int realStatusId = isNormal?80:81;
+//			int realStatusId = isNormal?80:81;
 			int exeStatusId  = isNormal?91:99;				
 			CommandDAO commandDAO = new CommandDAO();
 			Command command = commandDAO.findById(commandId);
@@ -530,10 +539,10 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			StatusDAO statusDAO = new StatusDAO();
 			NodeDAO nodeDAO = new NodeDAO();
 			ExecutelogDAO exeDAO = new ExecutelogDAO();
-			if (realLog!=null && realLog.length()>0) // 有则存之，无则无视
+			if (realLogS!=null) // 有则存之，无则无视
 			{
-				Executelog reallog = new Executelog(command,statusDAO.findById(realStatusId),nodeDAO.findById(nodeId),realLog.toString(),new Date());
-				exeDAO.save(reallog);		
+				realLogS.close();
+				realLogS = null;
 			}
 			
 			Executelog exelog  = new Executelog(command,statusDAO.findById(exeStatusId),nodeDAO.findById(nodeId),commandDAO.getNoteWithID(command) + message,new Date());
@@ -543,13 +552,14 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		{
 			LOG.error("saveRealLog fail",e);
 			
-		}finally
-		{
-//			LOG.info("realLog reset");
-			realLog = null;					
-			
-			
 		}
+//		finally
+//		{
+////			LOG.info("realLog reset");
+//			realLog = null;					
+//			
+//			
+//		}
 		
 		
 	}
@@ -591,25 +601,44 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 //				timeOutThread = new TimeoutThread(0,commandId,this);
 //				timeOutThread.start();
 //			}
-			if(realLog == null) realLog = new StringBuffer();
 			
 			
 			if(message.startsWith("***GOODBYE***")){
 //				LOG.info("Node: "+nodeId+" GOODBYE");
 //				timeOutThread.cancel();
-				
+				if(realLogS!=null){
+					realLogS.close();
+					realLogS = null;
+				}
 				setFinish(commandId);
 //				timeOutThread = null;
 			}
 			else{
-				realLog.append(message);
+				if(realLogS == null){
+					File file = NetRenderLogFactory.getInstance().getFile(commandId);
+					if(file.getParentFile().exists() || file.getParentFile().mkdirs()){
+						if(file.createNewFile()){
+							realLogS = new FileOutputStream(file);
+//							LOG.info("new log file:"+file.getAbsolutePath());
+						}else{
+							throw new FileNotFoundException();
+						}						
+					}
+				}
+				realLogS.write(message.getBytes());				
+				
+//				realLog.append(message);
 				// 重置超时时间
-				LOG.debug("timethread reset");
+//				LOG.debug("timethread reset");
 //				timeOutThread.reset();
 			}			
+		}catch (FileNotFoundException e) {
+			LOG.error("new a log file fail FileNotFoundException");
+		}catch (IOException e) {
+			LOG.error("parse log file fail IOException "+e.getMessage());
 		}catch(Exception e)
 		{
-			
+			LOG.error("AddFeadBack fail ",e);
 		}
 	}
 
@@ -718,6 +747,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			}else if( code.getId() == EOPCODES.getInstance().get("N_PRELIGHT").getId() ){
 				String commandId = datas.get(0);
 				String preLight = datas.get(1);
+				LOG.info("preLight: "+preLight);
 				int intCommandId = Integer.parseInt(commandId);
 				(new DealQuest()).setPreLight(intCommandId, preLight);
 				

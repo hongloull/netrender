@@ -1,6 +1,7 @@
 package com.webrender.axis.beanxml;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,7 +31,15 @@ public final class ExecutelogUtils {
 		LOG.debug("bean2xml success executeLogId: "+ exeLog.getExecuteLogId());
 		return root;
 	}
-	
+	public Element arg2xml(String message,String logTime,String nodeIp,String status){
+		Element root = new Element("Executelog");
+		CDATA note = new CDATA(message+"");
+		root.addContent(note);
+		root.addAttribute("logTime",logTime);
+		root.addAttribute("nodeIp", nodeIp);
+		root.addAttribute("status",status);
+		return root;
+	}
 	private Element bean2xml2 (Executelog exeLog){
 		LOG.debug("bean2xml For event exeLogId: "+exeLog.getExecuteLogId() );
 		Element root = new Element("Event");
