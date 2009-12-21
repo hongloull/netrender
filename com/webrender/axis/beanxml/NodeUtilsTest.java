@@ -59,7 +59,7 @@ public class NodeUtilsTest {
 			Element root = new Element("TEST");
 			Document doc = new Document(root);
 			root.addContent(utils.bean2xml(node));
-			System.out.println( out.outputToString(doc) );
+//			System.out.println( out.outputToString(doc) );
 			assertTrue( out.outputToString(doc).startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") );
 		}
 	}

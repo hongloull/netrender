@@ -72,11 +72,13 @@ public class CommandOperateImplTest {
 	 */
 	@Test
 	public final void testReinitCommand() {
+//		System.out.println(impl.reinitCommand("a", 1));
+		assertTrue(impl.reinitCommand("0", 0).equals("Failure null"));
+		assertTrue(impl.reinitCommand("f", 0).startsWith("Failure For input string:"));
 		List<Command> list = dao.findAll();
 		for(Command command : list){
 			String commandId = command.getCommandId().toString();
-			impl.reinitCommand(commandId, 1);
-//			assertTrue( impl.getRealLogFile(commandId).equalsIgnoreCase( BaseOperate.ACTIONFAILURE));
+			assertTrue( BaseOperate.ACTIONSUCCESS.equals( impl.reinitCommand(commandId, 0) ) );
 		}
 	}
 
@@ -85,7 +87,14 @@ public class CommandOperateImplTest {
 	 */
 	@Test
 	public final void testSetFinish() {
-		fail("Not yet implemented"); // TODO
+		assertTrue(impl.setFinish("0", 0).equals("Failure null"));
+		assertTrue(impl.setFinish("", 0).startsWith("Failure For input string:"));
+		List<Command> list = dao.findAll();
+		for(Command command : list){
+			String commandId = command.getCommandId().toString();
+			assertTrue( BaseOperate.ACTIONSUCCESS.equals( impl.setFinish(commandId, 0) ) );
+//			assertTrue( impl.getRealLogFile(commandId).equalsIgnoreCase( BaseOperate.ACTIONFAILURE));
+		}
 	}
 
 }
