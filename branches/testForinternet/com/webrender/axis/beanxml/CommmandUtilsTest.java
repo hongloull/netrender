@@ -33,7 +33,7 @@ public class CommmandUtilsTest {
 		List<Command> list = dao.findAll();
 		for(Command command : list){
 			String result =  utils.commandToXMLForExe(command);
-			System.out.println(result);
+//			System.out.println(result);
 			assertTrue(result.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
 		}
 		

@@ -38,7 +38,7 @@ public class QuestargUtilsTest {
 		for(Questarg questarg : list){
 			Element element = utils.bean2xml(questarg);
 			Document doc = new Document(element);
-			System.out.println(out.outputToString(doc));
+//			System.out.println(out.outputToString(doc));
 			assertTrue( out.outputToString(doc).startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") );
 		}
 	}

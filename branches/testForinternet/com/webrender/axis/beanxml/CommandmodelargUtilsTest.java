@@ -56,7 +56,7 @@ public class CommandmodelargUtilsTest {
 			Element root = new Element("Test");
 			Document doc = new Document(root);
 			root.addContent(utils.bean2xml(arg));
-			System.out.println( xmlOut.outputToString(doc) );
+//			System.out.println( xmlOut.outputToString(doc) );
 			assertTrue( xmlOut.outputToString(doc).startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") );
 		}
 	}
