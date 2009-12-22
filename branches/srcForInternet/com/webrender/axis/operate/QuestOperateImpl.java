@@ -583,8 +583,18 @@ public class QuestOperateImpl extends BaseOperate {
 							break;
 				}
 			}
-			if(framesValue==null || byFrame==null){
-				return ACTIONFAILURE+"Lack FrameInfo";
+			if(framesValue==null ){
+				framesValue = questDAO.getFramesValueByCalc(quest);
+				if(framesValue == null){
+					return ACTIONFAILURE+"Waiting calc frames's value ";
+				}
+			}
+			if(byFrame == null){
+				String byFrameStr = questDAO.getByFrameValueByCalc(quest);
+				if(byFrame == null){
+					return ACTIONFAILURE+"Waiting calc byframe's value ";
+				}
+				byFrame = Double.parseDouble( byFrameStr );
 			}
 			TreeSet<Double> frames = new TreeSet<Double>();
 			FramesOperate framesOperate = new FramesOperate();
@@ -600,6 +610,7 @@ public class QuestOperateImpl extends BaseOperate {
 						result.append(doubleFrame).append(",");
 					
 				}
+				LOG.info("FRAMEINFO "+result);
 				return result.toString();
 			}
 			else{

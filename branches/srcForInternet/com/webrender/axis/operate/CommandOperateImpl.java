@@ -6,6 +6,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,7 +45,7 @@ public class CommandOperateImpl extends BaseOperate {
 		//	XMLOut.outputToFile(doc,new File("d:/reallog.xml") );
 			return (new XMLOut()).outputToString(doc);
 		}catch(NullPointerException e){
-			LOG.error("getRealLog null commandId:"+commandId);
+			LOG.error("getRealLog NullPointerException commandId:"+commandId);
 			return ACTIONFAILURE+e.getMessage();
 		}catch(NumberFormatException e){
 			LOG.error("getRealLog NumberFormatException commandId:"+commandId);
@@ -80,7 +82,10 @@ public class CommandOperateImpl extends BaseOperate {
 //				LOG.info(buffer.toString());				
 //				return buffer.toString();
 				ExecutelogUtils utils = new ExecutelogUtils();
-				Element element = utils.arg2xml(buffer.toString(),"","", "");
+				Date date = new Date();
+				SimpleDateFormat dateFormat =new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				date.setTime(file.lastModified());
+				Element element = utils.arg2xml(buffer.toString(),"",dateFormat.format(date), "");
 				Element root = new Element("Reallogs");
 				Document doc =new Document(root);
 				root.addContent(element);
@@ -91,7 +96,7 @@ public class CommandOperateImpl extends BaseOperate {
 				return BaseOperate.ACTIONFAILURE+"Log file does not exist! for commandId "+commandId;
 			}
 		}catch(NullPointerException e){
-			LOG.error("getRealLogFile null commandId:"+commandId);
+			LOG.error("getRealLogFile NullPointerException commandId:"+commandId);
 			return ACTIONFAILURE+e.getMessage();
 		}catch(NumberFormatException e){
 			LOG.error("getRealLogFile NumberFormatException commandId:"+commandId);

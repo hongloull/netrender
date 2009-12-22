@@ -6,43 +6,44 @@ import org.hibernate.Transaction;
 
 import com.webrender.dao.Command;
 import com.webrender.dao.CommandDAO;
+import com.webrender.dao.Commandarg;
+import com.webrender.dao.CommandargDAO;
+import com.webrender.dao.CommandmodelargDAO;
 import com.webrender.dao.HibernateSessionFactory;
 import com.webrender.dao.Quest;
 import com.webrender.dao.QuestDAO;
 import com.webrender.logic.CalcFrames;
 import com.webrender.server.ControlThreadServer;
+import com.webrender.tool.NameMap;
 
 public class DealQuest {
 	private static final Log LOG = LogFactory.getLog(DealQuest.class);
 	/**
+	 * @throws Exception 
 	 * 
 	 */
-	public void makeQuestFrames(Quest quest,String framesValue,String byFrame){
+	public void makeQuestFrames(Quest quest,String framesValue,String byFrame) throws Exception{
 		Transaction tx = null;
 		int totalSize = 0;
 		QuestDAO questDAO = new QuestDAO();
-		try{
-			questDAO.attachClean(quest);
-			
-			quest = questDAO.getQuestWithFrameInfo(quest, framesValue, byFrame);
-			CalcFrames calcFrames = new CalcFrames();
-			tx = HibernateSessionFactory.getSession().beginTransaction();
-			
-			int result = calcFrames.calc(quest);
-			totalSize = calcFrames.getTotalSize();
-			if(result == CalcFrames.SUCCESS){
-				tx.commit();
-			}
-			else{
-				LOG.error("quest:"+quest.getQuestName()+" deal frames fail.");
-				if(tx!=null) tx.rollback();
-			}
-		}catch(Exception e){
-			if(tx !=null){
-				tx.rollback();
-			}
-			LOG.error("makeQuestFrames fail",e);
+		
+		questDAO.attachClean(quest);		
+		quest = questDAO.getQuestWithFrameInfo(quest, framesValue, byFrame);
+		CalcFrames calcFrames = new CalcFrames();
+		tx = HibernateSessionFactory.getSession().beginTransaction();
+		
+		int result = calcFrames.calc(quest);
+		totalSize = calcFrames.getTotalSize();
+		if(result == CalcFrames.SUCCESS){
+			tx.commit();
+			tx = null;
 		}
+		else{
+			LOG.error("quest:"+quest.getQuestName()+" deal frames fail."+" framesValue:"+framesValue+" byFrame:"+byFrame);
+			if(tx!=null) tx.rollback();
+			throw (new Exception("quest:"+quest.getQuestId()+" deal frames fail."+" framesValue:"+framesValue+" byFrame:"+byFrame) );
+		}
+		
 		if(totalSize != 0){
 			try{
 				tx = HibernateSessionFactory.getSession().beginTransaction();
@@ -59,10 +60,34 @@ public class DealQuest {
 		ControlThreadServer.getInstance().notifyResume();
 		
 	}
-	public void makeQuestFrames(int commandId,String framesValue,String byFrame){
+	public void makeQuestFrames(int commandId,String framesValue,String byFrame) throws Exception{
 		CommandDAO commandDAO = new CommandDAO();
 		Command command = commandDAO.findById(commandId);
-		this.makeQuestFrames(command.getQuest(), framesValue, byFrame);
+		if( command.getType().endsWith(NameMap.GETFRAME)){
+			Transaction tx = null;
+			try{
+				tx = HibernateSessionFactory.getSession().beginTransaction();
+				CommandargDAO commandArgDAO = new CommandargDAO();
+//				CommandDAO commandDAO = new CommandDAO();
+				commandDAO.deleteCommandRel(command);
+				CommandmodelargDAO commandmodelargDAO = new CommandmodelargDAO();
+				Commandarg commandFrameArg = new Commandarg(command,commandmodelargDAO.findFrameArg(command.getQuest().getCommandmodel()),framesValue);
+				Commandarg commandByArg = new Commandarg(command,commandmodelargDAO.findByArg(command.getQuest().getCommandmodel()),byFrame);
+				commandArgDAO.save(commandFrameArg);
+				commandArgDAO.save(commandByArg);
+				tx.commit();
+			}catch(Exception e){
+				if(tx !=null){
+					tx.rollback();
+				}
+				LOG.error("makeQuestFrames save getFrame args fail",e );
+			}
+			this.makeQuestFrames(command.getQuest(), framesValue, byFrame);
+		}
+		else{
+			LOG.error("MakeQuestFrames command not GETFRAME commandId:"+commandId + " type:"+command.getType());
+			throw( new Exception("Command not getframe error"));
+		}
 	}
 	public void setPreLight(Quest quest , String preLight){
 		Transaction tx = null;

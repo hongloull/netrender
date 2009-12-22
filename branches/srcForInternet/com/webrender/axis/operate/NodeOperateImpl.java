@@ -46,8 +46,15 @@ public class NodeOperateImpl extends BaseOperate {
 //				nodeMachine.setPause(true);
 //				return "KillCommandError";
 //			}
+		}catch(NumberFormatException e){
+			LOG.error("pauseNode NumberFormatException nodeId:"+nodeId);
+			return ACTIONFAILURE+e.getMessage();
+		}
+		catch(java.lang.NullPointerException e){
+			LOG.error("pauseNode NullPointerException nodeId:"+nodeId);
+			return ACTIONFAILURE+e.getMessage();
 		}catch(Exception e){
-			LOG.error("pauseNode fail", e);
+			LOG.error("pauseNode fail nodeId:"+nodeId, e);
 			if(tx!=null){
 				tx.rollback();
 			}
@@ -69,8 +76,15 @@ public class NodeOperateImpl extends BaseOperate {
 			logOperate(regUserId,Operatelog.MOD,"Resume nodeId:"+nodeId);
 			tx.commit();
 			return ACTIONSUCCESS;			
+		}catch(NumberFormatException e){
+			LOG.error("resumeNode NumberFormatException nodeId:"+nodeId);
+			return ACTIONFAILURE+e.getMessage();
+		}
+		catch(java.lang.NullPointerException e){
+			LOG.error("resumeNode NullPointerException nodeId:"+nodeId);
+			return ACTIONFAILURE+e.getMessage();
 		}catch(Exception e){
-			LOG.error("resumeNode fail");
+			LOG.error("resumeNode fail nodeId:"+nodeId,e);
 			if(tx!=null){
 				tx.rollback();
 			}
@@ -99,9 +113,16 @@ public class NodeOperateImpl extends BaseOperate {
 			logOperate(regUserId,Operatelog.MOD,"NodeId:"+nodeId+" setRealTime "+(Integer.parseInt(isOpen)==1?"open":"close") );
 			tx.commit();
 			return ACTIONSUCCESS;
+		}catch(NumberFormatException e){
+			LOG.error("setRealLog NumberFormatException nodeId:"+nodeId+" isOpen:"+isOpen);
+			return ACTIONFAILURE+e.getMessage();
+		}
+		catch(java.lang.NullPointerException e){
+			LOG.error("setRealLog NullPointerException nodeId:"+nodeId+" isOpen:"+isOpen);
+			return ACTIONFAILURE+e.getMessage();
 		}catch(Exception e)
 		{
-			LOG.error("setRealLog fail" ,e);
+			LOG.error("setRealLog fail nodeId:"+nodeId+" isOpen:"+isOpen ,e);
 			if(tx!=null){
 				tx.rollback();
 			}
@@ -116,6 +137,13 @@ public class NodeOperateImpl extends BaseOperate {
 			NodeDAO nodeDAO = new NodeDAO();
 			Node node = nodeDAO.findById(Integer.parseInt(nodeId));
 			return node.getPri().toString();
+		}catch(NumberFormatException e){
+			LOG.error("getPriority NumberFormatException nodeId:"+nodeId);
+			return ACTIONFAILURE+e.getMessage();
+		}
+		catch(java.lang.NullPointerException e){
+			LOG.error("getPriority NullPointerException nodeId:"+nodeId);
+			return ACTIONFAILURE+e.getMessage();
 		}catch(Exception e){
 			LOG.error("getPriority fail.",e);
 			return ACTIONFAILURE+e.getMessage();
@@ -137,8 +165,15 @@ public class NodeOperateImpl extends BaseOperate {
 			logOperate(regUserId,Operatelog.MOD,"set Node:"+node.getNodeName()+" 's priority to "+ pri );
 			tx.commit();
 			return ACTIONSUCCESS;
+		}catch(NumberFormatException e){
+			LOG.error("setPriority NumberFormatException nodeId:"+nodeId+" priority:"+priority);
+			return ACTIONFAILURE+e.getMessage();
+		}
+		catch(java.lang.NullPointerException e){
+			LOG.error("setPriority NullPointerException nodeId:"+nodeId+" priority:"+priority);
+			return ACTIONFAILURE+e.getMessage();
 		}catch(Exception e){
-			LOG.error("setPriority fail.",e);
+			LOG.error("setPriority fail nodeId:"+nodeId+" priority:"+priority,e);
 			if(tx!=null){
 				tx.rollback();
 			}
@@ -185,9 +220,14 @@ public class NodeOperateImpl extends BaseOperate {
 			
 			LOG.debug("killCommand success");
 			return ACTIONSUCCESS;
+		}catch(NumberFormatException e){
+			LOG.error("killCommand NumberFormatException nodeId:"+nodeId);
+			return ACTIONFAILURE+e.getMessage();
 		}
-		
-		catch(Exception e)
+		catch(java.lang.NullPointerException e){
+			LOG.error("killCommand NullPointerException nodeId:"+nodeId);
+			return ACTIONFAILURE+e.getMessage();
+		}catch(Exception e)
 		{
 			LOG.error("killCommand error",e);
 			if (tx != null) 
@@ -233,11 +273,22 @@ public class NodeOperateImpl extends BaseOperate {
 					message = "reboot nodId: "+nodeId+" fail!";
 				}
 			}
+			else{
+				
+				return ACTIONFAILURE+"nodeId:"+nodeId+" isReboot:"+isReboot;
+			}
 			logOperate(regUserId,exeFlag?Operatelog.MOD:Operatelog.ERROR,message);
 			tx.commit();
 			return exeFlag?ACTIONSUCCESS:ACTIONFAILURE+" shutdown node error: node note response.";
+		}catch(NumberFormatException e){
+			LOG.error("shutdownNode NumberFormatException nodeId:"+nodeId+" isReboot:"+isReboot);
+			return ACTIONFAILURE+e.getMessage();
+		}
+		catch(java.lang.NullPointerException e){
+			LOG.error("shutdownNode NullPointerException nodeId:"+nodeId+" isReboot:"+isReboot);
+			return ACTIONFAILURE+e.getMessage();
 		}catch(Exception e){
-			LOG.error("shutdownNode fail. nodeId:"+nodeId,e);
+			LOG.error("shutdownNode fail. nodeId:"+nodeId+" isReboot:"+isReboot,e);
 			if(tx!=null){
 				tx.rollback();
 			}
@@ -246,6 +297,7 @@ public class NodeOperateImpl extends BaseOperate {
 			closeSession();
 		}
 	}
+	
 	public String  softRestart(String nodeId,int regUserId){
 		
 		LOG.debug("softRestart nodeId: "+nodeId);
@@ -255,24 +307,23 @@ public class NodeOperateImpl extends BaseOperate {
 		try{
 			tx = getTransaction();
 			NodeMachine nodeMachine  = NodeMachineManager.getInstance().getNodeMachine(Integer.parseInt(nodeId));
-			try{
-				if( nodeMachine.execute(serverMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_SOFTRESTART")))){
-					exeFlag = true;
-					message = "soft restart "+nodeId;
-				}else{
-					message = "soft restart "+nodeId+" fail!";
-				}				
-			}catch(NullPointerException e1)
-			{
+			if( nodeMachine.execute(serverMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_SOFTRESTART")))){
 				exeFlag = true;
 				message = "soft restart "+nodeId;
-			}
-			
+			}else{
+				message = "soft restart "+nodeId+" fail!";
+			}				
 			logOperate(regUserId,exeFlag?Operatelog.MOD:Operatelog.ERROR,message);
 			tx.commit();
 			return exeFlag?ACTIONSUCCESS:ACTIONFAILURE+"soft restart error :node not response.";
+		}catch(NumberFormatException e){
+			LOG.error("softRestart NumberFormatException nodeId:"+nodeId);
+			return ACTIONFAILURE+e.getMessage();
 		}
-		catch(Exception e){
+		catch(NullPointerException e){
+			LOG.error("softRestart NullPointerException nodeId:"+nodeId);
+			return ACTIONFAILURE+e.getMessage();
+		}catch(Exception e){
 			LOG.error("softRestart fail nodeId:"+ nodeId,e);
 			if(tx!=null){
 				tx.rollback();
@@ -296,41 +347,35 @@ public class NodeOperateImpl extends BaseOperate {
 		Transaction tx =null;
 		boolean exeFlag = false;
 		boolean feedBackFlag = true;
-		if("0".endsWith(needFeedBack)){
+		if("0".equals(needFeedBack)){
 			feedBackFlag = false;
 		}
 		String message = "";
 		try{
 			tx = getTransaction();
 			NodeMachine nodeMachine  = NodeMachineManager.getInstance().getNodeMachine(Integer.parseInt(nodeId));
-			try{
-				CODE code = EOPCODES.getInstance().get("S_SYSTEM").getSubCode(FLAG);
-				if (code == null){
-					return ACTIONFAILURE+": "+FLAG+" doesn't exist in head.xml" ;
-				}
-				else if( nodeMachine.execute(serverMessages.createSystemPkt(code)) || !feedBackFlag ){
-					exeFlag = true;
-					message = FLAG + " nodeId:"+nodeId;
-				}else{
-					message = FLAG + " nodeId:"+nodeId+" fail!";
-				}				
-			}catch(NullPointerException e)
-			{
-				if(feedBackFlag == false){
-					exeFlag = true;
-					message = FLAG + " nodeId:"+nodeId;					
-				}
-				else{
-					message = FLAG + " nodeId:"+nodeId+" fail !";
-				}				
+			CODE code = EOPCODES.getInstance().get("S_SYSTEM").getSubCode(FLAG);
+			if (code == null){
+				return ACTIONFAILURE+":"+FLAG+" doesn't exist in head.xml" ;
 			}
-			
+			else if( nodeMachine.execute(serverMessages.createSystemPkt(code)) || !feedBackFlag ){
+				exeFlag = true;
+				message = FLAG + " nodeId:"+nodeId;
+			}else{
+				message = FLAG + " nodeId:"+nodeId+" fail!";
+			}
 			logOperate(regUserId,exeFlag?Operatelog.MOD:Operatelog.ERROR,message);
 			tx.commit();
-			return exeFlag?ACTIONSUCCESS:ACTIONFAILURE+"exe systemcommand error: node not response";
+			return exeFlag?ACTIONSUCCESS:ACTIONFAILURE+"exe systemcommand error: node not response nodeId:"+nodeId;
+		}catch(NumberFormatException e){
+			LOG.error("exeSystemCommand NumberFormatException nodeId:"+nodeId+" flag:"+FLAG+" needFeedBack:"+needFeedBack);
+			return ACTIONFAILURE+e.getMessage();
 		}
-		catch(Exception e){
-			LOG.error("exeSystemCommand fail nodeId:"+ nodeId,e);
+		catch(NullPointerException e){
+			LOG.error("exeSystemCommand NullPointerException nodeId:"+nodeId+" flag:"+FLAG+" needFeedBack:"+needFeedBack);
+			return ACTIONFAILURE+e.getMessage();
+		}catch(Exception e){
+			LOG.error("exeSystemCommand fail nodeId:"+ nodeId+" flag:"+FLAG+" needFeedBack:"+needFeedBack,e);
 			if(tx!=null){
 				tx.rollback();
 			}
@@ -348,11 +393,19 @@ public class NodeOperateImpl extends BaseOperate {
 			tx = getTransaction();
 			NodeDAO nodeDAO = new NodeDAO();
 			Node node = nodeDAO.findById(Integer.parseInt(nodeId));
+			if(node == null) return ACTIONFAILURE+"NodeId:"+nodeId+" not exist";
 			nodeDAO.delete(node);
 			logOperate(regUserId,Operatelog.MOD,"delete nodeId:"+nodeId +" name:"+node.getNodeName()+" ip:"+node.getNodeIp());
 			tx.commit();
 			LOG.debug("delNode success nodeId:"+nodeId);
 			return ACTIONSUCCESS;
+		}catch(NumberFormatException e){
+			LOG.error("delNode NumberFormatException nodeId:"+nodeId);
+			return ACTIONFAILURE+e.getMessage();
+		}
+		catch(java.lang.NullPointerException e){
+			LOG.error("delNode NullPointerException nodeId:"+nodeId);
+			return ACTIONFAILURE+e.getMessage();
 		}catch(Exception e){
 			LOG.error("delNode fail nodeId:"+nodeId);
 			if(tx!=null){

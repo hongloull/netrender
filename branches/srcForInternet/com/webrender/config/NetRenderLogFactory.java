@@ -30,13 +30,17 @@ public class NetRenderLogFactory {
 		return instance;
 	}
 	public File getFile(Integer commandId) {
-		CommandDAO commandDAO = new CommandDAO();
-		Command command = commandDAO.findById(commandId);
-		StringBuffer fileName = new StringBuffer(logPath);
-		fileName.append(command.getQuest().getQuestId()).append("_").append(command.getQuest().getCommitTime().getTime()).append("/").append(command.getCommandId()).append("_").append(command.getNode().getNodeId()).append("_").append(command.getNode().getNodeName()).append("_").append(command.getSendTime().getTime()).append(".log");
-		LOG.info("GetRealLogFile :"+fileName.toString());
-		return new File(fileName.toString());					
-		
+		try{
+			CommandDAO commandDAO = new CommandDAO();
+			Command command = commandDAO.findById(commandId);
+			StringBuffer fileName = new StringBuffer(logPath);
+			fileName.append(command.getQuest().getQuestId()).append("/").append(command.getCommandId()).append(".log");
+			LOG.info("GetRealLogFile :"+fileName.toString());
+			return new File(fileName.toString());		
+		}catch(NullPointerException e){
+			LOG.warn("GetRealLogFile NullPointerException commandId:"+commandId);
+			return null;
+		}
 	}
 
 
