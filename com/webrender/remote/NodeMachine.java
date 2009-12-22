@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -261,14 +262,14 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	
 	public class NodeStatus{
 		private String hostName;
-		private String platform;
+		private String platform="";
 		private String priortiry;
 		
 		private String status;
-		private String ramUsage;
-		private String cpuUsage;
-		private String jobName;
-		private String frames;
+		private String ramUsage="";
+		private String cpuUsage="";
+		private String jobName="";
+		private String frames="";
 		private String log;
 		
 		public String getCpuUsage() {
@@ -468,8 +469,6 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		 * 从节点机的CurrentCommands移除CommandID
 		 * 设置节点空闲。
 		 */
-		
-		LOG.info("NodeId: "+nodeId+" finish command: "+commandId);
 		if ( this.currentCommands.contains(commandId)){
 			
 //			HibernateSessionFactory.closeSession();
@@ -482,23 +481,18 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				saveRealLog(commandId,true,"finish");
 				CommandDAO commandDAO = new CommandDAO();
 				Command command = commandDAO.findById(commandId);			
-				StatusDAO statusDAO = new StatusDAO();
-				if (command !=null)
-				{
-					command.setNode(node);
-					command.setStatus(statusDAO.findById(72)); //72->Finish
-//					command.setSendTime(new Date());
-					commandDAO.attachDirty(command);							
-//					LOG.info(nodeId+" finish command "+command.getCommandId());
-				}
+				StatusDAO statusDAO = new StatusDAO();				
+				command.setNode(node);
+				command.setStatus(statusDAO.findById(72)); //72->Finish
+				commandDAO.attachDirty(command);
 				tx.commit();
-				LOG.debug("setFinish success command.questId: "+command.getQuest().getQuestId());
+				LOG.info("NodeId: "+nodeId+" finish command: "+commandId);
 				removeCommandId(commandId);
 				
 				return command.getQuest();
 			}
 			catch(NullPointerException e){
-				LOG.info("finishCommand Null id:"+commandId);
+				LOG.error("finishCommand NullPointerException id:"+commandId);
 				return null;
 			}
 			catch(Exception e)
@@ -600,10 +594,8 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 //			if (timeOutThread == null){
 //				timeOutThread = new TimeoutThread(0,commandId,this);
 //				timeOutThread.start();
-//			}
-			
-			
-			if(message.startsWith("***GOODBYE***")){
+//			}			
+			if("***GOODBYE***".endsWith(message)){
 //				LOG.info("Node: "+nodeId+" GOODBYE");
 //				timeOutThread.cancel();
 				if(realLogS!=null){
@@ -617,12 +609,10 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				if(realLogS == null){
 					File file = NetRenderLogFactory.getInstance().getFile(commandId);
 					if(file.getParentFile().exists() || file.getParentFile().mkdirs()){
-						if(file.createNewFile()){
-							realLogS = new FileOutputStream(file);
-//							LOG.info("new log file:"+file.getAbsolutePath());
-						}else{
-							throw new FileNotFoundException();
-						}						
+						realLogS = new FileOutputStream(file);
+//						LOG.info("new log file:"+file.getAbsolutePath());						
+					}else{
+						LOG.error("new log file error "+file.getAbsolutePath());
 					}
 				}
 				realLogS.write(message.getBytes());				
@@ -632,13 +622,10 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 //				LOG.debug("timethread reset");
 //				timeOutThread.reset();
 			}			
-		}catch (FileNotFoundException e) {
-			LOG.error("new a log file fail FileNotFoundException");
+		}catch(NullPointerException e){
+			LOG.error("AddFeadBack NullPointerException commandId:"+commandId);
 		}catch (IOException e) {
-			LOG.error("parse log file fail IOException "+e.getMessage());
-		}catch(Exception e)
-		{
-			LOG.error("AddFeadBack fail ",e);
+			LOG.error("parse log file fail IOException commandId:"+commandId);
 		}
 	}
 
@@ -732,7 +719,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 					String commandId = datas.get(0);
 					String frames = datas.get(1);
 					String byFrame = datas.get(2);
-					LOG.info("commandId: "+commandId+". frames: "+frames+". by: "+byFrame);
+					LOG.info("GETFRAME commandId: "+commandId+". frames: "+frames+". by: "+byFrame);
 					int intCommandId = Integer.parseInt(commandId);
 //					this.addFeedBack(intCommandId,"frames: "+frames+". by: "+byFrame );
 //					Quest quest = setFinish(intCommandId);
@@ -747,7 +734,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			}else if( code.getId() == EOPCODES.getInstance().get("N_PRELIGHT").getId() ){
 				String commandId = datas.get(0);
 				String preLight = datas.get(1);
-				LOG.info("preLight: "+preLight);
+				LOG.info("GetPreLight  commandId:"+commandId+" preLight:"+preLight);
 				int intCommandId = Integer.parseInt(commandId);
 				(new DealQuest()).setPreLight(intCommandId, preLight);
 				

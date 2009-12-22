@@ -1,5 +1,8 @@
 package com.webrender.dao;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -9,6 +12,8 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.Example;
+
+import com.webrender.tool.NameMap;
 
 /**
  * A data access object (DAO) providing persistence and search support for
@@ -334,6 +339,27 @@ public class CommandDAO extends BaseHibernateDAO {
 			throw re;
 		}
 	}
+	public Command getFrameCommand(Quest quest){
+		LOG.debug("getFrame instances questId:" +quest.getQuestId());
+		try {
+			String queryString = "from Command as command where quest.questId="+ quest.getQuestId()+" and type = ?";
+			Query queryObject = getSession().createQuery(queryString);
+			queryObject.setParameter(0, NameMap.GETFRAME);
+			List list = queryObject.list();
+			if ( list.size()==1){
+				return (Command) list.get(0);
+			}
+			else{
+				return null;
+			}
+			
+		}catch (RuntimeException re) {
+			LOG.error("getFrameCommand failed", re);
+			throw re;
+		}
+	}
+	
+	
 	private void reinitInProgressCommand(){
 		LOG.debug("reinitInProgressCommand ");
 		try
@@ -354,5 +380,72 @@ public class CommandDAO extends BaseHibernateDAO {
 		}	
 	}
 
+	public String getFramesValue(Command getFrameCommand) throws Exception {
+		LOG.debug("getFramesValue commandId"+getFrameCommand.getCommandId());
+		if(getFrameCommand.getType().endsWith(NameMap.GETFRAME)){
+			try {
+				String queryString = "from Commandarg as arg where command.commandId= "+ getFrameCommand.getCommandId()+" and commandmodelarg.status.statusId = 61 order by commandArgId desc";
+				Query queryObject = getSession().createQuery(queryString);
+				List list = queryObject.list();
+				if ( list.size()>0){
+					return ((Commandarg) list.get(0)).getValue();
+				}
+				else{
+					return null;
+				}
+				
+			}catch (RuntimeException re) {
+				LOG.error("getFrameCommand failed", re);
+				throw re;
+			}			
+		}
+		else{
+			throw( new Exception("getFramesValue error : commandId:"+getFrameCommand.getCommandId()+" not GETFRAME command"));
+		}
+	}
+
+	public String getByFrame(Command getFrameCommand) throws Exception {
+		LOG.debug("getByFrame commandId"+getFrameCommand.getCommandId());
+		if(getFrameCommand.getType().endsWith(NameMap.GETFRAME)){
+			try {
+				String queryString = "from Commandarg as arg where command.commandId= "+ getFrameCommand.getCommandId()+" and commandmodelarg.status.statusId = 63 order by commandArgId desc";
+				Query queryObject = getSession().createQuery(queryString);
+				List list = queryObject.list();
+				if ( list.size()>0){
+					return ((Commandarg) list.get(0)).getValue();
+				}
+				else{
+					return null;
+				}
+				
+			}catch (RuntimeException re) {
+				LOG.error("getFrameCommand failed", re);
+				throw re;
+			}			
+		}
+		else{
+			throw( new Exception("getByFrame error : commandId:"+getFrameCommand.getCommandId()+" not GETFRAME command"));
+		}
+	}
+	
+	public void deleteCommandRel(Command command){
+		LOG.debug("deleteCommandRel commandId:"+command.getCommandId());
+		try
+		{
+//			String hql = "from Questarg as o where o.quest.questId="+quest.getQuestId();
+//			getSession().delete(hql);
+//			String hql2 = "from Command as o where o.quest.questId="+quest.getQuestId();
+//			getSession().delete(hql2);
+			Connection con=getSession().connection();
+			Statement state=con.createStatement();
+			state.execute("DELETE FROM commandarg WHERE CommandID ="+command.getCommandId());
+		
+		}catch(RuntimeException re){
+			LOG.error("deleteCommandRel failed",re);
+			throw re;
+		} catch (SQLException e) {
+			LOG.error("deleteCommandRel SQLException",e);
+		}	
+	}
 	
 }

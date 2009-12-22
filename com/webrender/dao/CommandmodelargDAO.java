@@ -163,8 +163,8 @@ public class CommandmodelargDAO extends BaseHibernateDAO {
 			throw re;
 		}
 	}
-	public Commandmodelarg findStartArg(Commandmodel commandModel){
-		LOG.debug("finding findStartArg instances commandmodelName:" +commandModel.getCommandModelName());
+	public Commandmodelarg findFrameArg(Commandmodel commandModel){
+		LOG.debug("finding findFrameArg instances commandmodelName:" +commandModel.getCommandModelName());
 		try {
 			String queryString = "from Commandmodelarg as arg where commandmodel.commandModelId="+commandModel.getCommandModelId()+" and status.statusId= 61 ";
 			Query queryObject = getSession().createQuery(queryString);
@@ -181,24 +181,24 @@ public class CommandmodelargDAO extends BaseHibernateDAO {
 			throw re;
 		}
 	}
-	public Commandmodelarg findEndArg(Commandmodel commandModel){
-		LOG.debug("finding findEndArg instances commandmodelName:" +commandModel.getCommandModelName());
-		try {
-			String queryString = "from Commandmodelarg as arg where commandmodel.commandModelId="+commandModel.getCommandModelId()+" and status.statusId= 62 ";
-			Query queryObject = getSession().createQuery(queryString);
-			List list = queryObject.list();
-			if ( list.size()==1){
-				return (Commandmodelarg) list.get(0);
-			}
-			else{
-				return null;
-			}
-			
-		} catch (RuntimeException re) {
-			LOG.error("find end arg failed", re);
-			throw re;
-		}
-	}
+//	public Commandmodelarg findEndArg(Commandmodel commandModel){
+//		LOG.debug("finding findEndArg instances commandmodelName:" +commandModel.getCommandModelName());
+//		try {
+//			String queryString = "from Commandmodelarg as arg where commandmodel.commandModelId="+commandModel.getCommandModelId()+" and status.statusId= 62 ";
+//			Query queryObject = getSession().createQuery(queryString);
+//			List list = queryObject.list();
+//			if ( list.size()==1){
+//				return (Commandmodelarg) list.get(0);
+//			}
+//			else{
+//				return null;
+//			}
+//			
+//		} catch (RuntimeException re) {
+//			LOG.error("find end arg failed", re);
+//			throw re;
+//		}
+//	}
 	public Commandmodelarg findByArg(Commandmodel commandModel){
 		LOG.debug("finding findByArg instances commandmodelName:" +commandModel.getCommandModelName());
 		try {

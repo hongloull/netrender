@@ -201,7 +201,7 @@ public class QuestDAO extends BaseHibernateDAO {
 			Set set_Commands = instance.getCommands();
 			Iterator ite_Commands = instance.getCommands().iterator();
 			boolean hasGetFrame = false;
-			boolean isOneToMany = false;
+//			boolean isOneToMany = false;
 			while(ite_Commands.hasNext())
 			{
 				Command command =  (Command)ite_Commands.next();
@@ -331,12 +331,11 @@ public class QuestDAO extends BaseHibernateDAO {
 		QuestargDAO questArgDAO = new QuestargDAO();
 		
 		if(questArgDAO.getFramesValue(quest)==null){
-			Questarg startArg = new Questarg();
-			startArg.setCommandmodelarg(cMADAO.findStartArg(quest.getCommandmodel()));
-			startArg.setValue(framesValue);
-			startArg.setQuest(quest);
-			quest.getQuestargs().add(startArg);			
-			
+			Questarg frameArg = new Questarg();
+			frameArg.setCommandmodelarg(cMADAO.findFrameArg(quest.getCommandmodel()));
+			frameArg.setValue(framesValue);
+			frameArg.setQuest(quest);
+			quest.getQuestargs().add(frameArg);
 		}
 		
 		if(questArgDAO.getByFrame(quest)==null){
@@ -344,7 +343,7 @@ public class QuestDAO extends BaseHibernateDAO {
 			byArg.setCommandmodelarg(cMADAO.findByArg(quest.getCommandmodel()));
 			byArg.setValue(byFrame);
 			byArg.setQuest(quest);
-			quest.getQuestargs().add(byArg);			
+			quest.getQuestargs().add(byArg);		
 		}
 		
 		return quest;
@@ -352,6 +351,27 @@ public class QuestDAO extends BaseHibernateDAO {
 	public int getUserInstance(Quest quest){
 		CommandDAO commandDAO = new CommandDAO();
 		return commandDAO.getInProgress(quest).size();
+	}
+	
+	public String getFramesValueByCalc(Quest quest) throws Exception{
+		CommandDAO commandDAO = new CommandDAO();
+		Command command = commandDAO.getFrameCommand(quest);
+		if (command == null){
+			throw new Exception("GetFrame command not exist questModelType:"+quest.getCommandmodel().getType());
+		}else{
+			String framesValue = commandDAO.getFramesValue(command);
+			return framesValue;
+		}
+	}
+	public String getByFrameValueByCalc(Quest quest) throws Exception{
+		CommandDAO commandDAO = new CommandDAO();
+		Command command = commandDAO.getFrameCommand(quest);
+		if (command == null){
+			throw new Exception("GetFrame command not exist questModelType:"+quest.getCommandmodel().getType());
+		}else{
+			String byFrame = commandDAO.getByFrame(command);
+			return byFrame;
+		}
 	}
 	
 }
