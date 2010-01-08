@@ -169,14 +169,19 @@ public class QuestOperateImpl extends BaseOperate {
 //			Dispatcher.getInstance().exeCommands();
 			return quest.getQuestId().toString();
 			
-		} catch (Exception e) {
+		}catch(NullPointerException e){
+			LOG.error("commitQuest NullPointerException questXML:"+questXML+" regUserId:"+regUserId);
+			return ACTIONFAILURE+e.getMessage();
+		}catch(org.jdom.JDOMException e){
+			LOG.error("commitQuest JDOMException questXML:"+questXML+" regUserId:"+regUserId);
+			return ACTIONFAILURE+e.getMessage();
+		}catch (Exception e) {
 			LOG.error("commitQuest fail",e);
 			return ACTIONFAILURE+e.getMessage();
 		}finally
 		{
 			this.closeSession();
 		}
-		
 	}
 
 	public String deleteQuest(String questId,int regUserId){
@@ -194,8 +199,21 @@ public class QuestOperateImpl extends BaseOperate {
 			tx.commit();
 			LOG.debug("deleteQuest success");
 			return ACTIONSUCCESS;
-		}
-		catch(Exception e)
+		}catch(NullPointerException e){
+			LOG.error("deleteQuest  NullPointerException questId:"+questId);
+			if (tx != null) 
+			{
+				tx.rollback();
+			}
+			return ACTIONFAILURE+e.getMessage();
+		}catch(NumberFormatException e){
+			LOG.error("deleteQuest  NumberFormatException questId:"+questId);
+			if (tx != null) 
+			{
+				tx.rollback();
+			}
+			return ACTIONFAILURE+e.getMessage();
+		}catch(Exception e)
 		{
 			LOG.error("deleteQuest fail",e);
 			if (tx != null) 
@@ -222,8 +240,21 @@ public class QuestOperateImpl extends BaseOperate {
 			tx.commit();
 			LOG.debug("pauseQuest success");
 			return ACTIONSUCCESS;
-		}
-		catch(Exception e)
+		}catch(NullPointerException e){
+			LOG.error("pauseQuest  NullPointerException questId:"+questId);
+			if (tx != null) 
+			{
+				tx.rollback();
+			}
+			return ACTIONFAILURE+e.getMessage();
+		}catch(NumberFormatException e){
+			LOG.error("pauseQuest  NumberFormatException questId:"+questId);
+			if (tx != null) 
+			{
+				tx.rollback();
+			}
+			return ACTIONFAILURE+e.getMessage();
+		}catch(Exception e)
 		{
 			LOG.error("pauseQuest fail",e);
 			if (tx != null) 
@@ -257,6 +288,20 @@ public class QuestOperateImpl extends BaseOperate {
 			
 			LOG.debug("resumeQuest success");
 			return ACTIONSUCCESS;
+		}catch(NullPointerException e){
+			LOG.error("resumeQuest  NullPointerException questId:"+questId);
+			if (tx != null) 
+			{
+				tx.rollback();
+			}
+			return ACTIONFAILURE+e.getMessage();
+		}catch(NumberFormatException e){
+			LOG.error("resumeQuest  NumberFormatException questId:"+questId);
+			if (tx != null) 
+			{
+				tx.rollback();
+			}
+			return ACTIONFAILURE+e.getMessage();
 		}
 		catch(Exception e)
 		{
@@ -291,6 +336,20 @@ public class QuestOperateImpl extends BaseOperate {
 			
 			LOG.debug("reinitQuest success");
 			return ACTIONSUCCESS;
+		}catch(NullPointerException e){
+			LOG.error("reinitQuest  NullPointerException questId:"+questId);
+			if (tx != null) 
+			{
+				tx.rollback();
+			}
+			return ACTIONFAILURE+e.getMessage();
+		}catch(NumberFormatException e){
+			LOG.error("reinitQuest  NumberFormatException questId:"+questId);
+			if (tx != null) 
+			{
+				tx.rollback();
+			}
+			return ACTIONFAILURE+e.getMessage();
 		}
 		catch(Exception e)
 		{
@@ -323,6 +382,20 @@ public class QuestOperateImpl extends BaseOperate {
 			
 			LOG.debug("setFinish success");
 			return ACTIONSUCCESS;
+		}catch(NullPointerException e){
+			LOG.error("setFinish  NullPointerException questId:"+questId);
+			if (tx != null) 
+			{
+				tx.rollback();
+			}
+			return ACTIONFAILURE+e.getMessage();
+		}catch(NumberFormatException e){
+			LOG.error("setFinish  NumberFormatException questId:"+questId);
+			if (tx != null) 
+			{
+				tx.rollback();
+			}
+			return ACTIONFAILURE+e.getMessage();
 		}
 		catch(Exception e)
 		{
@@ -348,14 +421,25 @@ public class QuestOperateImpl extends BaseOperate {
 			tx = getTransaction();
 			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
-			if (quest==null){
-				return ACTIONFAILURE+" QuestNotExist";
-			}
-			quest.setQuestName(name);
+			quest.setQuestName(name.toString());
 			questDAO.attachDirty(quest);
 			logOperate(regUserId,Operatelog.MOD,"Change "+quest.getQuestName()+" to "+name);
 			tx.commit();
 			return ACTIONSUCCESS;
+		}catch(NullPointerException e){
+			LOG.error("changeName  NullPointerException questId:"+questId+" changeName:"+name);
+			if (tx != null) 
+			{
+				tx.rollback();
+			}
+			return ACTIONFAILURE+e.getMessage();
+		}catch(NumberFormatException e){
+			LOG.error("changeName  NumberFormatException questId:"+questId+" changeName:"+name);
+			if (tx != null) 
+			{
+				tx.rollback();
+			}
+			return ACTIONFAILURE+e.getMessage();
 		}
 		catch(Exception e)
 		{
@@ -610,7 +694,7 @@ public class QuestOperateImpl extends BaseOperate {
 						result.append(doubleFrame).append(",");
 					
 				}
-				LOG.info("FRAMEINFO "+result);
+//				LOG.info("FRAMEINFO "+result);
 				return result.toString();
 			}
 			else{

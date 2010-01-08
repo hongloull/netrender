@@ -1,20 +1,9 @@
 package com.webrender.axis;
 
-import java.util.Iterator;
-import java.util.Set;
-
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jdom.Document;
-import org.jdom.Element;
 
-import com.webrender.axis.beanxml.NodeUtils;
-import com.webrender.axis.beanxml.XMLOut;
 import com.webrender.axis.operate.NodesStateImpl;
-import com.webrender.dao.Node;
-import com.webrender.dao.NodeDAO;
-import com.webrender.remote.NodeMachineManager;
 
 
 public class NodesState extends BaseAxis{

@@ -1,26 +1,9 @@
 package com.webrender.axis;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Transaction;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
 
-import com.webrender.axis.beanxml.XMLOut;
 import com.webrender.axis.operate.UserOperateImpl;
-import com.webrender.config.GenericConfig;
-import com.webrender.config.UserXMLConfig;
-import com.webrender.dao.Operatelog;
-import com.webrender.dao.Reguser;
-import com.webrender.dao.ReguserDAO;
-import com.webrender.tool.FileCopy;
 
 
 

@@ -1,24 +1,12 @@
 package com.webrender.axis;
 
 
-import java.util.Iterator;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Transaction;
-import org.jdom.Document;
-import org.jdom.Element;
 
-import com.webrender.axis.beanxml.ExecutelogUtils;
-import com.webrender.axis.beanxml.XMLOut;
 import com.webrender.axis.operate.BaseOperate;
 import com.webrender.axis.operate.CommandOperateImpl;
-import com.webrender.dao.Command;
 import com.webrender.dao.CommandDAO;
-import com.webrender.dao.Executelog;
-import com.webrender.dao.ExecutelogDAO;
-import com.webrender.dao.Operatelog;
-import com.webrender.server.Dispatcher;
 
 public class CommandOperate extends BaseAxis {
 	private static final Log LOG = LogFactory.getLog(CommandOperate.class);

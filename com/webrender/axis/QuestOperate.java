@@ -4,14 +4,50 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.webrender.axis.operate.BaseOperate;
-import com.webrender.axis.operate.NodeOperateImpl;
 import com.webrender.axis.operate.QuestOperateImpl;
 import com.webrender.dao.QuestDAO;
 
 public class QuestOperate extends BaseAxis {
 	
 	private static final Log LOG = LogFactory.getLog(QuestOperate.class);
-	//String NotLogin = "<ResultSet>NotLogin</ResultSet>";
+	
+	public String deleteQuest(String questId){
+		String[] questIds = {questId};
+		return this.deleteQuest(questIds);
+	}
+	public String pauseQuest(String questId){
+		String[] questIds = {questId};
+		return this.pauseQuest(questIds);
+	}
+	public String resumeQuest(String questId){
+		String[] questIds = {questId};
+		return this.resumeQuest(questIds);
+	}
+	public String reinitQuest(String questId){
+		String[] questIds = {questId};
+		return this.reinitQuest(questIds);
+	}
+	public String setFinish(String questId){
+		String[] questIds = {questId};
+		return this.setFinish(questIds);
+	}
+	public String changeName(String questId,String name){
+		String[] questIds = {questId};
+		return this.changeName(questIds, name);
+	}
+	public String changePriority(String questId,String pri){
+		String[] questIds = {questId};
+		return this.changePriority(questIds, pri);
+	}
+	public String changeMaxNodes(String questId,String maxNodes){
+		String[] questIds = {questId};
+		return this.changeMaxNodes(questIds, maxNodes);
+	}
+	public String changePool(String questId,String poolName){
+		String[] questIds = {questId};
+		return this.changePool(questIds, poolName);
+	}
+	
 	public String CommitQuest(String questXML)
 	{
 		if (  !this.canVisit(0) &&  !this.canVisit(10) ) return BaseAxis.RIGHTERROR;

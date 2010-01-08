@@ -150,6 +150,11 @@ public final class ControlThreadServer extends Thread {
 						}
 						catch(Exception e){
 							LOG.error("getIdleMaichine fail",e);
+							try {
+								Thread.sleep(60000);
+							} catch (InterruptedException e1) {
+								LOG.error("",e);
+							}
 						}
 						if(nodeMachine!=null && node!=null){ ///   has node
 //							commandDAO.attachClean(command);

@@ -128,7 +128,7 @@ public class CommandOperateImpl extends BaseOperate {
 			ControlThreadServer.getInstance().notifyResume();
 			return ACTIONSUCCESS;
 		}catch(NullPointerException e){
-			LOG.error("reinitCommand null commandId:"+commandId);
+			LOG.error("reinitCommand NullPointerException commandId:"+commandId);
 			return ACTIONFAILURE+e.getMessage(); 
 		}catch(NumberFormatException e){
 			LOG.error("reinitCommand NumberFormatException commandId:"+commandId);

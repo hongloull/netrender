@@ -1,21 +1,9 @@
 package com.webrender.axis;
 
-import java.util.Iterator;
-
-import com.webrender.axis.beanxml.CommandmodelUtils;
-import com.webrender.axis.beanxml.CommandmodelargUtils;
-import com.webrender.axis.beanxml.XMLOut;
-import com.webrender.axis.operate.ModelOperateImpl;
-import com.webrender.dao.Commandmodel;
-import com.webrender.dao.CommandmodelDAO;
-import com.webrender.dao.Commandmodelarg;
-import com.webrender.dao.Reguser;
-import com.webrender.dao.ReguserDAO;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jdom.Document;
-import org.jdom.Element;
+
+import com.webrender.axis.operate.ModelOperateImpl;
 
 public class ModelOperate extends BaseAxis {
 	private static final Log LOG = LogFactory.getLog(ModelOperate.class);
@@ -41,6 +29,6 @@ public class ModelOperate extends BaseAxis {
 		int regUserId = this.getLoginUserId();
 		if ( regUserId == 0 )	return BaseAxis.NOTLOGIN;
 
-		return (new ModelOperateImpl()).getModels(regUserId);
+		return (new ModelOperateImpl()).getModels(regUserId,canVisit(0));
 	}
 }
