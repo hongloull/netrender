@@ -42,7 +42,9 @@ public class QuestOperateImplTest {
 	 */
 	@Test
 	public final void testCommitQuest() {
-		fail("Not yet implemented"); // TODO
+		assertTrue( impl.CommitQuest(null, 0, true).equals("Failure null") );
+		assertTrue( impl.CommitQuest("", 0, true).equals("Failure Premature end of file.: Error on line -1: Premature end of file.") );
+		
 	}
 
 	/**
@@ -50,7 +52,10 @@ public class QuestOperateImplTest {
 	 */
 	@Test
 	public final void testDeleteQuest() {
-		fail("Not yet implemented"); // TODO
+		System.out.println( impl.deleteQuest(null, 0).equals("Failure null"));
+		System.out.println( impl.deleteQuest("0", 0).equals("Failure null") );
+		System.out.println( impl.deleteQuest("A", 0).equals("Failure For input string: \"A\"") );
+		
 	}
 
 	/**
@@ -58,7 +63,9 @@ public class QuestOperateImplTest {
 	 */
 	@Test
 	public final void testPauseQuest() {
-		fail("Not yet implemented"); // TODO
+		System.out.println( impl.pauseQuest(null, 0).equals("Failure null"));
+		System.out.println( impl.pauseQuest("0", 0).equals("Failure null") );
+		System.out.println( impl.pauseQuest("A", 0).equals("Failure For input string: \"A\"") );
 	}
 
 	/**
@@ -66,7 +73,9 @@ public class QuestOperateImplTest {
 	 */
 	@Test
 	public final void testResumeQuest() {
-		fail("Not yet implemented"); // TODO
+		System.out.println( impl.resumeQuest(null, 0).equals("Failure null"));
+		System.out.println( impl.resumeQuest("0", 0).equals("Failure null") );
+		System.out.println( impl.resumeQuest("A", 0).equals("Failure For input string: \"A\"") );
 	}
 
 	/**
@@ -74,7 +83,9 @@ public class QuestOperateImplTest {
 	 */
 	@Test
 	public final void testReinitQuest() {
-		fail("Not yet implemented"); // TODO
+		System.out.println( impl.reinitQuest(null, 0).equals("Failure null"));
+		System.out.println( impl.reinitQuest("0", 0).equals("Failure null") );
+		System.out.println( impl.reinitQuest("A", 0).equals("Failure For input string: \"A\"") );
 	}
 
 	/**
@@ -82,7 +93,9 @@ public class QuestOperateImplTest {
 	 */
 	@Test
 	public final void testSetFinish() {
-		fail("Not yet implemented"); // TODO
+		System.out.println( impl.setFinish(null, 0).equals("Failure null"));
+		System.out.println( impl.setFinish("0", 0).equals("Failure null") );
+		System.out.println( impl.setFinish("A", 0).equals("Failure For input string: \"A\"") );
 	}
 
 	/**
@@ -90,7 +103,13 @@ public class QuestOperateImplTest {
 	 */
 	@Test
 	public final void testChangeName() {
-		fail("Not yet implemented"); // TODO
+		System.out.println( impl.changeName(null, null, 0).equals("Failure null"));
+		System.out.println( impl.changeName("0",null,0).equals("Failure null") );
+		System.out.println( impl.changeName("A",null ,0).equals("Failure For input string: \"A\"") );
+		Quest quest = (Quest)dao.findAll().get(0);
+		System.out.println( impl.changeName(quest.getQuestId().toString(), null, 0).equals("Failure null"));
+		System.out.println( impl.changeName(quest.getQuestId().toString(),"",0).equals("Failure null") );
+		
 	}
 
 	/**

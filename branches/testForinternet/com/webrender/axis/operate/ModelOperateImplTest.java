@@ -64,15 +64,13 @@ public class ModelOperateImplTest {
 	@Test
 	public final void testGetModels() {
 		int regUserId = 0;
-		assertTrue(impl.getModels(regUserId).startsWith("Failure : Reguser = null"));
+		assertTrue(impl.getModels(regUserId,true).startsWith("Failure : Reguser = null"));
 		regUserId = -1;
-		assertTrue(impl.getModels(regUserId).startsWith("Failure : Reguser = null"));
+		assertTrue(impl.getModels(regUserId,true).startsWith("Failure : Reguser = null"));
 		ReguserDAO regUserDAO = new ReguserDAO();
 		List<Reguser> list = regUserDAO.findAll();
 		for(Reguser user : list){
-//			System.out.println(user.getRegName());
-//			System.out.println( impl.getModels(user.getRegUserId()) );
-			assertTrue(impl.getModels(user.getRegUserId()).startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
+			assertTrue(impl.getModels(user.getRegUserId(),true).startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
 		}
 	}
 

@@ -14,12 +14,13 @@ import org.junit.Test;
  *
  */
 public class PoolOperateImplTest {
-
+	private PoolOperateImpl impl = null;
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		impl = new PoolOperateImpl();
 	}
 
 	/**
@@ -34,7 +35,8 @@ public class PoolOperateImplTest {
 	 */
 	@Test
 	public final void testAddPool() {
-		fail("Not yet implemented"); // TODO
+		System.out.println( impl.addPool(null,0).equals("Failure name can not be null") );
+		System.out.println( impl.addPool("All",0).equals("Failure PoolExistError"));
 	}
 
 	/**
@@ -42,7 +44,8 @@ public class PoolOperateImplTest {
 	 */
 	@Test
 	public final void testModPool() {
-		fail("Not yet implemented"); // TODO
+		assertTrue( impl.modPool("All", null, 0).equals("Failure PoolFileNotExistError"));
+		assertTrue( impl.modPool(null, null, 0).equals("Failure name can not be null"));
 	}
 
 	/**
@@ -50,7 +53,8 @@ public class PoolOperateImplTest {
 	 */
 	@Test
 	public final void testGetPoolConfig() {
-		fail("Not yet implemented"); // TODO
+		assertTrue( impl.getPoolConfig("All").equals("Failure PoolNotExistError") );
+		assertTrue( impl.getPoolConfig(null).equals("Failure name can not be null") );
 	}
 
 	/**
@@ -58,7 +62,8 @@ public class PoolOperateImplTest {
 	 */
 	@Test
 	public final void testDelPool() {
-		fail("Not yet implemented"); // TODO
+		assertTrue( impl.delPool(null, 0).equals("Failure PoolNotExistError") );
+		assertTrue( impl.delPool("All", 0).equals("Failure Del All file error") );
 	}
 
 	/**
@@ -66,7 +71,8 @@ public class PoolOperateImplTest {
 	 */
 	@Test
 	public final void testGetPools() {
-		fail("Not yet implemented"); // TODO
+		assertTrue(impl.getPools(0, true).startsWith("<?xml version"));
+		assertTrue(impl.getPools(0, false).equals("Failure null"));
 	}
 
 	/**
@@ -74,7 +80,7 @@ public class PoolOperateImplTest {
 	 */
 	@Test
 	public final void testGetNodes() {
-		fail("Not yet implemented"); // TODO
+		assertTrue( impl.getNodes().equals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Nodes />") );
 	}
 
 }

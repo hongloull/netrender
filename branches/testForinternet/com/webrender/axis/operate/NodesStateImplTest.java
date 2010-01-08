@@ -14,12 +14,13 @@ import org.junit.Test;
  *
  */
 public class NodesStateImplTest {
-
+	private NodesStateImpl impl = null;
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		impl = new NodesStateImpl();
 	}
 
 	/**
@@ -34,7 +35,9 @@ public class NodesStateImplTest {
 	 */
 	@Test
 	public final void testGetNodeStatus() {
-		fail("Not yet implemented"); // TODO
+		assertTrue( impl.getNodeStatus("0").endsWith("Failure null") );
+		assertTrue( impl.getNodeStatus(null).endsWith("Failure null") );
+		assertTrue( impl.getNodeStatus("F").endsWith("Failure For input string: \"F\"") );
 	}
 
 	/**
@@ -42,7 +45,7 @@ public class NodesStateImplTest {
 	 */
 	@Test
 	public final void testGetNodesStatus() {
-		fail("Not yet implemented"); // TODO
+		assertTrue(impl.getNodesStatus("All").startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
 	}
 
 	/**
@@ -50,7 +53,7 @@ public class NodesStateImplTest {
 	 */
 	@Test
 	public final void testGetAllNodes() {
-		fail("Not yet implemented"); // TODO
+		assertTrue(impl.getAllNodes().startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
 	}
 
 }
