@@ -1,31 +1,55 @@
 package com.webrender.axis;
 
-import java.util.Date;
-import java.util.Iterator;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Transaction;
 
-import com.webrender.axis.beanxml.NodeUtils;
 import com.webrender.axis.operate.BaseOperate;
 import com.webrender.axis.operate.NodeOperateImpl;
-import com.webrender.dao.Executelog;
-import com.webrender.dao.ExecutelogDAO;
-import com.webrender.dao.Node;
-import com.webrender.dao.NodeDAO;
-import com.webrender.dao.Operatelog;
-import com.webrender.dao.StatusDAO;
-import com.webrender.protocol.enumn.EOPCODES;
-import com.webrender.protocol.enumn.EOPCODES.CODE;
-import com.webrender.protocol.messages.ServerMessages;
-import com.webrender.remote.NodeMachine;
-import com.webrender.remote.NodeMachineManager;
-import com.webrender.server.Dispatcher;
 
 public class NodeOperate extends BaseAxis {
 	
 	private static final Log LOG = LogFactory.getLog(NodeOperate.class);
+	
+	public String pauseNode(String nodeId){
+		String[] nodeIds = {nodeId};
+		return pauseNode(nodeIds);
+	}
+	public String resumeNode(String nodeId){
+		String[] nodeIds = {nodeId};
+		return resumeNode(nodeIds);
+	}
+	public String setRealLog(String nodeId,String isOpen){
+		String[] nodeIds = {nodeId};
+		return setRealLog(nodeIds,isOpen);
+	}
+	public String setPriority(String nodeId,String priority){
+		String[] nodeIds = {nodeId};
+		return setPriority(nodeIds,priority);
+	}
+	public String killCommand(String nodeId){
+		String[] nodeIds = {nodeId};
+		return killCommand(nodeIds);
+	}
+	public String  shutdownNode(String nodeId ,String isReboot){
+		String[] nodeIds = {nodeId};
+		return shutdownNode( nodeIds ,isReboot);
+	}
+	public String  softRestart(String nodeId){
+		String[] nodeIds = {nodeId};
+		return softRestart(nodeIds);
+	}
+	public String softStop(String nodeId){
+		String[] nodeIds = {nodeId};
+		return softStop(nodeIds);
+	}
+	public String exeSystemCommand(String nodeId ,String FLAG,String needFeedBack){
+		String[] nodeIds = {nodeId};
+		return exeSystemCommand(nodeIds,FLAG,needFeedBack);
+	}
+	public String delNode(String nodeId){
+		String[] nodeIds = {nodeId};
+		return delNode(nodeIds);
+	}
 	
 	public String pauseNode(String[] nodeIds)
 	{

@@ -17,7 +17,7 @@
             <column name="CommandModelID" not-null="true" />
         </many-to-one>
         <many-to-one name="nodegroup" class="com.webrender.dao.Nodegroup" fetch="select">
-            <column name="NodeGroupID" />
+            <column name="NodeGroupID" not-null="true"/>
         </many-to-one>
         <many-to-one name="reguser" class="com.webrender.dao.Reguser" fetch="select">
             <column name="RegUserID" not-null="true" />

@@ -1,9 +1,6 @@
 package com.webrender.axis.beanxml;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,7 +9,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 import com.webrender.dao.Executelog;
-import com.webrender.dao.ExecutelogDAO;
 
 public final class ExecutelogUtils {
 	private   static final Log LOG = LogFactory.getLog(ExecutelogUtils.class);

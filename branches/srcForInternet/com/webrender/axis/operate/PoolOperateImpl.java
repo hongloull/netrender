@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
@@ -37,6 +36,7 @@ public class PoolOperateImpl extends BaseOperate {
 	private NodeUtils nodeUtils = new NodeUtils();
 	public String addPool(String name,int regUserId){
 		LOG.debug("addPool :"+name);
+		if(name==null) return ACTIONFAILURE+"name can not be null";
 		Transaction tx = null;
 		try{
 			NodegroupDAO nGDAO = new NodegroupDAO();
@@ -48,7 +48,7 @@ public class PoolOperateImpl extends BaseOperate {
 			String defConfig = GenericConfig.getInstance().getFile("nodes/default");
 			File defFile = new File(defConfig);
 			if(!defFile.exists() || !defFile.canRead() ){
-				return ACTIONFAILURE+"PoolConfigNotExistError";
+				return ACTIONFAILURE+"pool default config not exist error";
 			}
 			String poolFile = GenericConfig.getInstance().getFile("nodes/"+name+".xml");
 			
@@ -83,6 +83,7 @@ public class PoolOperateImpl extends BaseOperate {
 	
 	public String modPool(String name ,String questXML,int regUserId){
 		LOG.debug("modPoolConfig: "+name);
+		if(name==null) return ACTIONFAILURE+"name can not be null";
 		Transaction tx = null;
 		try{			
 			String poolFile = GenericConfig.getInstance().getFile("nodes/"+name+".xml");
@@ -116,6 +117,7 @@ public class PoolOperateImpl extends BaseOperate {
 	
 	public String getPoolConfig(String name){		
 		LOG.debug("getPoolConfig: "+name);
+		if(name==null) return ACTIONFAILURE+"name can not be null";
 		try{
 			String poolFile = GenericConfig.getInstance().getFile("nodes/"+name+".xml");
 			File file = new File(poolFile);
@@ -136,15 +138,15 @@ public class PoolOperateImpl extends BaseOperate {
 	public String delPool(String name,int regUserId){
 		LOG.debug("delPool: " +name);
 		try{
-			if(name.equalsIgnoreCase("All") ) return ACTIONFAILURE+"DelPoolAllError";
+//			if(name.equalsIgnoreCase("All") ) return ACTIONFAILURE+"Del pool All Error";
 			NodegroupDAO nGDAO = new NodegroupDAO();
 			Nodegroup pool = nGDAO.findByNodeGroupName(name);
 			if(pool==null ) return ACTIONFAILURE+"PoolNotExistError";
 			String poolFile = GenericConfig.getInstance().getFile("nodes/"+name+".xml");
 			File file_Pool = new File(poolFile);
 			boolean result = file_Pool.delete();
-			if(file_Pool.exists() && result == false){
-				return ACTIONFAILURE+"Del"+name+"FileError";
+			if(file_Pool.exists() || result == false){
+				return ACTIONFAILURE+"Del "+name+" file error";
 			}else{
 				Transaction tx =null;
 				try{
@@ -159,7 +161,7 @@ public class PoolOperateImpl extends BaseOperate {
 						tx.rollback();
 					}
 					LOG.error("delPool from database fail",e);
-					return ACTIONFAILURE+"Del"+name+"FromDBError";
+					return ACTIONFAILURE+"Del "+name+"f rom db error";
 				}
 			}
 		}catch(Exception e){
@@ -191,6 +193,7 @@ public class PoolOperateImpl extends BaseOperate {
 			LOG.debug("getPools success");
 			return xmlOut.outputToString(doc);
 		} catch (Exception e) {
+			LOG.error("getPools fail regUserId:"+regUserId+" isAdmin:"+isAdmin);
 			return ACTIONFAILURE+e.getMessage();
 		}finally{
 			this.closeSession();

@@ -61,7 +61,7 @@ public class ModelOperateImpl extends BaseOperate {
 	 * 所有模板简单列表
 	 * @return XML的模板列表
 	 */
-	public String getModels(int regUserId)
+	public String getModels(int regUserId,boolean isAdmin)
 	{
 		LOG.debug("getCommandModels");
 		try{
@@ -73,9 +73,12 @@ public class ModelOperateImpl extends BaseOperate {
 			
 			Element root = new Element("Commandmodels");
 			Document doc = new Document(root);
-			
-			Iterator ite_CMS = (new CommandmodelDAO()).findAll().iterator(); 
-				
+			Iterator ite_CMS = null;
+			if(isAdmin){
+				ite_CMS = (new CommandmodelDAO()).findAll().iterator();
+			}else{
+				ite_CMS = regUser.getModels().iterator();
+			}
 			
 			while(ite_CMS.hasNext())
 			{

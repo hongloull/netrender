@@ -63,6 +63,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	private ServerMessages serverMessages = new ServerMessages();
 	private CommandUtils commmandUtils = new CommandUtils();
 	private CommandDAO commandDAO = new CommandDAO();
+	private boolean isReady = false;
 //	IResultStore resultStore;
 
 
@@ -71,7 +72,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	private boolean isConnect = false;
 	private boolean isBusy = false;
 	private boolean isRealTime = false;
-	private boolean isPause = false;
+	private boolean isPause = true;
 	private NodeStatus status = null;
 //	private TimeoutThread timeOutThread = null;
 	
@@ -81,6 +82,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	
 	public NodeMachine(Integer nodeId,Short pri)
 	{
+		LOG.debug("A New NodeMachine  nodeId:"+nodeId + " pri : "+ pri);
 		this.nodeId = nodeId;
 		this.pri = pri;
 	    currentCommands = Collections.synchronizedSet(new HashSet<Integer>());;
@@ -109,7 +111,6 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 
 	public boolean execute(Command command)
 	{
-//		LOG.info("nodeId: "+nodeId + " execute commandId: "+command.getCommandId());
 		CODE cmdType = null;
 		if( command.getType()==null || NameMap.RENDER.equalsIgnoreCase(command.getType())){
 			cmdType = EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_RENDER");
@@ -133,6 +134,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			LOG.warn("nodeId: "+nodeId + " execute commandId: "+command.getCommandId()+ " createCommandpkt failure.");
 			return false;
 		}
+//		LOG.info(Thread.currentThread().getId()+" nodeId: "+nodeId + " execute commandId: "+command.getCommandId());
 		if( this.execute(cmdBuffer))
 		{
 			command.setSendTime(new Date());
@@ -173,7 +175,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	}
 		
 	
-	public synchronized boolean execute(ByteBuffer command)
+	public boolean execute(ByteBuffer command)
 	{
 		LOG.debug("execute bytebuffer");
 		LOG.debug(nodeId +": "+ command);
@@ -338,6 +340,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		this.isConnect = isConnect;
 		if (isConnect==false)
 		{
+			setReady(false);
 			cleanRunCommands("NodeId:"+nodeId +" disconnect");
 //			NodeMachineManager.getInstance()
 		}
@@ -383,7 +386,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	
 	private void selfCheck()
 	{
-		if (isConnect() && isBusy()==false && isPause()==false )
+		if (isConnect() && isBusy()==false && isPause()==false && isReady()==true)
 		{
 			NodeMachineManager.getInstance().addNodeMachines(this);
 		}
@@ -630,6 +633,10 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	}
 
 	public void ready() {
+		if(isReady()==false){
+			setReady(true);
+			this.selfCheck();
+		}
 		session.setAttribute("StartFlag","Success");		
 	}
 
@@ -755,7 +762,21 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 						
 		}catch(Exception e){
 			LOG.error("execute buffer fail",e);
-			
 		}
+	}
+
+	/**
+	 * @return the isReady
+	 */
+	public boolean isReady() {
+		return isReady;
+	}
+
+	/**
+	 * @param isReady the isReady to set
+	 */
+	public void setReady(boolean isReady) {
+//		LOG.info("Set Node Ready nodeId: "+ nodeId);
+		this.isReady = isReady;
 	}
 }
