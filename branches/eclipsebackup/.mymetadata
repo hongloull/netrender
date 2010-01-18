@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="WebRender"
+  id="myeclipse.1236649216984"
+  context-root="/WebRender"
+  j2ee-spec="5.0"
+  archive="WebRender.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+
