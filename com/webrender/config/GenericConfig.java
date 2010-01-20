@@ -58,7 +58,7 @@ public final class GenericConfig {
 	 * 
 	 * @return static的类实例
 	 */
-	public static final GenericConfig getInstance() {
+	public static synchronized GenericConfig getInstance() {
 		return instance;
 	}
 

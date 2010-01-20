@@ -259,7 +259,27 @@ public class QuestOperate extends BaseAxis {
 		}
 		return result.toString();
 	}
-	
+	public String patchFrames(String[] questIds, String frames){
+		if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) ) )
+			return BaseAxis.RIGHTERROR;
+		QuestOperateImpl questOperateImpl = new QuestOperateImpl();
+		StringBuffer result = new StringBuffer();
+		String subResult = null;
+		for(String questId:questIds){
+			if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(questId)) ) ){
+				result.append(questId).append(":").append(BaseAxis.RIGHTERROR).append("\n\r");
+				continue;
+			}
+			subResult = questOperateImpl.patchFrames(questId,frames,this.getLoginUserId());
+			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
+				result.append(questId).append(":").append(subResult).append("\n\r");
+			}
+		}
+		if(result.length()==0){
+			result.append(BaseOperate.ACTIONSUCCESS);
+		}
+		return result.toString();
+	}
 	public String getDetail(String questId)
 	{
 		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;

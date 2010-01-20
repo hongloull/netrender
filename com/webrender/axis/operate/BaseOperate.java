@@ -17,7 +17,12 @@ public class BaseOperate {
 	private   static final Log LOG = LogFactory.getLog(BaseOperate.class);
 	public static final String ACTIONSUCCESS = "Success";
 	public static final String ACTIONFAILURE = "Failure ";
-	
+	/**
+	 * 
+	 * @param regUserId
+	 * @param type    Operatelog.ADD or others
+	 * @param information
+	 */
 	protected void logOperate(int regUserId,Short type,String information){
 		ReguserDAO regUserDAO = new ReguserDAO();
 		Reguser regUser = regUserDAO.findById(regUserId);

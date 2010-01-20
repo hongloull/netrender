@@ -20,7 +20,8 @@ import com.webrender.remote.NodeMachineManager;
 public class MessageHandlerImpl implements MessageHandler {
 	private static MessageHandler instance;
     protected MessageHandlerImpl() {Runtime.getRuntime().traceMethodCalls(true);}
-    public static MessageHandler getInstance() {
+//TODO  is right??
+    public static synchronized MessageHandler getInstance() {
         if(instance == null) {
             MessageHandlerImpl.instance = new MessageHandlerImpl();
         }
@@ -31,6 +32,7 @@ public class MessageHandlerImpl implements MessageHandler {
 	public ByteBuffer parseClientPacket(CODE code, ByteBuffer packet,
 			IClientProcessor processor) {
 //		LOG.info("CODEID: "+ code.getId());
+//		LOG.info("ProcessorID:"+ ((NodeMachine)processor).getId());
 		int initialPositon = packet.position();
 		try {
 			
@@ -75,6 +77,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			byte[] byteFmts = new byte[fmts.limit()];
 			fmts.get(byteFmts);
 			processor.parseDatas(code, byteFmts, datas);
+			
 			return null;
 		} catch (java.nio.BufferUnderflowException e) {
 			//解析到不完整包 数据未完
@@ -86,6 +89,9 @@ public class MessageHandlerImpl implements MessageHandler {
 			remainBuffer.put(bytes);
 			return remainBuffer;
 		}
+//		finally{
+//			LOG.info("ProcessorID:"+ ((NodeMachine)processor).getId()+" finish");
+//		}
 
 	}
 	

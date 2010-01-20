@@ -28,7 +28,7 @@ public final class NodeLogServer {
     private NodeLogServer()
     {
     }
-    public static NodeLogServer getInstance(){
+    public static synchronized  NodeLogServer getInstance(){
     	if(instance==null){
     		instance = new NodeLogServer();
     	}

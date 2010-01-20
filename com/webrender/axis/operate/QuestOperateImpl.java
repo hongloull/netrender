@@ -38,6 +38,7 @@ import com.webrender.logic.CalcFrames;
 import com.webrender.logic.CalcManyToMany;
 import com.webrender.logic.CalcOneToMany;
 import com.webrender.server.ControlThreadServer;
+import com.webrender.server.deal.DealQuest;
 import com.webrender.tool.FramesOperate;
 import com.webrender.tool.NameMap;
 
@@ -49,6 +50,7 @@ public class QuestOperateImpl extends BaseOperate {
 	private CommandmodelUtils commandmodelUtils = new CommandmodelUtils();
 	private QuestargUtils questargUtils = new QuestargUtils();
 	private XMLOut xmlOut = new XMLOut();
+	QuestDAO questDAO = new QuestDAO();
 	public String CommitQuest(String questXML,int regUserId,boolean isAdmin)
 	{
 		//TODO  没权限的人不能提交Edit其他人的任务
@@ -89,7 +91,7 @@ public class QuestOperateImpl extends BaseOperate {
 			try{
 				tx = getTransaction();
 				
-				QuestDAO questDAO = new QuestDAO();
+				
 				questDAO.save(quest);
 				questDAO.delQuestRel(quest);
 				
@@ -190,7 +192,7 @@ public class QuestOperateImpl extends BaseOperate {
 		try
 		{
 			tx = getTransaction();
-			QuestDAO questDAO = new QuestDAO();
+//			QuestDAO questDAO = new QuestDAO();
 //			StatusDAO statusDAO = new StatusDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			String questName = quest.getQuestName();
@@ -233,7 +235,7 @@ public class QuestOperateImpl extends BaseOperate {
 		try
 		{
 			tx = getTransaction();
-			QuestDAO questDAO = new QuestDAO();
+//			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			questDAO.pauseQuest(quest);
 			logOperate(regUserId,Operatelog.MOD,"Pause quest "+quest.getQuestName());
@@ -278,7 +280,7 @@ public class QuestOperateImpl extends BaseOperate {
 		try
 		{
 			tx = getTransaction();
-			QuestDAO questDAO = new QuestDAO();
+//			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			questDAO.resumeQuest(quest);
 			logOperate(regUserId,Operatelog.MOD,"Resume quest "+quest.getQuestName());
@@ -326,7 +328,7 @@ public class QuestOperateImpl extends BaseOperate {
 		try
 		{
 			tx = getTransaction();
-			QuestDAO questDAO = new QuestDAO();
+//			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			questDAO.reinitQuest(quest);
 			logOperate(regUserId,Operatelog.MOD,"Reinit quest "+quest.getQuestName());
@@ -374,7 +376,7 @@ public class QuestOperateImpl extends BaseOperate {
 		try
 		{
 			tx = getTransaction();
-			QuestDAO questDAO = new QuestDAO();
+//			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			questDAO.setFinish(quest);
 			logOperate(regUserId,Operatelog.MOD,"setFinish quest "+quest.getQuestName());
@@ -419,7 +421,7 @@ public class QuestOperateImpl extends BaseOperate {
 		try
 		{
 			tx = getTransaction();
-			QuestDAO questDAO = new QuestDAO();
+//			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			quest.setQuestName(name.toString());
 			questDAO.attachDirty(quest);
@@ -464,7 +466,7 @@ public class QuestOperateImpl extends BaseOperate {
 			short priValue = Short.parseShort(pri);
 			if(priValue<0) return ACTIONFAILURE;		
 			tx = getTransaction();
-			QuestDAO questDAO = new QuestDAO();
+//			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			quest.setPri(priValue);
 			questDAO.attachDirty(quest);
@@ -493,7 +495,7 @@ public class QuestOperateImpl extends BaseOperate {
 		try
 		{
 			tx = getTransaction();
-			QuestDAO questDAO = new QuestDAO();
+//			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			quest.setMaxNodes(Integer.parseInt(maxNodes));
 			questDAO.attachDirty(quest);
@@ -522,7 +524,7 @@ public class QuestOperateImpl extends BaseOperate {
 
 		try
 		{
-			QuestDAO questDAO = new QuestDAO();
+//			QuestDAO questDAO = new QuestDAO();
 			NodegroupDAO nGDAO = new NodegroupDAO();
 			Nodegroup nG = nGDAO.findByNodeGroupName(poolName);
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
@@ -551,13 +553,47 @@ public class QuestOperateImpl extends BaseOperate {
 		}
 		
 	}
-	
+	public String patchFrames(String questId,String frames,int regUserId){
+		LOG.debug("patch frames questId:"+questId+" frames:"+frames);
+		if(frames==null && questId==null){
+			return  ACTIONFAILURE+"Lack Args";
+		}
+		Transaction tx = null;
+		try{
+			Quest quest = questDAO.findById(Integer.parseInt(questId));
+			QuestargDAO dao = new QuestargDAO();
+			String byFrame = dao.getByFrame(quest).getValue();
+			if(byFrame==null){
+				byFrame = questDAO.getByFrameValueByCalc(quest);
+				if(byFrame == null){
+					byFrame = "1";
+				}
+			}
+			DealQuest dealQuest = new DealQuest();
+			dealQuest.patchFrames(quest,frames,byFrame);
+			
+			tx = getTransaction();
+			logOperate(regUserId,Operatelog.MOD,"patch quest "+quest.getQuestName()+"' frames: " + frames);
+			tx.commit();
+			
+			return ACTIONSUCCESS;
+		}catch(Exception e){
+			if(tx!=null){
+				tx.rollback();
+			}
+			return  ACTIONFAILURE+e.getMessage();
+		}
+		finally
+		{
+			this.closeSession();
+		}
+	}
 	public String getDetail(String questId)
 	{
 		LOG.debug("getDetail questId:"+questId);
 		try{
-			this.closeSession();
-			QuestDAO questDAO = new QuestDAO();
+//			this.closeSession();
+//			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			Element root = questUtils.bean2xml(quest);
 			
@@ -593,7 +629,7 @@ public class QuestOperateImpl extends BaseOperate {
 			this.closeSession();
 			Element root = new Element("Details");
 			Document doc = new Document(root);
-			QuestDAO questDAO = new QuestDAO();
+//			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			Iterator ite_Commands = quest.getCommands().iterator();
 			
@@ -629,7 +665,7 @@ public class QuestOperateImpl extends BaseOperate {
 	public String getPreLight(String questId) {
 		LOG.debug("getPreLight questId:" + questId);
 		try {
-			QuestDAO questDAO = new QuestDAO();
+//			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			
 			return quest.getPreLight()+"";
@@ -652,7 +688,7 @@ public class QuestOperateImpl extends BaseOperate {
 		try{
 			String framesValue = null;
 			Double byFrame = null;
-			QuestDAO questDAO = new QuestDAO();
+//			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			Iterator questArgs = quest.getQuestargs().iterator();
 			while( questArgs.hasNext() )

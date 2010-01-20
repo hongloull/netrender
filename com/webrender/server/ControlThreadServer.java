@@ -42,7 +42,7 @@ public final class ControlThreadServer extends Thread {
 		setDaemon(true);
 	}
 	
-	public static ControlThreadServer getInstance()
+	public static synchronized ControlThreadServer getInstance()
 	{
 		if (instance == null){
 			LOG.warn("A new controlthread server");

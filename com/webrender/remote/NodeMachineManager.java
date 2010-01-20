@@ -26,7 +26,7 @@ public final  class  NodeMachineManager {
 	private NodeComparator nodeComparator = new NodeComparator();
 	private Set<NodeMachine> idleMachines = Collections.synchronizedSet( new TreeSet<NodeMachine>(nodeComparator) );  
 	
-	public static NodeMachineManager getInstance(){
+	public static synchronized NodeMachineManager getInstance(){
 		return instance;
 	}
 	

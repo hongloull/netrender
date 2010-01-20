@@ -46,7 +46,13 @@ public class CalcFrames implements CalcCommands {
 //		}
 //		System.out.println();
 //	}
-	public int calc(Quest quest) {
+	public int calc(Quest quest){
+		return calc(quest, false);
+	}
+	public int patch(Quest quest){
+		return calc(quest,true);
+	}
+	private int calc(Quest quest,boolean isPatch) {
 		
 		Short packetSize = quest.getPacketSize();
 		String framesValue = null;
@@ -73,12 +79,12 @@ public class CalcFrames implements CalcCommands {
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 			return CalcCommands.NumberFormatException;
-		} catch(NullPointerException e){
-			
+		} catch(NullPointerException e){	
 		}
 		StatusDAO statusDAO = new StatusDAO();
 		Status status = statusDAO.findById(70);
-		if ( framesValue == null || byFrame==null){
+		if ( framesValue == null || byFrame==null ){
+			if(isPatch) return CalcCommands.NEEDARGS;
 			command = new Command(quest);
 			command.setType(NameMap.GETFRAME);
 			command.setStatus(status);
@@ -146,6 +152,7 @@ public class CalcFrames implements CalcCommands {
 						commandFrameValue = commandFrameValue+commandCurrentEndFrame;
 //						LOG.info("CommandFrames:"+commandFrameValue+" byFrame:"+commandByFrame);
 						command = new Command(quest);
+						command.setType(isPatch?NameMap.PATCH:null);
 						command.setStatus(status);
 						commandDAO.save(command);
 						
@@ -158,7 +165,7 @@ public class CalcFrames implements CalcCommands {
 						commandArg = new Commandarg();
 						commandArg.setCommand(command);
 						commandArg.setCommandmodelarg(byTag);
-						commandArg.setValue(commandByFrame.toString());
+						commandArg.setValue(commandByFrame.doubleValue()+"");
 						commandargDAO.save(commandArg);
 						
 						commandFrameValue = preFrame+"-";
@@ -171,6 +178,7 @@ public class CalcFrames implements CalcCommands {
 					
 //					LOG.info("CommandFrames:"+commandFrameValue+" byFrame:"+commandByFrame);
 					command = new Command(quest);
+					command.setType(isPatch?NameMap.PATCH:null);
 					command.setStatus(status);
 					commandDAO.save(command);
 					
@@ -209,6 +217,7 @@ public class CalcFrames implements CalcCommands {
 		}
 			LOG.info("CommandFrames:"+commandFrameValue+" byFrame:"+commandByFrame);
 			command = new Command(quest);
+			command.setType(isPatch?NameMap.PATCH:null);
 			command.setStatus(status);
 			commandDAO.save(command);
 			
