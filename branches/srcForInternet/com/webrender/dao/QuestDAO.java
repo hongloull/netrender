@@ -218,6 +218,9 @@ public class QuestDAO extends BaseHibernateDAO {
 						commandDAO.reinitCommand(command);
 						hasGetFrame = true;
 					}
+					else if( NameMap.PATCH.equals(command.getType()) ){
+						commandDAO.delete(command);
+					}
 				}
 				else{
 					commandDAO.delete(command);
@@ -325,27 +328,28 @@ public class QuestDAO extends BaseHibernateDAO {
 		}
 	}
 	
-	public Quest getQuestWithFrameInfo(Quest quest,String framesValue,String byFrame){
+	public Quest getQuestWithFrameInfo(Quest quest,String framesValue,String byFrame,boolean isMandatory){
 		CommandmodelargDAO cMADAO = new CommandmodelargDAO();
 		
 		QuestargDAO questArgDAO = new QuestargDAO();
-		
-		if(questArgDAO.getFramesValue(quest)==null){
-			Questarg frameArg = new Questarg();
+		Questarg frameArg = questArgDAO.getFramesValue(quest);
+		if( isMandatory || frameArg ==null ){
+			if(frameArg != null )quest.getQuestargs().remove(frameArg);
+			frameArg = new Questarg();
 			frameArg.setCommandmodelarg(cMADAO.findFrameArg(quest.getCommandmodel()));
 			frameArg.setValue(framesValue);
 			frameArg.setQuest(quest);
 			quest.getQuestargs().add(frameArg);
 		}
-		
-		if(questArgDAO.getByFrame(quest)==null){
-			Questarg byArg = new Questarg();
+		Questarg byArg = questArgDAO.getByFrame(quest);
+		if(isMandatory || byArg==null){
+			if(byArg!=null) quest.getQuestargs().remove(byArg); 
+			byArg = new Questarg();
 			byArg.setCommandmodelarg(cMADAO.findByArg(quest.getCommandmodel()));
 			byArg.setValue(byFrame);
 			byArg.setQuest(quest);
 			quest.getQuestargs().add(byArg);		
 		}
-		
 		return quest;
 	}
 	public int getUserInstance(Quest quest){

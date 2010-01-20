@@ -27,7 +27,7 @@ public final class RealLogServer {
     private RealLogServer()
     {
     }
-    public static RealLogServer getInstance(){
+    public static synchronized RealLogServer getInstance(){
     	if(instance==null){
     		instance = new RealLogServer();
     	}

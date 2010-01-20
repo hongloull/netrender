@@ -31,7 +31,7 @@ public final class Dispatcher extends Thread {
 	private Dispatcher(){
 	}
 	
-	public static Dispatcher getInstance()
+	public static synchronized Dispatcher getInstance()
 	{
 		return instance;
 		

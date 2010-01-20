@@ -22,13 +22,13 @@ public class DealQuest {
 	 * @throws Exception 
 	 * 
 	 */
-	public void makeQuestFrames(Quest quest,String framesValue,String byFrame) throws Exception{
+	private void makeQuestFrames(Quest quest,String framesValue,String byFrame) throws Exception{
 		Transaction tx = null;
 		int totalSize = 0;
 		QuestDAO questDAO = new QuestDAO();
 		
 		questDAO.attachClean(quest);		
-		quest = questDAO.getQuestWithFrameInfo(quest, framesValue, byFrame);
+		quest = questDAO.getQuestWithFrameInfo(quest, framesValue, byFrame,false);
 		CalcFrames calcFrames = new CalcFrames();
 		tx = HibernateSessionFactory.getSession().beginTransaction();
 		
@@ -41,7 +41,7 @@ public class DealQuest {
 		else{
 			LOG.error("quest:"+quest.getQuestName()+" deal frames fail."+" framesValue:"+framesValue+" byFrame:"+byFrame);
 			if(tx!=null) tx.rollback();
-			throw (new Exception("quest:"+quest.getQuestId()+" deal frames fail."+" framesValue:"+framesValue+" byFrame:"+byFrame) );
+			throw (new Exception("quest:"+quest.getQuestName()+" deal frames fail."+" framesValue:"+framesValue+" byFrame:"+byFrame) );
 		}
 		
 		if(totalSize != 0){
@@ -60,6 +60,27 @@ public class DealQuest {
 		ControlThreadServer.getInstance().notifyResume();
 		
 	}
+	public void patchFrames(Quest quest, String frames, String byFrame) throws Exception{
+		if(NameMap.RENDER.equals(quest.getCommandmodel().getType())){
+			Transaction tx = null;
+			
+			QuestDAO questDAO = new QuestDAO();
+			quest = questDAO.getQuestWithFrameInfo(quest, frames, byFrame,true);			
+			CalcFrames calc = new CalcFrames();
+			tx = HibernateSessionFactory.getSession().beginTransaction();
+			if( CalcFrames.SUCCESS == calc.patch(quest) ){
+				tx.commit();
+			}else{
+				LOG.error("quest:"+quest.getQuestName()+" patch frames fail."+" framesValue:"+frames+" byFrame:"+byFrame);
+				if(tx!=null) tx.rollback();
+				throw (new Exception("quest:"+quest.getQuestName()+" patch frames fail."+" framesValue:"+frames+" byFrame:"+byFrame) );
+			}
+		}else{
+			throw new Exception("Template type:"+ quest.getCommandmodel().getType()+" , cannot patchFrames!");
+		}
+		ControlThreadServer.getInstance().notifyResume();
+	}
+	
 	public void makeQuestFrames(int commandId,String framesValue,String byFrame) throws Exception{
 		CommandDAO commandDAO = new CommandDAO();
 		Command command = commandDAO.findById(commandId);
@@ -92,13 +113,11 @@ public class DealQuest {
 	public void setPreLight(Quest quest , String preLight){
 		Transaction tx = null;
 		try{
-//			LOG.info("setPreLight before save questId:"+quest.getQuestId());
 			tx = HibernateSessionFactory.getSession().beginTransaction();
 			QuestDAO questDAO = new QuestDAO();
 			quest.setPreLight(preLight);
 			questDAO.attachDirty(quest);
 			tx.commit();
-//			LOG.info("setPreLight after save questId:"+quest.getQuestId());
 			return;
 		}catch(Exception e){
 			if(tx !=null){
@@ -112,4 +131,5 @@ public class DealQuest {
 		Command command = commandDAO.findById(commandId);
 		this.setPreLight(command.getQuest(), preLight);
 	}
+	
 }

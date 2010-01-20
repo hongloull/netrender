@@ -66,19 +66,19 @@ public class QuestsStateImpl extends BaseOperate {
 		LOG.debug("getQuestsStatus");
 		
 // 很郁闷，为了解决删除或添加后，数据显示不更新的问题，修改下数据库刷新。
-		StatusDAO statusDAO = new StatusDAO();
-		Transaction tx = null;
-		try {
-			tx = getSession().beginTransaction();
-			statusDAO.updateSystemVersion();
-			tx.commit();					
-		}catch (Exception e){					
-			LOG.error("UpdateSystemVersion Error", e);
-			if(tx!=null){
-				tx.rollback();
-			}
-		}finally{		
-		}
+//		StatusDAO statusDAO = new StatusDAO();
+//		Transaction tx = null;
+//		try {
+//			tx = getSession().beginTransaction();
+//			statusDAO.updateSystemVersion();
+//			tx.commit();					
+//		}catch (Exception e){					
+//			LOG.error("UpdateSystemVersion Error", e);
+//			if(tx!=null){
+//				tx.rollback();
+//			}
+//		}finally{		
+//		}
 		
 		try{
 			

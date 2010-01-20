@@ -11,7 +11,7 @@ public class NetRenderLogFactory {
 	private static String logPath = null;;
 	private static final Log LOG = LogFactory.getLog(NetRenderLogFactory.class);
 	private static NetRenderLogFactory instance = null;
-	public static NetRenderLogFactory getInstance() {
+	public static synchronized NetRenderLogFactory getInstance() {
 		if (instance==null){
 			instance = new NetRenderLogFactory();
 			logPath = GenericConfig.getInstance().getFile("");

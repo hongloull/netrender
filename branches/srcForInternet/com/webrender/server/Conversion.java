@@ -21,7 +21,7 @@ public final class Conversion extends Thread {
 	// 标记该服务器状态 0 未启动过 ， 1 运行中 2 暂停
 	private CODE status = EOPCODES.getInstance().get("S_SERVERSTATUS").getSubCode("S_OFF");
 	
-	public static Conversion  getInstance()
+	public static synchronized Conversion  getInstance()
 	{
 		return instance;
 	}

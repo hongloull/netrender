@@ -27,7 +27,7 @@ public final class ExecuteLogServer {
     private ExecuteLogServer()
     {
     }
-    public static ExecuteLogServer getInstance(){
+    public static synchronized ExecuteLogServer getInstance(){
     	if(instance == null ){
     		instance = new ExecuteLogServer();
     	}

@@ -11,6 +11,7 @@ public final class NameMap {
 	// CommandType 
 	public static final String GETFRAME = "getframe";
 	public static final String PRELIGHT = "prelight";
+	public static final String PATCH    = "patch";
 	
 	
 }

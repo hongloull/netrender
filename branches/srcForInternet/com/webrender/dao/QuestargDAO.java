@@ -152,7 +152,7 @@ public class QuestargDAO extends BaseHibernateDAO {
 		}
 		
 	}
-	public String getFramesValue(Quest quest)
+	public Questarg getFramesValue(Quest quest)
 	{
 		LOG.debug("getStartFrame questId:"+quest.getQuestId());
 		try{
@@ -163,7 +163,7 @@ public class QuestargDAO extends BaseHibernateDAO {
 			int size = list.size();
 			if (size==1)
 			{
-				return  ( (Questarg)list.get(0) ).getValue();
+				return  ( (Questarg)list.get(0) );
 			}
 			else if (size>1){
 				LOG.error("QuestId:"+quest.getQuestId()+"has more than one frames value");
@@ -198,7 +198,7 @@ public class QuestargDAO extends BaseHibernateDAO {
 //			throw re;
 //		}
 //	}
-	public String getByFrame(Quest quest)
+	public Questarg getByFrame(Quest quest)
 	{
 		LOG.debug("getByFrame questId:"+quest.getQuestId());
 		try{
@@ -209,7 +209,7 @@ public class QuestargDAO extends BaseHibernateDAO {
 			int size = list.size();
 			if (size==1)
 			{
-				return  ( (Questarg)list.get(0) ).getValue();
+				return  ( (Questarg)list.get(0) );
 			}
 			else
 			{

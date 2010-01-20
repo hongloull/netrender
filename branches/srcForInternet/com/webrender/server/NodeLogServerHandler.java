@@ -25,7 +25,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 	private ServerMessages serverMessages = new ServerMessages();
 	public void exceptionCaught(IoSession session, Throwable cause) {
 		  // Close connection when unexpected exception is caught.
-		cause.printStackTrace();
+		LOG.error("NodeLogServerHandler exception",cause);
 //		session.write(cause.getMessage());
 //		session.close();
 	  }

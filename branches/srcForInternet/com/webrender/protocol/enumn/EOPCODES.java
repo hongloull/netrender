@@ -21,7 +21,7 @@ public final class EOPCODES{
 	private EOPCODES(){
 		
 	}
-	public static EOPCODES getInstance(){
+	public static synchronized EOPCODES getInstance(){
 		if(instance == null){
 			EOPCODES.instance = new EOPCODES();
 			try {
