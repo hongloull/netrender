@@ -46,6 +46,7 @@ public final  class  NodeMachineManager {
 	
 	public void deleteNodeMachine(int nodeId){
 		if( machines.containsKey(nodeId) ){
+			idleMachines.remove(getNodeMachine(nodeId));
 			machines.remove(nodeId);
 		}
 	}
@@ -58,7 +59,7 @@ public final  class  NodeMachineManager {
 	public void addNodeMachines(NodeMachine nodeMachine){
 		if(!idleMachines.contains(nodeMachine)){
 			idleMachines.add(nodeMachine);
-//			LOG.info("Node "+nodeMachine.getId()+ " is idle");
+			LOG.debug("Add Node "+nodeMachine.getId()+ " To Idles");
 		}
 		ControlThreadServer.getInstance().notifyResume();
 	}
@@ -77,7 +78,7 @@ public final  class  NodeMachineManager {
 	public void removeIdleMachines(NodeMachine nodeMachine){
 		if(idleMachines.contains(nodeMachine)){
 			idleMachines.remove(nodeMachine);
-//			LOG.info("Node "+nodeMachine.getId()+ " is not idle!");
+			LOG.debug("Remove Node "+nodeMachine.getId()+ " From Idles");
 		}
 		
 	}

@@ -15,7 +15,7 @@ public final class Conversion extends Thread {
 	private  String mainServer = GenericConfig.getInstance().getMainServer();
 	private  String subServer  = GenericConfig.getInstance().getSubServer();
 	private static final Log LOG = LogFactory.getLog(Conversion.class);
-	private static Conversion instance = new Conversion(); 
+	private static Conversion instance = null;
 	// 标记该服务器类型 flag = 0 无用，1为主机 2为副机
 	private  int flag = 0; 
 	// 标记该服务器状态 0 未启动过 ， 1 运行中 2 暂停
@@ -23,6 +23,9 @@ public final class Conversion extends Thread {
 	
 	public static synchronized Conversion  getInstance()
 	{
+		if(instance == null){
+			instance = new Conversion();
+		}
 		return instance;
 	}
 	

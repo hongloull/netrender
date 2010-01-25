@@ -8,6 +8,7 @@ import org.jdom.Element;
 import com.webrender.dao.Quest;
 import com.webrender.dao.QuestDAO;
 import com.webrender.dao.QuestargDAO;
+import com.webrender.dao.QuestDAO.QuestState;
 
 
 public final class QuestUtils {
@@ -70,23 +71,26 @@ public final class QuestUtils {
 	 public Element bean2xmlWithState(Quest quest)
 	 {
 		 LOG.debug("bean2xmlWithState questId:"+quest.getQuestId());
-		 QuestargDAO questargDAO = new QuestargDAO();
 		 QuestDAO questDAO = new QuestDAO();
 		 Element root = bean2xml(quest);
-		 root.addAttribute("status",questDAO.getStatus(quest)+"");
-		 root.addAttribute("progress",questDAO.getProgress(quest)+"");
-		 root.addAttribute("nodeNum",questDAO.getUserInstance(quest)+"");
+		 QuestState questState = questDAO.calcQuestState(quest);
+		 root.addAttribute("status",questState.getStatus());
+		 root.addAttribute("progress",questState.getProgress());
+		 root.addAttribute("nodeNum",questState.getNodeNum());
+		 root.addAttribute("frames",questState.getFrames());
+		 root.addAttribute("fileName",questState.getFileName());
+
+		 
+		 
 		 root.addAttribute("commandModelName",quest.getCommandmodel().getCommandModelName());
+		 root.addAttribute("totalFrames",quest.getTotalFrames()+"");
 //		 String startFrame = questargDAO.getStartFrame(quest)+"";
 //		 String endFrame   = questargDAO.getEndFrame(quest)+"";
 		 
 //			 CalcFrame cF = new CalcFrame();
-		 root.addAttribute("totalFrames",quest.getTotalFrames()+"");
 		 
 //		 root.addAttribute("startFrame",questargDAO.getStartFrame(quest)+"");
 //		 root.addAttribute("endFrame",questargDAO.getEndFrame(quest)+"");
-		 root.addAttribute("frames",questargDAO.getFramesValue(quest)+"");
-		 root.addAttribute("fileName",questargDAO.getFileName(quest)+"");
 		 LOG.debug("bean2xmlWithState success questId:"+quest.getQuestId());
 		 return root;
 	 }

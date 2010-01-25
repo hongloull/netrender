@@ -153,6 +153,7 @@ public class QuestargDAO extends BaseHibernateDAO {
 		
 	}
 	public Questarg getFramesValue(Quest quest)
+	//TODO optimize 
 	{
 		LOG.debug("getStartFrame questId:"+quest.getQuestId());
 		try{
@@ -221,30 +222,31 @@ public class QuestargDAO extends BaseHibernateDAO {
 		}
 	}
 
-	public String getFileName(Quest quest) {
-		LOG.debug("getFileName questId:"+quest.getQuestId());
-		try{
-			// 获取某Quest中getByFrame;
-			Query query = getSession().createQuery("from Questarg as arg where arg.quest.questId = ? and arg.commandmodelarg.status.statusId = 64 ");
-			query.setParameter(0, quest.getQuestId());
-			List list = query.list();
-			int size = list.size();
-			if (size>=1)
-			{
-				String result = ( (Questarg)list.get(0) ).getValue();
-				if(result.length()>65){
-					result = result.substring(0,65)+"...";
-				}
-				return result;
-			}
-			else
-			{
-				return null;
-			}
-		} catch (RuntimeException re) {
-			LOG.error("getFileName failed questId:"+quest.getQuestId(), re);
-			throw re;
-		}
-	}
+//	public String getFileName(Quest quest) {
+//		//TODO optimize 
+//		LOG.debug("getFileName questId:"+quest.getQuestId());
+//		try{
+//			// 获取某Quest中getByFrame;
+//			Query query = getSession().createQuery("from Questarg as arg where arg.quest.questId = ? and arg.commandmodelarg.status.statusId = 64 ");
+//			query.setParameter(0, quest.getQuestId());
+//			List list = query.list();
+//			int size = list.size();
+//			if (size>=1)
+//			{
+//				String result = ( (Questarg)list.get(0) ).getValue();
+//				if(result.length()>65){
+//					result = result.substring(0,65)+"...";
+//				}
+//				return result;
+//			}
+//			else
+//			{
+//				return null;
+//			}
+//		} catch (RuntimeException re) {
+//			LOG.error("getFileName failed questId:"+quest.getQuestId(), re);
+//			throw re;
+//		}
+//	}
 	
 }
