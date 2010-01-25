@@ -1,5 +1,6 @@
 package com.webrender.server;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import org.apache.commons.logging.Log;
@@ -35,7 +36,7 @@ public final class NodeLogServer {
     	return instance;
     }
     
-    public void run() throws Exception{
+    public void run() throws IOException {
 //    	chain.addLast("codec", new ProtocolCodecFilter(
 //    			new TextLineCodecFactory()));
     	ByteBuffer.setUseDirectBuffers(false);/*设置内存获取方式*/

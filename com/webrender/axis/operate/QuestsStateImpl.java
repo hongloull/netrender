@@ -20,6 +20,7 @@ public class QuestsStateImpl extends BaseOperate {
 	private static final Log LOG = LogFactory.getLog(QuestsStateImpl.class);
 	private QuestUtils questUtils = new QuestUtils();
 	private XMLOut xmlOut = new XMLOut();
+	QuestDAO questDAO = new QuestDAO();
 	public String getQuestStatus(String questId)
 	{
 		
@@ -37,7 +38,7 @@ public class QuestsStateImpl extends BaseOperate {
 //		}
 		
 		try{
-			QuestDAO questDAO = new QuestDAO();
+			
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			if(quest!=null){
 				Element root = questUtils.bean2xmlWithState(questDAO.findById(Integer.parseInt(questId)));
@@ -85,7 +86,7 @@ public class QuestsStateImpl extends BaseOperate {
 			Element root = new Element("Quests");
 			Document doc = new Document(root);
 			
-			QuestDAO questDAO = new QuestDAO();
+//			QuestDAO questDAO = new QuestDAO();
 			int size = questDAO.findAll().size();
 			
 			Iterator ite_Quests = questDAO.findAll().iterator();

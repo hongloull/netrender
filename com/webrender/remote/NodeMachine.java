@@ -118,11 +118,14 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		else if( (NameMap.GETFRAME).equalsIgnoreCase(command.getType()) ){
 			cmdType = EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_GETFRAME");
 		}
+		else if( (NameMap.PRELIGHT).equalsIgnoreCase(command.getType()) ){
+			cmdType = EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_PRELIGHT");
+		}
 		else if( (NameMap.ONETOMANY).equalsIgnoreCase(command.getType()) || (NameMap.MANYTOMANY).equalsIgnoreCase(command.getType()) ){
 			cmdType = EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_SHELL");
 		}
-		else if( (NameMap.PRELIGHT).equalsIgnoreCase(command.getType()) ){
-			cmdType = EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_PRELIGHT");
+		else{ // 其他默认为Render
+			cmdType = EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_RENDER");
 		}
 		String cmdString = commmandUtils.commandToXMLForExe(command);
 		
@@ -342,7 +345,6 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		{
 			setReady(false);
 			cleanRunCommands("NodeId:"+nodeId +" disconnect");
-//			NodeMachineManager.getInstance()
 		}
 		selfCheck();			
 	}

@@ -20,14 +20,14 @@ import com.webrender.remote.NodeMachineManager;
 public class MessageHandlerImpl implements MessageHandler {
 	private static MessageHandler instance;
     protected MessageHandlerImpl() {Runtime.getRuntime().traceMethodCalls(true);}
-//TODO  is right??
+    
     public static synchronized MessageHandler getInstance() {
         if(instance == null) {
             MessageHandlerImpl.instance = new MessageHandlerImpl();
         }
         return instance;
     }
-    protected final Log LOG = LogFactory.getLog(MessageHandlerImpl.class);
+    private final Log LOG = LogFactory.getLog(MessageHandlerImpl.class);
 	
 	public ByteBuffer parseClientPacket(CODE code, ByteBuffer packet,
 			IClientProcessor processor) {

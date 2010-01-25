@@ -258,35 +258,38 @@ public class QuestDAO extends BaseHibernateDAO {
 	 * @param quest
 	 * @return pause inprogress complete waiting 
 	 */
-	public String getStatus(Quest quest) {
-		LOG.debug("getStatus");
-		try {
-			int isPause = quest.getStatus().getStatusId()==51?1:0;
-			CommandDAO commandDAO = new CommandDAO();
-			boolean isProgress = commandDAO.isInProgress(quest);
-			int finish = commandDAO.getFinish(quest).size();
-			int error  = commandDAO.getError(quest).size();
-			int total = quest.getCommands().size() ;	
-			LOG.debug("getStatus successful");
-			if (finish ==total) return "Complete";
-			else if ( finish+error == total) return "Error";
-			else if (isPause==1) return "Pause";
-			else if (isProgress == true) return "InProgress";
-			else return "Waiting"; 
-			
-		}
-		catch (RuntimeException re) {
-			LOG.error("getStatus failed", re);
-			throw re;
-		}
-	}
-	public String getProgress(Quest quest){
-		CommandDAO commandDAO = new CommandDAO();
-		int finish = commandDAO.getFinish(quest).size();
-		int total = quest.getCommands().size() ;
-		if (total == 0 ) return "error";
-		return finish*100/total+"%";
-	}
+//	public String getStatus(Quest quest) {
+//		//TODO optimize 
+//		LOG.debug("getStatus");
+//		try {
+//			int isPause = quest.getStatus().getStatusId()==51?1:0;
+//			CommandDAO commandDAO = new CommandDAO();
+//			boolean isProgress = commandDAO.isInProgress(quest);
+//			int finish = commandDAO.getFinish(quest).size();
+//			int error  = commandDAO.getError(quest).size();
+//			int total = quest.getCommands().size() ;	
+//			LOG.debug("getStatus successful");
+//			if (finish ==total) return "Complete";
+//			else if ( finish+error == total) return "Error";
+//			else if (isPause==1) return "Pause";
+//			else if (isProgress == true) return "InProgress";
+//			else return "Waiting"; 
+//			
+//		}
+//		catch (RuntimeException re) {
+//			LOG.error("getStatus failed", re);
+//			throw re;
+//		}
+//	}
+	
+//	public String getProgress(Quest quest){
+//		//TODO optimize 
+//		CommandDAO commandDAO = new CommandDAO();
+//		int finish = commandDAO.getFinish(quest).size();
+//		int total = quest.getCommands().size() ;
+//		if (total == 0 ) return "error";
+//		return finish*100/total+"%";
+//	}
 
 	public void delQuestRel(Quest quest) {
 		LOG.debug("delQuestRel questId:"+quest.getQuestId());
@@ -352,10 +355,11 @@ public class QuestDAO extends BaseHibernateDAO {
 		}
 		return quest;
 	}
-	public int getUserInstance(Quest quest){
-		CommandDAO commandDAO = new CommandDAO();
-		return commandDAO.getInProgress(quest).size();
-	}
+//	public int getUserInstance(Quest quest){
+//		//TODO optimize 
+//		CommandDAO commandDAO = new CommandDAO();
+//		return commandDAO.getInProgress(quest).size();
+//	}
 	
 	public String getFramesValueByCalc(Quest quest) throws Exception{
 		CommandDAO commandDAO = new CommandDAO();
@@ -375,6 +379,127 @@ public class QuestDAO extends BaseHibernateDAO {
 		}else{
 			String byFrame = commandDAO.getByFrame(command);
 			return byFrame;
+		}
+	}
+	public QuestState calcQuestState(Quest quest){
+		int totalSize      = 0;
+		int waitingSize    = 0;
+		int inProgressSize = 0;
+		int finishSize     = 0;
+		int errorSize      = 0;
+		String frames      = null;
+		String fileName    = null;
+		boolean isPause    = quest.getStatus().getStatusId()==51?true:false;
+		Iterator ite_Commands = quest.getCommands().iterator();
+		while(ite_Commands.hasNext()){
+			totalSize++;
+			Command cmd = (Command)ite_Commands.next();
+			switch (cmd.getStatus().getStatusId()){
+			case 70: waitingSize++; break;
+			case 71: inProgressSize++; break;
+			case 72: finishSize++; break;
+			case 73: errorSize++; break;
+			}
+		}
+		if(totalSize == 0)
+		{
+			return new QuestState("Complete","Error","0","","");
+		}
+		
+		String status;
+		if (finishSize == totalSize) status = "Complete";
+		else if ( finishSize+errorSize == totalSize) status = "Error";
+		else if ( isPause) status = "Pause";
+		else if (inProgressSize>0) status = "InProgress:"+inProgressSize;
+		else status = "Waiting";
+		String progress = finishSize*100/totalSize+"%";
+		
+		Iterator ite_QuestArgs = quest.getQuestargs().iterator();
+		while(ite_QuestArgs.hasNext()){
+			totalSize++;
+			Questarg arg = (Questarg)ite_QuestArgs.next();
+			switch (arg.getCommandmodelarg().getStatus().getStatusId()){
+			case 61: frames=arg.getValue(); break;
+			case 64: fileName=arg.getValue();break;
+			}
+		}
+		return new QuestState(status,progress,inProgressSize+"",frames+"",fileName+"");
+	}
+	public class QuestState{
+		public String status;
+		public String progress;
+		public String nodeNum;
+		public String frames;
+		public String fileName;
+		
+		public QuestState(String status, String progress, String nodeNum,
+				String frames, String fileName) {
+			super();
+			this.status = status;
+			this.progress = progress;
+			this.nodeNum = nodeNum;
+			this.frames = frames;
+			this.fileName = fileName;
+		}
+		/**
+		 * @return the status
+		 */
+		public String getStatus() {
+			return status;
+		}
+		/**
+		 * @param status the status to set
+		 */
+		public void setStatus(String status) {
+			this.status = status;
+		}
+		/**
+		 * @return the progress
+		 */
+		public String getProgress() {
+			return progress;
+		}
+		/**
+		 * @param progress the progress to set
+		 */
+		public void setProgress(String progress) {
+			this.progress = progress;
+		}
+		/**
+		 * @return the nodeNum
+		 */
+		public String getNodeNum() {
+			return nodeNum;
+		}
+		/**
+		 * @param nodeNum the nodeNum to set
+		 */
+		public void setNodeNum(String nodeNum) {
+			this.nodeNum = nodeNum;
+		}
+		/**
+		 * @return the frames
+		 */
+		public String getFrames() {
+			return frames;
+		}
+		/**
+		 * @param frames the frames to set
+		 */
+		public void setFrames(String frames) {
+			this.frames = frames;
+		}
+		/**
+		 * @return the fileName
+		 */
+		public String getFileName() {
+			return fileName;
+		}
+		/**
+		 * @param fileName the fileName to set
+		 */
+		public void setFileName(String fileName) {
+			this.fileName = fileName;
 		}
 	}
 	
