@@ -61,7 +61,11 @@ public final class NodeUtils {
 			Element root = bean2xml(node);
 			if (nodeMachine.isBusy())
 			{
-				root.addAttribute("status","InProgress");
+				if(nodeMachine.isPause()){
+					root.addAttribute("status","InProg&Pause");
+				}else{
+					root.addAttribute("status","InProgress");					
+				}
 			}
 			else if (nodeMachine.isPause())
 			{

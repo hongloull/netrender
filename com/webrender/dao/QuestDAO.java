@@ -403,12 +403,12 @@ public class QuestDAO extends BaseHibernateDAO {
 		}
 		if(totalSize == 0)
 		{
-			return new QuestState("Complete","Error","0","","");
+			return new QuestState("Complete","NoCommands","0","","");
 		}
 		
 		String status;
 		if (finishSize == totalSize) status = "Complete";
-		else if ( finishSize+errorSize == totalSize) status = "Error";
+		else if ( finishSize+errorSize == totalSize) status = "HasError";
 		else if ( isPause) status = "Pause";
 		else if (inProgressSize>0) status = "InProgress:"+inProgressSize;
 		else status = "Waiting";

@@ -61,9 +61,11 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 //	private StringBuffer realLog = null;
 	private FileOutputStream realLogS = null;
 	private ServerMessages serverMessages = new ServerMessages();
-	private CommandUtils commmandUtils = new CommandUtils();
+	private CommandUtils commandUtils = new CommandUtils();
 	private CommandDAO commandDAO = new CommandDAO();
 	private boolean isReady = false;
+	private Date shellCommandTime = null;
+	private String shellCommand = null;
 //	IResultStore resultStore;
 
 
@@ -127,7 +129,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		else{ // 其他默认为Render
 			cmdType = EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_RENDER");
 		}
-		String cmdString = commmandUtils.commandToXMLForExe(command);
+		String cmdString = commandUtils.commandToXMLForExe(command);
 		
 		ByteBuffer cmdBuffer;
 		try {
@@ -160,7 +162,29 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		}
 //		resultStore.storeResult();
 	}
-
+	public boolean exeShellCommand(String command ){
+		CODE cmdType = EOPCODES.getInstance().get("S_COMMAND").getSubCode("S_SHELL");
+		String cmdString = commandUtils.simpleCommandToXML(command);
+		ByteBuffer cmdBuffer;
+		try {
+			cmdBuffer = serverMessages.createCommandPkt(cmdType,-1,cmdString);
+		} catch (Exception e) {
+			LOG.error("createCommandPkt fail",e);
+			LOG.warn("nodeId: "+nodeId + " exeShellCommand command: "+ command + " createCommandpkt failure.");
+			return false;
+		}
+		if( this.execute(cmdBuffer)){
+			shellCommandTime = new Date();
+			shellCommand = command;
+			LOG.info("nodeId: "+nodeId+ " exeShellCommand success ");
+			return true;
+		}else{
+			shellCommandTime = null;
+			shellCommand = null;
+			LOG.error("nodeId: "+nodeId+ " exeShellCommand fail time out ");
+			return false;
+		}
+	}
 	public Set<Integer> getCurrentCommands()
 	{
 		return this.currentCommands;
@@ -456,7 +480,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				this.removeCommandId(commandId);
 			}
 		}else{
-			return true;			
+			return true;
 		}
 	}
 	
@@ -512,7 +536,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			}
 		}
 		else{
-			LOG.info("NodeId:"+nodeId+" can not finish command:"+commandId+"!  node's current commands doesn't contain this command.");
+//			LOG.info("NodeId:"+nodeId+" can not finish command:"+commandId+"!  node's current commands doesn't contain this command.");
 			return null;
 		}
 //		setBusy(false);
@@ -591,6 +615,10 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				return;
 			}
 		}
+		else if( commandId == -1 ){
+			// 返回ShellCommand feedback
+						
+		}
 		else if(! this.currentCommands.contains(commandId) ){
 			LOG.warn("NodeId:"+nodeId+" get new commandId:"+commandId+ " message:"+message);
 			this.addCommandId(commandId);
@@ -607,12 +635,20 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 					realLogS.close();
 					realLogS = null;
 				}
-				setFinish(commandId);
+				if(commandId != -1){
+					setFinish(commandId);					
+				}
 //				timeOutThread = null;
 			}
 			else{
 				if(realLogS == null){
-					File file = NetRenderLogFactory.getInstance().getFile(commandId);
+					File file = null;
+					if(commandId != -1){
+						file = NetRenderLogFactory.getInstance().getFile(commandId);
+					}else{
+						file = NetRenderLogFactory.getInstance().getExeLog(nodeId,shellCommandTime);	
+					}
+					
 					if(file.getParentFile().exists() || file.getParentFile().mkdirs()){
 						realLogS = new FileOutputStream(file);
 //						LOG.info("new log file:"+file.getAbsolutePath());						

@@ -1,0 +1,37 @@
+<header>
+<code name="S_SYSTEM" id="0">
+<subcode name="S_SHUTDOWN" id="0"/>
+<subcode name="S_RESTART" id="1"/>
+<subcode name="S_SOFTRESTART" id="2"/>
+<subcode name="S_KILL" id="3"/>
+<subcode name="S_REMOTECONTROL" id="4"/>
+<subcode name="S_SOFTSTOP" id="5"/>
+</code>
+<code name="S_COMMAND" id="1">
+<subcode name="S_RENDER" id="0"/>
+<subcode name="S_GETFRAME" id="1"/>
+<subcode name="S_PRELIGHT" id="2"/>
+<subcode name="S_SHELL" id="3"/>
+</code>
+<code name="S_SETNODEID" id="2"/>
+<code name="S_GETCONFIG" id="3"/>
+<code name="S_GETSTATUS" id="4"/>
+<code name="S_SETCONFIG" id="5"/>
+<code name="S_SERVERSTATUS" id="6">
+<subcode name="S_OFF" id="0"/>
+<subcode name="S_ON" id="1"/>
+<subcode name="S_PAUSE" id="2"/>
+</code>
+<code name="S_PATHCONFIG" id="7"/>
+<code name="S_ERROR" id="100"/>
+<code name="N_ERROR" id="99"/>
+<code name="N_RUN" id="51"/>
+<code name="N_SUCCESS" id="52"/>
+<code name="N_FEEDBACK" id="53"/>
+<code name="N_STATUSINFO" id="54"/>
+<code name="N_CONFIGINFO" id="55"/>
+<code name="N_GETSERVERSTATUS" id="56"/>
+<code name="N_FRAMEINFO" id="57"/>
+<code name="N_PRELIGHT" id="58"/>
+<code name="N_GETPATHCONFIG" id="59"/>
+</header>

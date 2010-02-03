@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Rights>
+<Right Id="0" detail="is a administrator" />
+<Right Id="10" detail="can submit jobs to the dispatcher engine" />
+<Right Id="11" detail="can manage jobs belongs to him" />
+<Right Id="12" detail="can manage jobs belongs to others" />
+<Right Id="13" detail="can arrange jobs changing their priority" />
+<Right Id="20" detail="can manager hosts in the hosts list" />
+<Right Id="21" detail="can remote control hosts in the hosts list" />
+<Right Id="30" detail="can modify the status of the engine" />
+<Right Id="40" detail="can login by web page" />
+</Rights>
