@@ -48,10 +48,10 @@ public final class Conversion extends Thread {
 	
 	public void run()
 	{
-		if(check()==false){
-			LOG.error("OutOfDate!");
-			return;
-		}
+//		if(check()==false){
+//			LOG.error("OutOfDate!");
+//			return;
+//		}
 		switch (flag)
 		{
 		case 1:{// MainServer
@@ -182,11 +182,11 @@ public final class Conversion extends Thread {
 		}
 	}
 	private boolean check() {
-		Date date = new Date();
-		long limit = 1277867456437L;
-		if (date.getTime() > limit)
-			return false;
-		else
+//		Date date = new Date();
+//		long limit = 1277867456437L;
+//		if (date.getTime() > limit)
+//			return false;
+//		else
 			return true;
 
 	}
