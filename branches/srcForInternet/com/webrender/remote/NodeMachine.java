@@ -604,9 +604,9 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		{
 			RealLogServer.getInstance().broadCast(nodeId+"***"+message);
 		}
+		
 		if(commandId == null || commandId == 0){
-			
-			// 目前 commandId 传过来都是null
+			//TODO 应该报错 待测试
 			if(currentCommands.iterator().hasNext()){
 				commandId = this.currentCommands.iterator().next();				
 			}
@@ -616,7 +616,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			}
 		}
 		else if( commandId == -1 ){
-			// 返回ShellCommand feedback
+			// ShellCommand feedback
 						
 		}
 		else if(! this.currentCommands.contains(commandId) ){
