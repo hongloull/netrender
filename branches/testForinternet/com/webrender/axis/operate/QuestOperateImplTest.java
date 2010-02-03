@@ -135,7 +135,14 @@ public class QuestOperateImplTest {
 	public final void testChangePool() {
 		fail("Not yet implemented"); // TODO
 	}
-
+	/**
+	 * Test method for {@link com.webrender.axis.operate.QuestOperateImpl#patchFrames(java.lang.String, java.lang.String, int)}.
+	 */
+	@Test
+	public final void testPatchFrames(){
+//		System.out.println( impl.patchFrames("240", "1,20,21",0) );
+	}
+	
 	/**
 	 * Test method for {@link com.webrender.axis.operate.QuestOperateImpl#getDetail(java.lang.String)}.
 	 */
