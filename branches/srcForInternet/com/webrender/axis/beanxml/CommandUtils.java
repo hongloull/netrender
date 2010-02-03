@@ -3,6 +3,8 @@ package com.webrender.axis.beanxml;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.jdom.CDATA;
+
 import com.webrender.dao.Command;
 import com.webrender.dao.Commandarg;
 import com.webrender.dao.Commandmodelarg;
@@ -58,6 +60,8 @@ public final class CommandUtils {
 			else {
 				if (questArg.getCommandmodelarg().getStatus().getStatusId()==64){
 					element = new org.jdom.Element("Endarg");
+					CDATA note = new CDATA(questArg.getValue()+"");
+					element.addContent(note);					
 				}
 				else element = new org.jdom.Element("Cmdarg");
 //				element.addAttribute("commandModelArgId", cMDArg.getCommandModelArgId().toString());	
@@ -94,6 +98,32 @@ public final class CommandUtils {
 //		root.addAttribute("content",result.toString() );
 		org.jdom.Document doc = new org.jdom.Document(root);
 //		System.out.println(XMLOut.outputToString(doc));
+		return (new XMLOut()).outputToString(doc);
+	}
+	public String simpleCommandToXML(String command){
+		System.out.println(command);
+		org.jdom.Element root = new org.jdom.Element("Cmd");
+		root.addAttribute("cmdModelName","System_Simple");
+		root.addAttribute("cmdId","-1");
+		root.addAttribute("questId","-1");
+		root.addAttribute("questName","Exe");
+		org.jdom.Element windows = new org.jdom.Element("Endarg");
+		windows.addAttribute("argName", "windows");
+		windows.addAttribute("value", command );
+		CDATA note = new CDATA(command+"");
+		windows.addContent(note);
+		
+		root.addContent(windows);
+		
+		org.jdom.Element linux = new org.jdom.Element("Endarg");
+		linux.addAttribute("argName", "linux");
+		linux.addAttribute("value", command );	
+		CDATA note2 = new CDATA(command+"");
+		linux.addContent(note2);
+		
+		root.addContent(linux);
+		
+		org.jdom.Document doc = new org.jdom.Document(root);
 		return (new XMLOut()).outputToString(doc);
 	}
 }

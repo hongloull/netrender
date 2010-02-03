@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Commandmodel type="manytomany">
+<Commandmodelarg argName="windows" argInstruction="Windows Command" type="3" statusId="64" order="0"/>
+<Commandmodelarg argName="linux" argInstruction="Linux Command" type="3" statusId="64" order="1"/>
+</Commandmodel>

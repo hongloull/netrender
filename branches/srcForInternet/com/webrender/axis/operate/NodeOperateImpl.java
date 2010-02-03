@@ -1,11 +1,13 @@
 package com.webrender.axis.operate;
 
+import java.io.File;
 import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Transaction;
 
+import com.webrender.config.NetRenderLogFactory;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
 import com.webrender.dao.Node;
@@ -309,7 +311,7 @@ public class NodeOperateImpl extends BaseOperate {
 				message = "soft restart "+nodeId;
 			}else{
 				message = "soft restart "+nodeId+" fail!";
-			}				
+			}
 			logOperate(regUserId,exeFlag?Operatelog.MOD:Operatelog.ERROR,message);
 			tx.commit();
 			return exeFlag?ACTIONSUCCESS:ACTIONFAILURE+"soft restart error :node not response.";
@@ -411,6 +413,60 @@ public class NodeOperateImpl extends BaseOperate {
 			return ACTIONFAILURE+e.getMessage();
 		}finally{
 			this.closeSession();
+		}
+	}
+	/**
+	 * <?xml version="1.0" encoding="UTF-8"?><Cmd cmdModelName="System_Simple" cmdId="1255" questId="135" questName="frames_test2"><Endarg argName="windows" value="shutdown -s -f -t 1" /><Endarg argName="linux" value="shutdown -s -f -t 1" /></Cmd>
+	 * @param nodeId
+	 * @param command
+	 * @param loginUserId
+	 * @return
+	 */
+	public String exeCommand(String nodeId, String command, int loginUserId) {
+		Transaction tx = null;
+		try{
+			NodeMachine nodeMachine  = NodeMachineManager.getInstance().getNodeMachine(Integer.parseInt(nodeId));
+			boolean flag = nodeMachine.exeShellCommand(command);
+			tx = getTransaction();
+			if(flag) logOperate(loginUserId,Operatelog.ADD,"ExeShellCommand success nodeId:"+nodeId +" command :"+command);
+			else logOperate(loginUserId,Operatelog.ERROR,"ExeShellCommand fail nodeId:"+nodeId +" command :"+command);
+			tx.commit();
+			LOG.debug("exeShellCommand finish nodeId:"+nodeId);
+			return ACTIONSUCCESS;
+		}catch(NumberFormatException e){
+			LOG.error("exeShellCommand NumberFormatException nodeId:"+nodeId);
+			return ACTIONFAILURE+e.getMessage();
+		}
+		catch(java.lang.NullPointerException e){
+			LOG.error("exeShellCommand NullPointerException nodeId:"+nodeId);
+			return ACTIONFAILURE+e.getMessage();
+		}catch(Exception e){
+			LOG.error("exeShellCommand fail nodeId:"+nodeId);
+			if(tx!=null){
+				tx.rollback();
+			}
+			return ACTIONFAILURE+e.getMessage();
+		}finally{
+			this.closeSession();
+		}
+	}
+	public String getExeLogList(String nodeId){
+		LOG.debug("getExeLog nodeId: "+nodeId);
+		try{
+			File logFolder = NetRenderLogFactory.getInstance().getExeLogFolder(Integer.parseInt(nodeId));
+			if(logFolder.exists()){
+				
+			}
+			return null;
+		}catch(NullPointerException e){
+			LOG.error("getExeLogList NullPointerException nodeId:"+nodeId);
+			return ACTIONFAILURE+e.getMessage();
+		}catch(NumberFormatException e){
+			LOG.error("getExeLogList NumberFormatException nodeId:"+nodeId);
+			return ACTIONFAILURE+e.getMessage();
+		}catch(Exception e){
+			LOG.error("getExeLogList fail ",e);
+			return ACTIONFAILURE+e.getMessage();
 		}
 	}
 	

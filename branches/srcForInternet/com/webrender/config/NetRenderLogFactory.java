@@ -1,6 +1,8 @@
 package com.webrender.config;
 
 import java.io.File;
+import java.util.Date;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -31,6 +33,7 @@ public class NetRenderLogFactory {
 			CommandDAO commandDAO = new CommandDAO();
 			Command command = commandDAO.findById(commandId);
 			StringBuffer fileName = new StringBuffer(logPath);
+			fileName.append("jobs/");
 			fileName.append(command.getQuest().getQuestId()).append("/").append(command.getCommandId()).append(".log");
 			LOG.info("GetRealLogFile :"+fileName.toString());
 			return new File(fileName.toString());
@@ -38,5 +41,17 @@ public class NetRenderLogFactory {
 			LOG.warn("GetRealLogFile NullPointerException commandId:"+commandId);
 			return null;
 		}
+	}
+	public File getExeLog(Integer nodeId,Date date){
+		StringBuffer fileName = new StringBuffer(logPath);
+		fileName.append("nodes/");
+		fileName.append(nodeId).append("/").append(date.getTime()).append(".log");
+		LOG.info("GetExeLogFolder :"+fileName.toString());
+		return new File(fileName.toString());
+	}
+	public File getExeLogFolder(Integer nodeId){
+		StringBuffer fileName = new StringBuffer(logPath);
+		fileName.append("nodes/").append(nodeId).append("/");
+		return new File(fileName.toString());
 	}
 }

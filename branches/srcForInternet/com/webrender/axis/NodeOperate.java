@@ -46,6 +46,8 @@ public class NodeOperate extends BaseAxis {
 		String[] nodeIds = {nodeId};
 		return exeSystemCommand(nodeIds,FLAG,needFeedBack);
 	}
+	
+	
 	public String delNode(String nodeId){
 		String[] nodeIds = {nodeId};
 		return delNode(nodeIds);
@@ -223,6 +225,28 @@ public class NodeOperate extends BaseAxis {
 		}
 		return result.toString();
 		
+	}
+	
+	public String exeCommand(String[] nodeIds , String command){
+		if (  !this.canVisit(0) &&  !this.canVisit(21) ) return BaseAxis.RIGHTERROR;
+		NodeOperateImpl nodeOperateImpl = new NodeOperateImpl();
+		StringBuffer result = new StringBuffer();
+		String subResult = null;
+		for(String nodeId:nodeIds){
+			subResult = nodeOperateImpl.exeCommand(nodeId,command,this.getLoginUserId());
+			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
+				result.append(nodeId).append(":").append(subResult).append("\n\r");
+			}
+		}
+		if(result.length()==0){
+			result.append(BaseOperate.ACTIONSUCCESS);
+		}
+		return result.toString();
+	}
+	
+	public String getExeLogList(String nodeId){
+		if (  !this.canVisit(0) ) return BaseAxis.RIGHTERROR;
+		return (new NodeOperateImpl()).getExeLogList(nodeId);
 	}
 	
 	public String delNode(String[] nodeIds){
