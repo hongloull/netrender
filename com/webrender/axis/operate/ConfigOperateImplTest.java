@@ -63,7 +63,7 @@ public class ConfigOperateImplTest {
 	 */
 	@Test
 	public final void testGetNodeConfig() {
-		//TODO cannot test
+
 //		Set<Integer> set = NodeMachineManager.getInstance().getNodeMachines();
 //		for(Integer nodeId : set){
 //			String result = impl.getNodeConfig(nodeId.toString());
