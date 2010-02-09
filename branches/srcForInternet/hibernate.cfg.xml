@@ -26,7 +26,6 @@
 	<property name="hibernate.c3p0.idle_test_period">120</property>
 	<property name="hibernate.c3p0.acquire_increment">2</property>
 	<property name="hibernate.c3p0.validate">true</property>
-	<property name="connection.password">111111</property>
 
 
 
