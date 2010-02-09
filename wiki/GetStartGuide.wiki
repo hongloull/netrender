@@ -1,0 +1,21 @@
+= Get Start Guide =
+  this project is developed by java, built by maven 
+  
+== software needed ==
+
+  * Running With JRE 5.0 Or Later
+    # Download JRE,release version 5.0 or later, from [http://java.sun.com/j2se]
+    # Set an environment variable named JRE_HOME to the pathname of the directory into which you installed the JRE, e.g. c:\jre5.0 or /usr/local/java/jre5.0.
+  * Running With Tomcat 5.5 Or Later
+    # Download a binary distribution of Tomcat from: [http://tomcat.apache.org]
+    # Unpack the binary distribution into a convenient location so that the distribution resides in its own directory (conventionally named "apache-tomcat-[version]").  For the purposes of the remainder of this document, the symbolic name "$CATALINA_HOME" is used to refer to the full pathname of the release directory.
+  * Running with Mysql 5.1 Or Later
+    # Download Mysql release version ,from [http://dev.mysql.com/downloads/mysql/]
+    # Run mysql and Import SQL Script  [http://netrender.googlecode.com/files/distributedmanagement.sql distributedmanagement.sql]
+---------
+== Deploy ==
+  * Get WebRender.war, deploy to tomcat
+   # Download war [http://netrender.googlecode.com/files/WebRender.war WebRender.war]
+   # use [http://maven.apache.org/ maven] to compile  sources , get the newest package.
+   # copy WebRender.war to TOMCAT_HOME/webapps/
+   # open http://localhost:8080/WebRender
