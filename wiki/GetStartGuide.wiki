@@ -14,7 +14,7 @@
     # Run mysql and Import SQL Script  [http://netrender.googlecode.com/files/distributedmanagement.sql distributedmanagement.sql]
 ---------
 ==2 Deploy ==
-  * Get WebRender.war, deploy to tomcat
+  * Get package, deploy to tomcat
    # Download war [http://netrender.googlecode.com/files/WebRender.war WebRender.war]
    # use [http://maven.apache.org/ maven] to compile  sources , get the newest package.
    # copy WebRender.war to TOMCAT_HOME/webapps/
