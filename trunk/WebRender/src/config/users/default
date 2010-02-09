@@ -1,0 +1,7 @@
+<User maxInstance="100" priority="10" >
+<Group name="All" />
+<Right id="10"/>
+<Right id="11"/>
+<Right id="21"/>
+<Right id="40"/>
+</User>
