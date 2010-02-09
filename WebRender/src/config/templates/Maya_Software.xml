@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Commandmodel type="render">
+<Commandmodelarg argName="frames" argInstruction="Frames" type="0" statusId="61" order="2" />
+<Commandmodelarg argName="-b" argInstruction="ByFrame" type="0" statusId="63" order="3" />
+<Commandmodelarg argName="-proj" argInstruction="Project" type="2" statusId="60" order="0" />
+<Commandmodelarg argName="-rd" argInstruction="Image" type="2" statusId="60" order="4"/>
+<Commandmodelarg argName="" argInstruction="File" type="1" statusId="64" order="1" />
+<Commandmodelarg argName="args" argInstruction="Args" type="0" statusId="60" order="5"/>
+<Commandmodelarg argName="-r" argInstruction="EngineType" value="sw" statusId="65" />
+</Commandmodel>

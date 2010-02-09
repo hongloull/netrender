@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Job Detail</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<script src="./js/jquery-1.3.2.min.js" type="text/javascript"></script>
+		<script src="./js/jquery.webservice-1.0.js" type="text/javascript"></script>
+		<script src="./js/wsvisit.js" type="text/javascript"></script>
+		<script src="./js/jobDetail.js" type="text/javascript"></script>
+		<script src="./js/jobDetailAction.js" type="text/javascript"></script>
+		<script src="./js/util.js" type="text/javascript"></script>
+<style>
+	.JobArg{
+	width:150px;
+	height:20x;
+	background: #CCCCCC;
+	font-weight: border;
+}
+		</style>
+	</head>
+	
+	<body onload="JobDetailInit();">
+		<table border="1">
+			<tbody>
+				<tr>
+					<td colspan="2" width="150" height="40" bgcolor="#999999">
+						<strong>General</strong>
+					</td>
+				</tr>
+				<tr>
+					<td class='JobArg'>
+						JobName
+					</td>
+					<td id="questName"></td>
+				</tr>
+				<tr>
+					<td class='JobArg'>
+						Priority
+					</td>
+					<td id="pri">
+						&nbsp;
+					</td>
+				</tr>
+				<tr>
+					<td class='JobArg'>
+						UserName
+					</td>
+					<td id="regName">
+						&nbsp;
+					</td>
+				</tr>
+				<tr>
+					<td class='JobArg'>
+						MaxNodes
+					</td>
+					<td id="maxNodes">
+						&nbsp;
+					</td>
+				</tr>
+				<tr>
+					<td class='JobArg'>
+						CommitTime
+					</td>
+					<td id="commitTime">
+						&nbsp;
+					</td>
+				</tr>
+				<tr>
+					<td class='JobArg'>
+						PacketSize
+					</td>
+					<td id="packetSize">
+						&nbsp;
+					</td>
+				</tr>
+				<tr>
+					<td class='JobArg'>
+						PoolName
+					</td>
+					<td id="Nodes">
+						&nbsp;
+					</td>
+				</tr>
+			</tbody>
+			<tbody id="modelInfo">
+				<tr>
+					<td colspan="2" width="150" height="40" bgcolor="#999999">
+						<strong id="modleName"></strong>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		
+	</body>
+</html>

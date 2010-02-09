@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Commandmodel type="render">
+<Commandmodelarg argName="frames" argInstruction="Frames" type="0" statusId="61" order="0"/>
+<Commandmodelarg argName="-b" argInstruction="ByFrame" type="0" statusId="63" order="1" />
+<Commandmodelarg argName="" argInstruction="File" type="1" statusId="64"  order="999" />
+</Commandmodel>
