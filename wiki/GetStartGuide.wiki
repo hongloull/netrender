@@ -1,7 +1,6 @@
-= Get Start Guide =
   this project is developed by java, built by maven 
   
-== software needed ==
+==1 software needed ==
 
   * Running With JRE 5.0 Or Later
     # Download JRE,release version 5.0 or later, from [http://java.sun.com/j2se]
@@ -13,7 +12,7 @@
     # Download Mysql release version ,from [http://dev.mysql.com/downloads/mysql/]
     # Run mysql and Import SQL Script  [http://netrender.googlecode.com/files/distributedmanagement.sql distributedmanagement.sql]
 ---------
-== Deploy ==
+==2 Deploy ==
   * Get WebRender.war, deploy to tomcat
    # Download war [http://netrender.googlecode.com/files/WebRender.war WebRender.war]
    # use [http://maven.apache.org/ maven] to compile  sources , get the newest package.
