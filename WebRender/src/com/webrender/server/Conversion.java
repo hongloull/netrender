@@ -2,15 +2,17 @@ package com.webrender.server;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Date;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import com.webrender.config.GenericConfig;
 import com.webrender.config.XMLConfigManager;
 import com.webrender.protocol.enumn.EOPCODES;
 import com.webrender.protocol.enumn.EOPCODES.CODE;
-
+/**
+ * control main sub server 
+ * @author WAEN
+ *
+ */
 public final class Conversion extends Thread {
 	private  String mainServer = GenericConfig.getInstance().getMainServer();
 	private  String subServer  = GenericConfig.getInstance().getSubServer();

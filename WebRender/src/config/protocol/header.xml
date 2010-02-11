@@ -34,4 +34,5 @@
 <code name="N_FRAMEINFO" id="57"/>
 <code name="N_PRELIGHT" id="58"/>
 <code name="N_GETPATHCONFIG" id="59"/>
+<code name="N_PROXY" id="60"/>
 </header>

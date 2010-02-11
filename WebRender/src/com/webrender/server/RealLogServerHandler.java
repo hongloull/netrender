@@ -17,6 +17,7 @@ public class RealLogServerHandler extends IoHandlerAdapter {
 	  }
 	  
 	  public void sessionOpened(IoSession session) throws Exception{
+		  
 		  sessions.add(session);
 	//	  System.out.println("New Session. totalNum:"+sessions.size() );
 	  }

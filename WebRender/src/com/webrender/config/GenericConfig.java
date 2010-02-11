@@ -11,9 +11,14 @@ import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-
+/**
+ * read configuration folder 
+ * sync with database
+ * @author WAEN
+ *
+ */
 public final class GenericConfig {
-	// For animationsp.com
+	// For Internet
 	private String  configPath = GenericConfig.class.getResource("/").getPath();
 	// For Lan
 //	private static String configPath = "Y:/NetRender/Server";
@@ -53,55 +58,12 @@ public final class GenericConfig {
 //		LOG.info("ConfigPath :" + configPath);
 	}
 
-	/**
-	 * 方法：getInstance<br/>. 获得Singlton的一个类实例
-	 * 
-	 * @return static的类实例
-	 */
+
 	public static synchronized GenericConfig getInstance() {
 		return instance;
 	}
 
 
-//	
-//	
-//	public int getStatusPort()
-//	{
-//		String sport =  config.getString("StatusPort");
-//		try{
-//			return  Integer.parseInt(sport);			
-//		}
-//		catch(Exception e)
-//		{
-//			return 10061;
-//		}
-//		
-//	}
-//	
-//	public int getCommandPort()
-//	{
-//		String sport =  config.getString("CommandPort");
-//		try{
-//			return  Integer.parseInt(sport);			
-//		}
-//		catch(Exception e)
-//		{
-//			return 10051;
-//		}
-//		
-//	}
-//	
-//	public int getServerPort()
-//	{
-//		String sport =  config.getString("ServerPort");
-//		try{
-//			return  Integer.parseInt(sport);			
-//		}
-//		catch(Exception e)
-//		{
-//			return 10061;
-//		}
-//	}
 	private void readServerConfig(){
 		File file = new File( getFile("server.xml") );
 		if( file.exists() ){
@@ -204,7 +166,11 @@ public final class GenericConfig {
 	}
 	
 
-	
+	/**
+	 * get config/path file
+	 * @param path  file path under config folder
+	 * @return 
+	 */
 	public String getFile(String path)
 	{
 		try {

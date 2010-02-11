@@ -45,7 +45,7 @@ public class UserLogin extends BaseAxis {
 				
 				Transaction tx = null;
 				try{
-					tx = getTransaction();
+					tx = HibernateSessionFactory.getSession().beginTransaction();
 					logOperate(regUserId,Operatelog.LOGIN,regName+" login");
 					tx.commit();
 				}catch(Exception e){
@@ -65,7 +65,7 @@ public class UserLogin extends BaseAxis {
 		{
 			return BaseAxis.ACTIONFAILURE+e.getMessage();
 		}finally{
-			closeSession();
+			HibernateSessionFactory.closeSession();
 		}
 		
 	}
