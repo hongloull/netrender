@@ -18,10 +18,11 @@ public class BaseOperate {
 	public static final String ACTIONSUCCESS = "Success";
 	public static final String ACTIONFAILURE = "Failure ";
 	/**
-	 * 
+	 * recording user's operateLog to database
+	 *  
 	 * @param regUserId
-	 * @param type    Operatelog.ADD or others
-	 * @param information
+	 * @param type Operatelog.LOGIN ADD MOD DEL ERROR
+	 * @param information message
 	 */
 	protected void logOperate(int regUserId,Short type,String information){
 		ReguserDAO regUserDAO = new ReguserDAO();
@@ -37,14 +38,26 @@ public class BaseOperate {
 			operateLogDAO.save(transientInstance);
 		}
 	}
+
+	/**
+	 * get hibernate session transaction
+	 * @return database transaction
+	 */
 	protected Transaction getTransaction()
 	{
 		return HibernateSessionFactory.getSession().beginTransaction();
 	}
+	/**
+	 * get hibernate session
+	 * @return database session
+	 */
 	protected org.hibernate.Session getSession()
 	{
 		return HibernateSessionFactory.getSession();
 	}
+	/**
+	 * close hibernate session
+	 */
 	protected void closeSession()
 	{
 		HibernateSessionFactory.closeSession();

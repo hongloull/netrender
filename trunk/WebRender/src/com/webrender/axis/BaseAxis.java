@@ -14,7 +14,12 @@ import com.webrender.dao.Operatelog;
 import com.webrender.dao.OperatelogDAO;
 import com.webrender.dao.Reguser;
 import com.webrender.dao.ReguserDAO;
-
+/**
+ * Axis Base Class
+ * 
+ * @author WAEN
+ *
+ */
 public abstract class BaseAxis {
 	private   static final Log LOG = LogFactory.getLog(BaseAxis.class);
 	protected static final String NOTLOGIN = "Failure:Please log in first.";
@@ -22,8 +27,8 @@ public abstract class BaseAxis {
 	protected static final String ACTIONFAILURE = "Failure ";	
 	protected static final String RIGHTERROR = "Failure: NoRight";
 	/**
-	 * 查看登录用户ID
-	 * @return ReguserId 0为未登录
+	 * get login userId from http session 
+	 * @return 0 : not log in
 	 */
 	protected int getLoginUserId()
 	{
@@ -41,27 +46,28 @@ public abstract class BaseAxis {
 	}
 	
 	/**
-	 * 未登录
-	 * if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
-	 * 需要管理员权限
-	 * if (  !this.canVisit(0) ) return BaseAxis.RIGHTERROR;
-     * 修改job权限
-	 * if (  ( !this.canVisit(0) && !this.canVisit(12) ) && ( !this.canVisit(11) || !this.isSelf(Integer.parseInt(commandId)) ) )
-	 *		 return BaseAxis.RIGHTERROR;
-	 * 需要20权限
-     * if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
-     * 
-	 * @param rightId
-	 * @return
+	 * Judge login user's rights
+		
+		<Right Id="0" detail="is a administrator" />
+		<Right Id="10" detail="can submit jobs to the dispatcher engine" />
+		<Right Id="11" detail="can manage jobs belongs to him" />
+		<Right Id="12" detail="can manage jobs belongs to others" />
+		<Right Id="13" detail="can arrange jobs changing their priority" />
+		<Right Id="20" detail="can manager hosts in the hosts list" />
+		<Right Id="21" detail="can remote control hosts in the hosts list" />
+		<Right Id="30" detail="can modify the status of the engine" />
+		<Right Id="40" detail="can login by web page" />
+		
+	 * @param rightId id's value
 	 */
-	@SuppressWarnings("unchecked")
 	protected boolean canVisit(int rightId)
 	{
 		try{
 			MessageContext mc = MessageContext.getCurrentContext();
 			Session session = mc.getSession();
 			Set<Integer> rightValue = (Set<Integer>)session.get("RightValue");
-			if(rightValue.contains(8)) return true;
+			// is admin
+			if(rightValue.contains(0)) return true; 
 			else{
 				return rightValue.contains(rightId)?true:false;				
 			}
@@ -71,10 +77,11 @@ public abstract class BaseAxis {
 		}
 	}
 	/**
-	 * 
+	 * recording user's operateLog to database
+	 *  
 	 * @param regUserId
-	 * @param type Operate.LOGIN ADD MOD DEL ERROR
-	 * @param information
+	 * @param type Operatelog.LOGIN ADD MOD DEL ERROR
+	 * @param information message
 	 */
 	protected void logOperate(int regUserId,Short type,String information){
 		ReguserDAO regUserDAO = new ReguserDAO();
@@ -90,20 +97,13 @@ public abstract class BaseAxis {
 		}
 	}
 	
+	/**
+	 * This implementation always throws an UnsupportedOperationException
+	 */
 	protected boolean isSelf(int objectId){
-		return false;
+		throw new UnsupportedOperationException();
 	}
-	protected Transaction getTransaction()
-	{
-		return HibernateSessionFactory.getSession().beginTransaction();
-	}
-	protected org.hibernate.Session getSession()
-	{
-		return HibernateSessionFactory.getSession();
-	}
-	protected void closeSession()
-	{
-		HibernateSessionFactory.closeSession();
-	}
+	
+
 	
 }

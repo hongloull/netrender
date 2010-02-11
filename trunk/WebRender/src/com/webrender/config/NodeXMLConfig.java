@@ -34,6 +34,7 @@ public class NodeXMLConfig extends XMLConfig {
 		Nodegroup all = nodeGroupDAO.findByNodeGroupName("All");
 		if (all!=null) lisNGs.remove(all);
 	}
+	
 	@Override
 	public void loadFromXML(File file) throws JDOMException {
 		LOG.debug("loadFromXML: "+file.getName());

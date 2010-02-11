@@ -21,20 +21,22 @@ import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
 import com.webrender.tool.NameMap;
 
+/**
+ * Command dispatcher Thread
+ * Singleton Pattern
+ * 
+ * 任务分发主线程
+ * 单一模式，防止出现分发命令冲突。
+ * 
+ * @author WAEN
+ */
 
-
-
-//	任务分发主线程
-//	单一模式，防止出现分发命令冲突。
-//  
-//
-//
 public final class ControlThreadServer extends Thread {
 	private static ControlThreadServer instance = null; 
-	private  boolean   threadStop   =   false;   
+	private  boolean   threadStop   =   false;   //  thread stop flag
 	private static final Log LOG = LogFactory.getLog(ControlThreadServer.class);
-	private int  NewNotify = 0; // 防止有新的节点插入Idles中，或新的Command加入到WaitingCommands中，二次建议。
-	private boolean noUsableNode = true;
+	private int  NewNotify = 0; // Double Check  防止有新的节点插入Idles中，或新的Command加入到WaitingCommands中
+	private boolean noUsableNode = true; // nodes usable flag 
 	private ControlThreadServer()
 	{
 		super();
@@ -51,6 +53,11 @@ public final class ControlThreadServer extends Thread {
 		return instance;
 	}
 	
+	/**
+	 * 负责分发任务，一直运行
+	 * 由wait() notify() 控制运行
+	 * 
+	 */
 	public void run()
 	{
 		NodeDAO nodeDAO = new NodeDAO();
@@ -229,7 +236,7 @@ public final class ControlThreadServer extends Thread {
 							
 						}
 					}
-//				循环上述操作：到所有任务全部完成  停止该线程
+//				
 				}
 				catch(org.hibernate.exception.JDBCConnectionException e)
 				{
