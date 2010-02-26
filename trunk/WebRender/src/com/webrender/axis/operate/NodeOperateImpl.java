@@ -163,6 +163,8 @@ public class NodeOperateImpl extends BaseOperate {
 			node.setPri(pri);
 			logOperate(regUserId,Operatelog.MOD,"set Node:"+node.getNodeName()+" 's priority to "+ pri );
 			tx.commit();
+			NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(id);
+			nodeMachine.setPri(pri);
 			return ACTIONSUCCESS;
 		}catch(NumberFormatException e){
 			LOG.error("setPriority NumberFormatException nodeId:"+nodeId+" priority:"+priority);
