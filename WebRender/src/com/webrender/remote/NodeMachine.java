@@ -108,6 +108,11 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	 */
 	public void setPri(Short pri) {
 		this.pri = pri;
+		if( NodeMachineManager.getInstance().containIdles(this) ){
+			// ReOrder
+			NodeMachineManager.getInstance().removeIdleMachines(this);
+			NodeMachineManager.getInstance().addNodeMachines(this);
+		}
 	}
 
 
