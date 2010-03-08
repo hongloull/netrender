@@ -23,6 +23,7 @@
 <subcode name="S_PAUSE" id="2"/>
 </code>
 <code name="S_PATHCONFIG" id="7"/>
+<code name="S_WAKEUP" id="8"/>
 <code name="S_ERROR" id="100"/>
 <code name="N_ERROR" id="99"/>
 <code name="N_RUN" id="51"/>
