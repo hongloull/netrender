@@ -249,6 +249,28 @@ public class NodeOperate extends BaseAxis {
 		return (new NodeOperateImpl()).getExeLogList(nodeId);
 	}
 	
+	public String wakeUpNode(String[] nodeIds){
+		if( !this.canVisit(0)&&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
+		NodeOperateImpl nodeOperateImpl = new NodeOperateImpl();
+		StringBuffer result = new StringBuffer();
+		String subResult = null;
+		for(String nodeId:nodeIds){
+			subResult = nodeOperateImpl.wakeUpNode(nodeId);
+			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
+				result.append(nodeId).append(":").append(subResult).append("\n\r");
+			}
+		}
+		if(result.length()==0){
+			result.append(BaseOperate.ACTIONSUCCESS);
+		}
+		return result.toString();
+	}
+	
+	public String wakeUpMAC(String MAC){
+		if( !this.canVisit(0)&&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
+		NodeOperateImpl nodeOperateImpl = new NodeOperateImpl();
+		return nodeOperateImpl.wakeUpMac(MAC);
+	}
 	public String delNode(String[] nodeIds){
 		if (  !this.canVisit(0) &&  !this.canVisit(20) ) return BaseAxis.RIGHTERROR;
 		NodeOperateImpl nodeOperateImpl = new NodeOperateImpl();
