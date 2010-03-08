@@ -2,6 +2,8 @@ package com.webrender.axis.operate;
 
 import java.io.File;
 import java.util.Date;
+import java.util.Hashtable;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,11 +22,27 @@ import com.webrender.protocol.messages.ServerMessages;
 import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
 import com.webrender.server.ControlThreadServer;
+import com.webrender.server.NodeLogServer;
 
 public class NodeOperateImpl extends BaseOperate {
 	
 	private static final Log LOG = LogFactory.getLog(NodeOperateImpl.class);
 	private ServerMessages serverMessages = new ServerMessages();
+	private static Map<String,String> macs = new Hashtable<String,String>();
+	static{
+		macs.put("5",  "00:16:76:E2:77:A3"); //192.168.20.129
+		macs.put("19", "00:13:21:C9:88:25"); //192.168.20.21
+		macs.put("22", "00:13:21:C9:7C:35"); //192.168.20.56
+		macs.put("42", "00:13:21:C9:88:1B"); //192.168.20.20
+		macs.put("44", "00:13:21:C9:7B:AF"); //192.168.20.48
+		macs.put("62", "00:16:76:E2:78:E4"); //192.168.20.127
+		macs.put("66", "00:13:21:C9:93:32"); //192.168.20.22
+		macs.put("68", "00:13:21:C9:74:87"); //192.168.20.13
+		macs.put("69", "00:13:21:C9:7A:AF"); //192.168.20.29
+		macs.put("70", "00:13:21:C9:76:2A"); //192.168.20.34
+	}
+	
+	
 	public String pauseNode(String nodeId,int regUserId)
 	{	
 		LOG.debug("pauseNode nodeId:"+nodeId);
@@ -385,6 +403,22 @@ public class NodeOperateImpl extends BaseOperate {
 			closeSession();
 		}
 		
+	}
+	
+	public String wakeUpNode(String nodeId) {
+		
+		String mac = macs.get(nodeId);
+		if(mac==null) return ACTIONFAILURE+"NodeId:"+nodeId+" hasn't its MAC Address.";
+		return wakeUpMac(mac);
+	}
+	public String wakeUpMac(String MAC){
+		try {
+			NodeLogServer.getInstance().wakeUp(MAC);
+			return ACTIONSUCCESS;
+		} catch (Exception e) {
+			LOG.error("wakeUp fail MAC:"+MAC,e);
+			return ACTIONFAILURE+e.getMessage();
+		}
 	}
 	
 	public String delNode(String nodeId,int regUserId){

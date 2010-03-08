@@ -48,6 +48,11 @@ public class ServerMessages {
 		String[] datas = {message};
 		return createPkt(EOPCODES.getInstance().get("S_ERROR"),fmt,datas);
 	}
+	public ByteBuffer createProxyPkt(String mac) throws Exception {
+		char[] fmt = {'s'};
+		String[] datas = {mac};
+		return createPkt(EOPCODES.getInstance().get("S_WAKEUP"),fmt,datas);
+	}
 	
 	/**
 	 * 编码函数 协议如下：
@@ -138,4 +143,5 @@ public class ServerMessages {
 		buffer.flip();
 		return buffer;
 	}
+
 }

@@ -53,5 +53,9 @@ public final class NodeLogServer {
 //    	acceptor.unbindAll();
 //    	LOG.info("NodeLogServer  port " + PORT + " is closed");
 //    }
+    public void wakeUp(String message) throws Exception
+    {
+    	( (NodeLogServerHandler)ioHandler ).wakeUp(message);
+    }
 
 }

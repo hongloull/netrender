@@ -2,6 +2,11 @@ package com.webrender.server;
 
 
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.apache.mina.common.ByteBuffer;
 
 
@@ -23,6 +28,7 @@ import com.webrender.remote.NodeMachineManager;
 public class NodeLogServerHandler extends IoHandlerAdapter {
 	private static final Log LOG = LogFactory.getLog(NodeLogServerHandler.class);
 	private ServerMessages serverMessages = new ServerMessages();
+	private Set<IoSession> proxySessions = Collections.synchronizedSet(new HashSet<IoSession>());
 	public void exceptionCaught(IoSession session, Throwable cause) {
 		  // Close connection when unexpected exception is caught.
 		LOG.error("NodeLogServerHandler exception",cause);
@@ -89,7 +95,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 				}
 				while(lastBuffer.hasRemaining()){
 					opCode = lastBuffer.get();
-//					LOG.info("CODEID:"+ opCode + "NodeId :" +nodeId);
+					LOG.info("CODEID:"+ opCode + "NodeId :" +nodeId);
 //					LOG.info("parse LastBuffer position:"+lastBuffer.position() +" limit:" + lastBuffer.limit()+" capacity:"+ lastBuffer.capacity());
 					if( EOPCODES.getInstance().get("N_RUN").getId() == opCode){
 						if (nodeId != null){ 
@@ -109,8 +115,18 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 						}
 					}
 					else if (EOPCODES.getInstance().get("N_GETSERVERSTATUS").getId()== opCode){
-						lastBuffer.get(); // 后面跟了00 需要读取
+						lastBuffer.get(); // 后面跟了00 需要读取 丢掉。
 						session.write(serverMessages.createServerStatusPkt());
+					}
+					else if(EOPCODES.getInstance().get("N_PROXY").getId() == opCode){
+						// Proxy node
+						if(!proxySessions.contains(session)){
+							LOG.info("new proxy connect.");
+							proxySessions.add(session);
+							session.setIdleTime(IdleStatus.READER_IDLE, 0);
+//							session.write(serverMessages.createServerStatusPkt());
+						}
+						
 					}
 					else if(nodeId !=null && nodeId !=0){
 						ByteBuffer remainBuffer = handler.parseClientPacket(EOPCODES.getInstance().get(opCode),lastBuffer,NodeMachineManager.getInstance().getNodeMachine(nodeId));
@@ -208,9 +224,22 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 			if(nodeSession == session){
 				LOG.info("NodeId: "+nodeId + " set session null");
 				NodeMachineManager.getInstance().getNodeMachine(nodeId).setSession(null);
-				NodeMachineManager.getInstance().deleteNodeMachine(nodeId);				
+				NodeMachineManager.getInstance().deleteNodeMachine(nodeId);		
 			}
-		}
+		}		
+		proxySessions.remove(session);
 		HibernateSessionFactory.closeSession();
 	}
+	
+	 public void wakeUp(String mac) throws Exception {
+		  synchronized (proxySessions) {
+			  Iterator iter = proxySessions.iterator();
+			  while (iter.hasNext()) {
+				  IoSession s = (IoSession) iter.next();
+				  if (s.isConnected()) {
+					  s.write(serverMessages.createProxyPkt(mac));
+				  }
+			  }
+		  }
+	  }
 }
