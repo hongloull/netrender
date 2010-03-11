@@ -63,14 +63,15 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	private ServerMessages serverMessages = new ServerMessages();
 	private CommandUtils commandUtils = new CommandUtils();
 	private CommandDAO commandDAO = new CommandDAO();
-	private boolean isReady = false;
 	private Date shellCommandTime = null;
 	private String shellCommand = null;
 //	IResultStore resultStore;
-
+	private static final int ERRORMAX = 5;
+	private int errorNum = 0;
 
 	private IoSession session = null;
 
+	private boolean isReady = false;
 	private boolean isConnect = false;
 	private boolean isBusy = false;
 	private boolean isRealTime = false;
@@ -409,9 +410,14 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	public boolean isPause() {
 		return isPause;
 	}
-
+	/**
+	 * set pauseStatus & reset errornum
+	 * @param isPause
+	 */
 	public void setPause(boolean isPause) {
-		this.isPause = isPause;
+		if ( this.isPause == isPause) return;
+		else this.isPause = isPause;
+		errorNum = 0;
 		selfCheck();
 	}
 	
@@ -457,6 +463,10 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 					commandDAO.reinitCommand(command);					
 				}else{
 					commandDAO.setError(command);
+					errorNum++;
+					if(errorNum>=ERRORMAX){ //  Continuous error setPause
+						setPause(true);
+					}
 				}
 				saveRealLog(commandId,false,message);
 				
@@ -521,6 +531,8 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				commandDAO.attachDirty(command);
 				tx.commit();
 				LOG.info("NodeId: "+nodeId+" finish command: "+commandId);
+				// reset error number.
+				errorNum = 0;
 				removeCommandId(commandId);
 				
 				return command.getQuest();
@@ -625,8 +637,8 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 						
 		}
 		else if(! this.currentCommands.contains(commandId) ){
-			LOG.warn("NodeId:"+nodeId+" get new commandId:"+commandId+ " message:"+message);
-			this.addCommandId(commandId);
+			LOG.error("NodeId:"+nodeId+" get new commandId:"+commandId+ " message:"+message);
+//			this.addCommandId(commandId);
 		}
 		try{
 //			if (timeOutThread == null){

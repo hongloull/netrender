@@ -136,8 +136,5 @@ public class QuestsStateImpl extends BaseOperate {
 //				LOG.info(" getQuestsStatus finally closeSession");
 			this.closeSession();
 		}
-		
-		
-
 	}
 }
