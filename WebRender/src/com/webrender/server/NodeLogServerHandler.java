@@ -95,7 +95,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 				}
 				while(lastBuffer.hasRemaining()){
 					opCode = lastBuffer.get();
-					LOG.info("CODEID:"+ opCode + "NodeId :" +nodeId);
+//					LOG.info("CODEID:"+ opCode + "NodeId :" +nodeId);
 //					LOG.info("parse LastBuffer position:"+lastBuffer.position() +" limit:" + lastBuffer.limit()+" capacity:"+ lastBuffer.capacity());
 					if( EOPCODES.getInstance().get("N_RUN").getId() == opCode){
 						if (nodeId != null){ 
