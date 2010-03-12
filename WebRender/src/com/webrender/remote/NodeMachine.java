@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringBufferInputStream;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -63,8 +64,8 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	private ServerMessages serverMessages = new ServerMessages();
 	private CommandUtils commandUtils = new CommandUtils();
 	private CommandDAO commandDAO = new CommandDAO();
-	private Date shellCommandTime = null;
-	private String shellCommand = null;
+//	private Date shellCommandTime = null;
+//	private String shellCommand = null;
 //	IResultStore resultStore;
 	private static final int ERRORMAX = 5;
 	private int errorNum = 0;
@@ -151,7 +152,9 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			command.setSendTime(new Date());
 			addCommandId(command.getCommandId());
 			status.setJobName(command.getQuest().getQuestName());
-			
+			status.setJobId(command.getCommandId().toString());
+			SimpleDateFormat   df=new  SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
+			status.setSendTime(df.format(command.getSendTime())+"");
 			status.setFrames(commandDAO.getNote(command).toString());
 //			if (timeOutThread == null){
 //				LOG.debug("timeOutThread == null startNew");
@@ -180,13 +183,13 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			return false;
 		}
 		if( this.execute(cmdBuffer)){
-			shellCommandTime = new Date();
-			shellCommand = command;
+//			shellCommandTime = new Date();
+//			shellCommand = command;
 			LOG.info("nodeId: "+nodeId+ " exeShellCommand success ");
 			return true;
 		}else{
-			shellCommandTime = null;
-			shellCommand = null;
+//			shellCommandTime = null;
+//			shellCommand = null;
 			LOG.error("nodeId: "+nodeId+ " exeShellCommand fail time out ");
 			return false;
 		}
@@ -303,9 +306,10 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		private String status;
 		private String ramUsage="";
 		private String cpuUsage="";
+		private String jobId="";
 		private String jobName="";
 		private String frames="";
-		private String log;
+		private String sendTime="";
 		
 		public String getCpuUsage() {
 			return cpuUsage;
@@ -331,12 +335,8 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		public void setJobName(String jobName) {
 			this.jobName = jobName;
 		}
-		public String getLog() {
-			return log;
-		}
-		public void setLog(String log) {
-			this.log = log;
-		}
+		
+
 		public String getPlatform() {
 			return platform;
 		}
@@ -362,7 +362,31 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			this.status = status;
 		}
 		public String toString(){
-			return this.status+this.ramUsage+this.cpuUsage+this.jobName+this.frames+this.log;
+			return this.status+this.ramUsage+this.cpuUsage+this.jobName+this.frames+this.sendTime;
+		}
+		/**
+		 * @return the startTime
+		 */
+		public String getSendTime() {
+			return sendTime;
+		}
+		/**
+		 * @param startTime the startTime to set
+		 */
+		public void setSendTime(String sendTime) {
+			this.sendTime = sendTime;
+		}
+		/**
+		 * @return the jobId
+		 */
+		public String getJobId() {
+			return jobId;
+		}
+		/**
+		 * @param jobId the jobId to set
+		 */
+		public void setJobId(String jobId) {
+			this.jobId = jobId;
 		}
 	}
 	
@@ -389,10 +413,11 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	}
 
 	public void setBusy(boolean isBusy) {
-		
 		LOG.debug(nodeId +":setBusy("+isBusy+")");
 		if (isBusy==false){
 			status.setJobName("");
+			status.setJobId("");
+			status.setSendTime("");
 			status.setFrames("");
 		}
 		this.isBusy = isBusy;
@@ -616,7 +641,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 
 
 	public synchronized void addFeedBack(Integer commandId, String message) {
-//		LOG.info("addFeedBack"+message);
+		LOG.info("addFeedBack commandId:"+commandId + " message: "+message);
 		if (  this.isRealTime() )
 		{
 			RealLogServer.getInstance().broadCast(nodeId+"***"+message);
@@ -633,11 +658,12 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			}
 		}
 		else if( commandId == -1 ){
-			// ShellCommand feedback
+			return;
 						
 		}
 		else if(! this.currentCommands.contains(commandId) ){
 			LOG.error("NodeId:"+nodeId+" get new commandId:"+commandId+ " message:"+message);
+			return;
 //			this.addCommandId(commandId);
 		}
 		try{
@@ -660,11 +686,11 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			else{
 				if(realLogS == null){
 					File file = null;
-					if(commandId != -1){
-						file = NetRenderLogFactory.getInstance().getFile(commandId);
-					}else{
-						file = NetRenderLogFactory.getInstance().getExeLog(nodeId,shellCommandTime);	
-					}
+//					if(commandId != -1){
+					file = NetRenderLogFactory.getInstance().getFile(commandId);
+//					}else{
+//						file = NetRenderLogFactory.getInstance().getExeLog(nodeId,shellCommandTime);	
+//					}
 					
 					if(file.getParentFile().exists() || file.getParentFile().mkdirs()){
 						realLogS = new FileOutputStream(file);

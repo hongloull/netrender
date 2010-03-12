@@ -40,6 +40,7 @@ public class NodeOperateImpl extends BaseOperate {
 		macs.put("68", "00:13:21:C9:74:87"); //192.168.20.13
 		macs.put("69", "00:13:21:C9:7A:AF"); //192.168.20.29
 		macs.put("70", "00:13:21:C9:76:2A"); //192.168.20.34
+		macs.put("78", "00:16:76:E2:EF:7C");   //192.168.20.145
 	}
 	
 	

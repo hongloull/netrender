@@ -82,7 +82,10 @@ public final class NodeUtils {
 			root.addAttribute("procNum","1");
 			root.addAttribute("platform", nodeStatus.getPlatform()+"");
 			root.addAttribute("jobName",nodeStatus.getJobName()+"");
-			root.addAttribute("realTime",nodeMachine.isRealTime()?"Enable":"Disable");	
+			root.addAttribute("jobId",nodeStatus.getJobId()+"");
+			root.addAttribute("sendTime", nodeStatus.getSendTime()+"");
+			root.addAttribute("realTime",nodeMachine.isRealTime()?"Enable":"Disable");
+			
 			LOG.debug("bean2xml_State success nodeId: "+node.getNodeId());
 			return root;
 		}

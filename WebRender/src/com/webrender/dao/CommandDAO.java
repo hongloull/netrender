@@ -13,6 +13,8 @@ import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.Example;
 
+import com.webrender.remote.NodeMachine;
+import com.webrender.remote.NodeMachineManager;
 import com.webrender.tool.NameMap;
 
 /**
@@ -215,6 +217,12 @@ public class CommandDAO extends BaseHibernateDAO {
 		LOG.debug("setFinish commandId:"+instance.getCommandId());
 		try
 		{
+			if( instance.getStatus().getStatusId()==71){
+				NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine( instance.getNode().getNodeId() );
+				if (nodeMachine.isBusy()==true){
+					nodeMachine.removeCommandId(instance.getCommandId());					
+				}
+			}
 			StatusDAO statusDAO = new StatusDAO();
 			instance.setStatus(statusDAO.findById(72));
 //			instance.setSendTime(new Date());
