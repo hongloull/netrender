@@ -641,7 +641,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 
 
 	public synchronized void addFeedBack(Integer commandId, String message) {
-		LOG.info("addFeedBack commandId:"+commandId + " message: "+message);
+//		LOG.info("addFeedBack commandId:"+commandId + " message: "+message);
 		if (  this.isRealTime() )
 		{
 			RealLogServer.getInstance().broadCast(nodeId+"***"+message);
