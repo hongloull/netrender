@@ -207,6 +207,9 @@ public class NodeDAO extends BaseHibernateDAO {
 	
 	public List getNodeGroupIds(Nodegroup group)
 	{
+		if(group==null){
+			return null;
+		}
 //		LOG.info("getting Nodegroup Ids in NodegroupName: " +group.getNodeGroupName());
 		try {
 			String queryString = "select distinct node.nodeId from Node node , Nodegroup pool where node in elements(pool.nodes) and pool.nodeGroupId="+group.getNodeGroupId() ;

@@ -28,8 +28,6 @@
 	<property name="hibernate.c3p0.validate">true</property>
 	<property name="connection.password">111111</property>
 
-
-
 	<mapping resource="com/webrender/dao/Operatelog.hbm.xml" />
 	<mapping resource="com/webrender/dao/Nodegroup.hbm.xml" />
 	<mapping resource="com/webrender/dao/Timegroup.hbm.xml" />

@@ -81,6 +81,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 //	private TimeoutThread timeOutThread = null;
 	
 	
+	@SuppressWarnings("unused")
 	private NodeMachine(){		
 	}
 	
@@ -95,6 +96,11 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	    cTest.setDaemon(true);
 		cTest.start();
 	}
+	
+	//TODO 节点端需要保证能讲渲染的最终状态发送会服务器
+	/**
+	 * 
+	 */
 	
 	
 	/**
@@ -398,7 +404,8 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		if (isConnect==false)
 		{
 			setReady(false);
-			cleanRunCommands("NodeId:"+nodeId +" disconnect");
+			//TODO waiting reconnect. go on. 
+//			cleanRunCommands("NodeId:"+nodeId +" disconnect");
 		}
 		selfCheck();			
 	}
@@ -649,13 +656,13 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		
 		if(commandId == null || commandId == 0){
 			//TODO 应该报错 待测试
-			if(currentCommands.iterator().hasNext()){
-				commandId = this.currentCommands.iterator().next();				
-			}
-			if (commandId == null || commandId == 0){
-				LOG.error("node: "+nodeId+" commandId :"+commandId+" message: "+message);
-				return;
-			}
+			LOG.error("node: "+nodeId+" commandId :"+commandId+" message: "+message);
+//			if(currentCommands.iterator().hasNext()){
+//				commandId = this.currentCommands.iterator().next();				
+//			}
+//			if (commandId == null || commandId == 0){
+//				return;
+//			}
 		}
 		else if( commandId == -1 ){
 			return;
