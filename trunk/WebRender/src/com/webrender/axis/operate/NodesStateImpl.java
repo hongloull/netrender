@@ -1,6 +1,8 @@
 package com.webrender.axis.operate;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 
@@ -16,6 +18,8 @@ import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
 import com.webrender.dao.Nodegroup;
 import com.webrender.dao.NodegroupDAO;
+import com.webrender.dao.Reguser;
+import com.webrender.dao.ReguserDAO;
 import com.webrender.dao.StatusDAO;
 import com.webrender.remote.NodeMachineManager;
 
@@ -97,17 +101,31 @@ public class NodesStateImpl extends BaseOperate{
 //			this.closeSession();
 //		}
 //	}
-	public String getNodesStatus(String groupName) {
+	public String getNodesStatus(String groupName,int regUserId,boolean isAdmin) {
 		LOG.debug("getNodesStatus groupName:"+groupName);
 		NodegroupDAO nGDAO = new NodegroupDAO();
+		ReguserDAO regUserDAO = new ReguserDAO();
+		Reguser regUser = regUserDAO.findById(regUserId);
 		Nodegroup group = nGDAO.findByNodeGroupName(groupName);
 		if(group==null){
 			return ACTIONFAILURE+" Pool "+groupName+" not exist!";
+		}else if(regUser == null){
+			return ACTIONFAILURE+" Reguser "+regUserId+" not exist!";
 		}
 		else{
 			Set<Integer> nodeMachinesIds = NodeMachineManager.getInstance().getNodeMachines();
-			
-			nodeMachinesIds.retainAll( nodeDAO.getNodeGroupIds(group) );
+//			List<Integer> listGroupIds = null ; 
+			if( isAdmin || regUser.getNodegroups().contains(group)){
+//				listGroupIds = nodeDAO.getNodeGroupIds(group);
+				nodeMachinesIds.retainAll( nodeDAO.getNodeGroupIds(group) );
+			}else{
+				Set<Integer> set_GroupsIds = new HashSet<Integer>();
+				Iterator<Nodegroup> ite_Groups = regUser.getNodegroups().iterator();
+				while(ite_Groups.hasNext()){
+					set_GroupsIds.addAll( nodeDAO.getNodeGroupIds( ite_Groups.next() ) );
+				}
+				nodeMachinesIds.retainAll( set_GroupsIds);
+			}
 			Node node = null;
 			Element root = new Element("Nodes");
 			Document doc = new Document(root);
@@ -130,21 +148,19 @@ public class NodesStateImpl extends BaseOperate{
 	
 	public String getAllNodes(){
 		
-		StatusDAO statusDAO = new StatusDAO();
-		Transaction tx = null;
-		try {
-			tx = getSession().beginTransaction();
-			statusDAO.updateSystemVersion();
-			tx.commit();					
-		}catch (Exception e){					
-			LOG.error("UpdateSystemVersion Error", e);
-			if(tx!=null){
-				tx.rollback();
-			}
-		}finally{		
-		}
-		
-		
+//		StatusDAO statusDAO = new StatusDAO();
+//		Transaction tx = null;
+//		try {
+//			tx = getSession().beginTransaction();
+//			statusDAO.updateSystemVersion();
+//			tx.commit();					
+//		}catch (Exception e){					
+//			LOG.error("UpdateSystemVersion Error", e);
+//			if(tx!=null){
+//				tx.rollback();
+//			}
+//		}finally{		
+//		}
 		try{
 			LOG.debug("getAllNodes");
 			Element root = new Element("Nodes");

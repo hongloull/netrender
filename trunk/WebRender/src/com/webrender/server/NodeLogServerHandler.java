@@ -224,7 +224,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 			if(nodeSession == session){
 				LOG.info("NodeId: "+nodeId + " set session null");
 				NodeMachineManager.getInstance().getNodeMachine(nodeId).setSession(null);
-				NodeMachineManager.getInstance().deleteNodeMachine(nodeId);		
+//				NodeMachineManager.getInstance().deleteNodeMachine(nodeId);		
 			}
 		}		
 		proxySessions.remove(session);

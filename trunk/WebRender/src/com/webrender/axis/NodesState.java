@@ -16,9 +16,10 @@ public class NodesState extends BaseAxis{
 	}
 	
 	public String getNodesStatus(String groupName){
-		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+		int regUserId = this.getLoginUserId();
+		if ( regUserId == 0 )	return BaseAxis.NOTLOGIN;
 		
-		return (new NodesStateImpl()).getNodesStatus(groupName);
+		return (new NodesStateImpl()).getNodesStatus(groupName,regUserId,canVisit(0));
 	}
 	public String getAllNodes(){
 		

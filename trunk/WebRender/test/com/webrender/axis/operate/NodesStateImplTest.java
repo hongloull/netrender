@@ -45,7 +45,8 @@ public class NodesStateImplTest {
 	 */
 	@Test
 	public final void testGetNodesStatus() {
-		assertTrue(impl.getNodesStatus("All").startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
+//		impl.getNodesStatus("All",1,true);
+		assertTrue(impl.getNodesStatus("All",1,true).startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
 	}
 
 	/**

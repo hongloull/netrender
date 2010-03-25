@@ -5,7 +5,7 @@
   <artifactId>WebRender</artifactId>
   <packaging>war</packaging>
   <name/>
-  <version>1.1.8.9</version>
+  <version>1.1.9.2</version>
   <description/>
   <build>
     <sourceDirectory>${basedir}/src</sourceDirectory>

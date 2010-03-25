@@ -336,10 +336,11 @@ public class CommandDAO extends BaseHibernateDAO {
 			String queryString = "select command.quest.nodegroup from Command as command where commandId="+command.getCommandId();
 			Query queryObject = getSession().createQuery(queryString);
 			List list = queryObject.list();
-			if(list.size()==1){
+			if(list.size()>=1){
 				return (Nodegroup)list.get(0);				
 			}
 			else{
+				LOG.error("CommandId:"+command.getCommandId()+" getNodeGroup null");
 				return null;
 			}
 		}catch (RuntimeException re) {

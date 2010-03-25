@@ -139,19 +139,24 @@ public final class ControlThreadServer extends Thread {
 								}
 							}
 							else{
+
 								List list_NodeGroupIds = nodeDAO.getNodeGroupIds(commandDAO.getNodegroup(command));
-								for(int i = 0 ; i<length ; i++){
-									tempNodeMachine = (NodeMachine) nodeMachines[i];
-									if(list_NodeGroupIds.contains(tempNodeMachine.getId()) ){
-										// 该节点保包含在任务执行池中，可以渲染
-										LOG.debug("command:"+command.getCommandId()+" 's nodegroup contains nodeId:"+tempNodeMachine.getId());
-										nodeMachine = tempNodeMachine;
-										node = nodeDAO.findById(tempNodeMachine.getId());
-										noUsableNode = false;
-										break;
-									}
-									LOG.debug("NoUsableNode for commandId:"+command.getCommandId());
+								if(list_NodeGroupIds == null){
 									noUsableNode = true;
+								}else{
+									for(int i = 0 ; i<length ; i++){
+										tempNodeMachine = (NodeMachine) nodeMachines[i];
+										if(list_NodeGroupIds.contains(tempNodeMachine.getId()) ){
+											// 该节点保包含在任务执行池中，可以渲染
+											LOG.debug("command:"+command.getCommandId()+" 's nodegroup contains nodeId:"+tempNodeMachine.getId());
+											nodeMachine = tempNodeMachine;
+											node = nodeDAO.findById(tempNodeMachine.getId());
+											noUsableNode = false;
+											break;
+										}
+										LOG.debug("NoUsableNode for commandId:"+command.getCommandId());
+										noUsableNode = true;
+									}									
 								}
 							}
 						}

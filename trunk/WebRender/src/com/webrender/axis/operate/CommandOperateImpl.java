@@ -181,6 +181,15 @@ public class CommandOperateImpl extends BaseOperate {
 		}
 	}
 	
-	
+	public String getFrame(String commandId){
+		LOG.debug("getFrame commandId:"+commandId);
+		commandDAO.findById(Integer.parseInt(commandId) );
+		try{
+			String framesValue = null;
+		}catch(Exception e){
+			
+		}
+		return null;
+	}
 	
 }
