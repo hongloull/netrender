@@ -20,17 +20,17 @@ public class TestNodeMachine {
 	
 	@Test
 	public void testAddRealLog(){
-		NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(3);
-		int commandId = 143;
-		nodeMachine.addCommandId(commandId);
-		for(int i = 0 ; i<5;i++){
-			try {
-				Thread.sleep(i*7000);
-				nodeMachine.addFeedBack(commandId,i+":realLog" );
-			} catch (InterruptedException e) {
-				//e.printStackTrace();
-			}
-		}
+//		NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(3);
+//		int commandId = 143;
+//		nodeMachine.addCommandId(commandId);
+//		for(int i = 0 ; i<5;i++){
+//			try {
+//				Thread.sleep(i*7000);
+//				nodeMachine.addFeedBack(commandId,i+":realLog" );
+//			} catch (InterruptedException e) {
+//				//e.printStackTrace();
+//			}
+//		}
 //		nodeMachine.addRealLog(commandId, "***GOODBYE***");
 	}
 	

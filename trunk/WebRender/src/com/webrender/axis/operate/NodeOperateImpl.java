@@ -30,23 +30,64 @@ public class NodeOperateImpl extends BaseOperate {
 	private ServerMessages serverMessages = new ServerMessages();
 	private static Map<String,String> macs = new Hashtable<String,String>();
 	static{
-		macs.put("5",  "00:16:76:E2:77:A3"); //192.168.20.129
-		macs.put("19", "00:13:21:C9:88:25"); //192.168.20.21
-		macs.put("22", "00:13:21:C9:7C:35"); //192.168.20.56
-		macs.put("42", "00:13:21:C9:88:1B"); //192.168.20.20
-		macs.put("44", "00:13:21:C9:7B:AF"); //192.168.20.48
-		macs.put("62", "00:16:76:E2:78:E4"); //192.168.20.127
-		macs.put("66", "00:13:21:C9:93:32"); //192.168.20.22
-		macs.put("68", "00:13:21:C9:74:87"); //192.168.20.13
-		macs.put("69", "00:13:21:C9:7A:AF"); //192.168.20.29
-		macs.put("72", "00:13:21:C9:76:2A"); //192.168.20.34
-		macs.put("74", "00:16:76:E2:E6:62"); //192.168.20.125
-		macs.put("75", "00:13:21:C9:75:D9"); //192.168.20.36
-		macs.put("76", "00:0F:20:6C:F8:B8"); //192.168.20.17
-		macs.put("77", "00:13:21:C9:7A:33"); //192.168.20.50
-		macs.put("78", "00:16:76:E2:EF:7C");   //192.168.20.145
+//		macs.put("5",  "00:16:76:E2:77:A3"); //192.168.20.129
+		macs.put("192.168.20.21", "00:13:21:C9:88:25"); //192.168.20.21
+		macs.put("192.168.20.56", "00:13:21:C9:7C:35"); //192.168.20.56
+		macs.put("192.168.20.20", "00:13:21:C9:88:1B"); //192.168.20.20
+		macs.put("192.168.20.48", "00:13:21:C9:7B:AF"); //192.168.20.48
+		macs.put("192.168.20.127", "00:16:76:E2:78:E4"); //192.168.20.127
+		macs.put("192.168.20.22", "00:13:21:C9:93:32"); //192.168.20.22
+		macs.put("192.168.20.13", "00:13:21:C9:74:87"); //192.168.20.13
+		macs.put("192.168.20.29", "00:13:21:C9:7A:AF"); //192.168.20.29
+		macs.put("192.168.20.34", "00:13:21:C9:76:2A"); //192.168.20.34
+		macs.put("192.168.20.125", "00:16:76:E2:E6:62"); //192.168.20.125
+		macs.put("192.168.20.36", "00:13:21:C9:75:D9"); //192.168.20.36
+		macs.put("192.168.20.17", "00:0F:20:6C:F8:B8"); //192.168.20.17
+		macs.put("192.168.20.50", "00:13:21:C9:7A:33"); //192.168.20.50
+		macs.put("192.168.20.145", "00:16:76:E2:EF:7C");   //192.168.20.145
 //		macs.put("83", "00:13:21:C9:7A:48");   //192.168.20.60
-		macs.put("84", "40-61-86-64-86-D9"); //192.168.20.155
+		macs.put("192.168.20.155", "40:61:86:64:86:D9"); //192.168.20.155
+		
+		macs.put("172.16.20.152", "00:12:79:91:e2:80");
+		macs.put("172.16.20.153", "00:11:85:fd:de:02");
+		macs.put("172.16.20.154", "00:14:c2:3c:7d:86");
+		macs.put("172.16.20.155", "40:61:86:64:86:d9");
+		macs.put("172.16.20.156", "00:14:c2:3d:53:81");
+		macs.put("172.16.20.157", "00:14:c2:40:68:6c");
+		macs.put("172.16.20.158", "00:14:c2:3d:43:13");
+		macs.put("172.16.20.160", "00:13:21:1d:1d:32");
+		macs.put("172.16.20.161", "00:14:c2:3c:0d:e8");
+		macs.put("172.16.20.162", "00:14:c2:3d:63:62");
+		macs.put("172.16.20.163", "00:14:c2:3c:8c:fe");
+		macs.put("172.16.20.164", "00:14:c2:3b:fe:f3");
+		macs.put("172.16.20.165", "00:14:c2:3c:9c:53");
+		macs.put("172.16.20.166", "00:11:85:6b:3f:25");
+		macs.put("172.16.20.167", "00:14:c2:3d:53:82");
+		macs.put("172.16.20.168", "00:14:c2:3f:9a:a3");
+		macs.put("172.16.20.169", "00:14:c2:40:58:7a");
+		macs.put("172.16.20.170", "00:14:c2:3c:1d:5d");
+		macs.put("172.16.20.171", "00:14:c2:3c:e7:21");
+		macs.put("172.16.20.172", "00:14:c2:3c:0d:f5");
+		macs.put("172.16.20.173", "00:14:c2:3d:63:63");
+		macs.put("172.16.20.174", "00:14:c2:40:58:40");
+		macs.put("172.16.20.175", "00:13:21:1b:94:f9");
+		macs.put("172.16.20.176", "00:14:c2:3d:63:b1");
+		macs.put("172.16.20.177", "00:14:c2:3f:47:4e");
+		macs.put("172.16.20.178", "00:14:c2:3c:1d:af");
+		macs.put("172.16.20.179", "00:12:79:93:c6:d8");
+		macs.put("172.16.20.180", "00:14:c2:3c:49:09");
+		macs.put("172.16.20.181", "00:14:c2:40:68:6b");
+		macs.put("172.16.20.182", "00:14:c2:3d:53:58");
+		macs.put("172.16.20.183", "00:11:85:fd:cd:a3");
+		macs.put("172.16.20.185", "00:11:85:fd:be:d5");
+		macs.put("172.16.20.188", "00:14:c2:3d:43:81");
+		macs.put("172.16.20.191", "00:16:35:3b:f3:ae");
+		macs.put("172.16.20.193", "00:12:79:8f:fa:39");
+		macs.put("172.16.20.198", "00:14:c2:40:58:8a");
+		
+		
+		
+		
 	}
 	
 	
@@ -226,7 +267,7 @@ public class NodeOperateImpl extends BaseOperate {
 			StatusDAO statusDAO = new StatusDAO();
 			if (flag)
 			{
-				nodeMachine.cleanRunCommands("Server kill "+nodeId+" 's Commands");
+				nodeMachine.cleanRunCommands("Server kill "+nodeId+" 's Commands",1);
 			}
 			
 			else
@@ -283,6 +324,7 @@ public class NodeOperateImpl extends BaseOperate {
 				if( nodeMachine.execute(serverMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_SHUTDOWN"))))
 				{
 					exeFlag =true;
+					nodeMachine.setPause(true);
 					message = "shutdown nodId: "+nodeId;
 				}
 				else{
@@ -292,6 +334,7 @@ public class NodeOperateImpl extends BaseOperate {
 			else if (Integer.parseInt(isReboot)==1) // reboot
 			{
 				if( nodeMachine.execute(serverMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_RESTART")))){
+					nodeMachine.setPause(true);
 					exeFlag = true;
 					message = "reboot nodId: "+nodeId;
 				}
@@ -413,8 +456,9 @@ public class NodeOperateImpl extends BaseOperate {
 	}
 	
 	public String wakeUpNode(String nodeId) {
-		
-		String mac = macs.get(nodeId);
+		NodeDAO nodeDAO = new NodeDAO();
+		Node node = nodeDAO.findById(Integer.parseInt(nodeId));
+		String mac = macs.get(node.getNodeIp());
 		if(mac==null) return ACTIONFAILURE+"NodeId:"+nodeId+" hasn't its MAC Address.";
 		return wakeUpMac(mac);
 	}

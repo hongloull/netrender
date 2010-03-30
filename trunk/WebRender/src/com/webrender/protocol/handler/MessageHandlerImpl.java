@@ -12,6 +12,7 @@ import org.hibernate.Transaction;
 import com.webrender.dao.HibernateSessionFactory;
 import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
+import com.webrender.protocol.enumn.EOPCODES;
 import com.webrender.protocol.enumn.EOPCODES.CODE;
 import com.webrender.protocol.processor.IClientProcessor;
 import com.webrender.remote.NodeMachine;
@@ -95,6 +96,10 @@ public class MessageHandlerImpl implements MessageHandler {
 
 	}
 	
+	/**
+	 * N_RUN  HeadLength   i    s    i        s     i     s       i       s         i     s       i     N_STATE   i
+                int       ID   IP  length   Name  len   Prority  len   ThreadNum   len   Version  len             CommandId
+	 */
 	public int initialClient(ByteBuffer packet) {
 		// i:nodeId s:name s:ip s:priority s:threads
 		int headLength = (int)packet.get();
@@ -103,29 +108,42 @@ public class MessageHandlerImpl implements MessageHandler {
 		packet.get(head);
 		ByteBuffer headBuffer = ByteBuffer.wrap(head);
 		if(headBuffer.get()!= 'i'){
-			LOG.error("initialNodePkt fmt error : [HEAD]1!=i");
+			LOG.error("initialNodePkt fmt error : [HEAD]1!=i ID");
 			return 0;
 		}
 		if(headBuffer.get()!= 's'){
-			LOG.error("initialNodePkt fmt error : [HEAD]2!=s");
+			LOG.error("initialNodePkt fmt error : [HEAD]2!=s NAME" );
 			return 0;
 		}
 		int nameLength = headBuffer.getInt();
 		if ( headBuffer.get()!='s'){
-			LOG.error("initialNodePkt fmt error : [HEAD]3!=s");
+			LOG.error("initialNodePkt fmt error : [HEAD]3!=s IP");
 			return 0;
 		}
 		int ipLength = headBuffer.getInt();
 		if ( headBuffer.get()!='s'){
-			LOG.error("initialNodePkt fmt error : [HEAD]4!=s");
+			LOG.error("initialNodePkt fmt error : [HEAD]4!=s Priority");
 			return 0;
 		}
 		int priLength = headBuffer.getInt();
 		if ( headBuffer.get()!='s'){
-			LOG.error("initialNodePkt fmt error : [HEAD]5!=s");
+			LOG.error("initialNodePkt fmt error : [HEAD]5!=s ThreadNum");
 			return 0;
 		}
 		int threadsLength = headBuffer.getInt();
+		String version = null;
+		int versionLength = 0;
+		int state = EOPCODES.getInstance().get("N_RUN").getSubCode("N_PAUSE").getId();
+		int commandId = 0;
+		if(headBuffer.remaining() > 0){
+			if( headBuffer.get()!='s' ){
+				LOG.error("initialNodePkt fmt error : [HEAD]6!=s Version");
+				return 0;
+			}
+			versionLength = headBuffer.getInt();
+			state = headBuffer.get();
+			commandId = headBuffer.getInt();
+		}
 		// body
 		int nodeId = packet.getInt();
 		byte[] name = new byte[ nameLength ];
@@ -136,6 +154,13 @@ public class MessageHandlerImpl implements MessageHandler {
 		packet.get(pri);
 		byte[] threads = new byte[threadsLength];
 		packet.get(threads);
+		if(versionLength>0){
+			byte[] versions = new byte[versionLength];
+			packet.get(versions);
+			version = new String(versions);
+		}else{
+			version = "1.1";
+		}
 		// pkt parse finish.
 		
 		
@@ -163,6 +188,11 @@ public class MessageHandlerImpl implements MessageHandler {
 			Node node = nodeDAO.runNode(nodeId,strIp, strName,strPri,strThreads);
 			tx.commit();
 			int saveNodeId = node.getNodeId();
+			nodeMachine = NodeMachineManager.getInstance().getNodeMachine(saveNodeId);
+			nodeMachine.initial(version,state,commandId);
+			
+			
+			
 			return saveNodeId;
 		}catch(Exception e){
 			LOG.error("RunSaveNode fail nodeId:"+nodeId, e);

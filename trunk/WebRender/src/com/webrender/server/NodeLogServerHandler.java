@@ -99,7 +99,7 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 //					LOG.info("parse LastBuffer position:"+lastBuffer.position() +" limit:" + lastBuffer.limit()+" capacity:"+ lastBuffer.capacity());
 					if( EOPCODES.getInstance().get("N_RUN").getId() == opCode){
 						if (nodeId != null){ 
-							// run more than one time
+							LOG.warn("NodeId "+nodeId+" run more than one time");
 							return ;
 						}
 						nodeId = handler.initialClient(lastBuffer);
@@ -224,9 +224,11 @@ public class NodeLogServerHandler extends IoHandlerAdapter {
 			if(nodeSession == session){
 				LOG.info("NodeId: "+nodeId + " set session null");
 				NodeMachineManager.getInstance().getNodeMachine(nodeId).setSession(null);
-//				NodeMachineManager.getInstance().deleteNodeMachine(nodeId);		
+				NodeMachineManager.getInstance().deleteNodeMachine(nodeId);		
 			}
-		}		
+		}else{
+			LOG.info("sessionClosed NodeId:"+nodeId+" session:"+session.getRemoteAddress());
+		}
 		proxySessions.remove(session);
 		HibernateSessionFactory.closeSession();
 	}
