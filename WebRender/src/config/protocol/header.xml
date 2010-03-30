@@ -27,6 +27,11 @@
 <code name="S_ERROR" id="100"/>
 <code name="N_ERROR" id="99"/>
 <code name="N_RUN" id="51"/>
+<subcode name="N_IDLE" id="0"/>
+<subcode name="N_PAUSE" id="1"/>
+<subcode name="N_EXE" id="2"/>
+<subcode name="N_FINISH" id="3"/>
+<subcode name="N_ERROR" id="4"/>
 <code name="N_SUCCESS" id="52"/>
 <code name="N_FEEDBACK" id="53"/>
 <code name="N_STATUSINFO" id="54"/>

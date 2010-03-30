@@ -213,6 +213,21 @@ public class CommandDAO extends BaseHibernateDAO {
 		}
 	}
 	
+	public void setDisconnect(Command instance) {
+		LOG.debug("setDisconnect commandId:"+instance.getCommandId());
+		try
+		{
+			StatusDAO statusDAO = new StatusDAO();
+			instance.setStatus(statusDAO.findById(74));
+			this.attachDirty(instance);
+			LOG.debug("setDisconnect successful commandId:"+instance.getCommandId());
+			
+		}catch(RuntimeException re){
+			LOG.error("setDisconnect failed commandId:"+instance.getCommandId(),re);
+			throw re;
+		}
+	}
+	
 	public void setFinish(Command instance) {
 		LOG.debug("setFinish commandId:"+instance.getCommandId());
 		try
@@ -456,5 +471,7 @@ public class CommandDAO extends BaseHibernateDAO {
 			LOG.error("deleteCommandRel SQLException",e);
 		}	
 	}
+
+	
 	
 }

@@ -46,7 +46,9 @@ public final  class  NodeMachineManager {
 	
 	public void deleteNodeMachine(int nodeId){
 		if( machines.containsKey(nodeId) ){
-			idleMachines.remove(getNodeMachine(nodeId));
+			NodeMachine nodeMachine = getNodeMachine(nodeId);
+			idleMachines.remove(nodeMachine);
+			nodeMachine = null;
 			machines.remove(nodeId);
 		}
 	}
