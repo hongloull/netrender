@@ -23,6 +23,10 @@ import com.webrender.dao.CommandDAO;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
 import com.webrender.dao.Operatelog;
+import com.webrender.protocol.enumn.EOPCODES;
+import com.webrender.protocol.messages.ServerMessages;
+import com.webrender.remote.NodeMachine;
+import com.webrender.remote.NodeMachineManager;
 import com.webrender.server.ControlThreadServer;
 
 public class CommandOperateImpl extends BaseOperate {
@@ -116,12 +120,14 @@ public class CommandOperateImpl extends BaseOperate {
 		LOG.debug("reinitCommand");
 		
 		Transaction tx = null;
+//		boolean killFlag = true;
 		try{
 			tx = getTransaction();
 			Command command = commandDAO.findById(Integer.parseInt(commandId));
 			commandDAO.reinitCommand(command );
-			logOperate(regUserId,Operatelog.MOD,"ReInit Command: "+commandDAO.getNoteWithID(command));
+			logOperate(regUserId,Operatelog.MOD,"ReInit Command: "+commandDAO.getNoteWithID(command));				
 			tx.commit();
+			
 //			Dispatcher.getInstance().exeCommands();
 			LOG.debug("reinitCommand success");
 			
@@ -150,7 +156,8 @@ public class CommandOperateImpl extends BaseOperate {
 	public String setFinish(String commandId , int regUserId){
 
 		
-		LOG.debug("finishCommand");
+		LOG.debug("setFinish command:"+commandId);
+		
 		Transaction tx = null;
 		try{
 			tx = getTransaction();
