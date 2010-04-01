@@ -235,8 +235,7 @@ public class QuestDAO extends BaseHibernateDAO {
 		}
 	}
 
-	public void setFinish(Quest instance)
-	{
+	public void setFinish(Quest instance) {
 		LOG.debug("setFinishQuest questId:"+instance.getQuestId());
 		try {
 			CommandDAO commandDAO = new CommandDAO();

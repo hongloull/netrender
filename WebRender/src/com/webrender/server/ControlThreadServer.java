@@ -109,7 +109,7 @@ public final class ControlThreadServer extends Thread {
 							break;
 						}
 						command = (Command)ite_Commands.next();
-//						LOG.info("Waiting commandId: "+command.getCommandId());
+						LOG.debug("Waiting commandId: "+command.getCommandId());
 						if(NodeMachineManager.getInstance().isIdleEmpty())
 						{
 							if (threadStop){
@@ -314,10 +314,11 @@ public final class ControlThreadServer extends Thread {
 //		}
 //	}
 	public void notifyResume(){
+		NewNotify = 0;
 		if (this.getState() == Thread.State.WAITING){
 			synchronized(this){
 				HibernateSessionFactory.closeSession();	
-				NewNotify = 0;
+				
 				notify();
 			}
 //			LOG.info("Dispather server notify..");
