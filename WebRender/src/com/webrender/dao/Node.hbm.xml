@@ -49,7 +49,7 @@
             </key>
             <many-to-many class="com.webrender.dao.Nodegroup" column="NodeGroupID"/>
         </set>
-        <set name="executelogs" inverse="true">
+        <set name="executelogs" inverse="true" order-by="executeLogId desc">
             <key>
                 <column name="NodeID" not-null="true" />
             </key>

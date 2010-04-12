@@ -244,9 +244,9 @@ public class NodeOperate extends BaseAxis {
 		return result.toString();
 	}
 	
-	public String getExeLogList(String nodeId){
+	public String getExeRecords(String nodeId,int pageIndex,int pageSize){
 		if (  !this.canVisit(0) ) return BaseAxis.RIGHTERROR;
-		return (new NodeOperateImpl()).getExeLogList(nodeId);
+		return (new NodeOperateImpl()).getExeRecords(nodeId,pageIndex,pageSize);
 	}
 	
 	public String wakeUpNode(String[] nodeIds){

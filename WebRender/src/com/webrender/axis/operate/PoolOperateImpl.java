@@ -59,7 +59,7 @@ public class PoolOperateImpl extends BaseOperate {
 					NodeXMLConfig loadConfig = new NodeXMLConfig();
 					loadConfig.loadFromXML(file_Pool);
 					tx = getTransaction();
-					logOperate(regUserId,Operatelog.ADD,"AddPool:"+name);
+					logOperate(regUserId,Operatelog.ADD,"AddPool:"+name,null,null,null);
 					tx.commit();
 				}
 			}catch(IOException e){
@@ -97,7 +97,7 @@ public class PoolOperateImpl extends BaseOperate {
 			NodeXMLConfig loadConfig = new NodeXMLConfig();
 			loadConfig.loadFromXML(file);
 			tx = getTransaction();
-			logOperate(regUserId,Operatelog.MOD,"ModPool:"+name);
+			logOperate(regUserId,Operatelog.MOD,"ModPool:"+name,null,null,null);
 			tx.commit();
 			ControlThreadServer.getInstance().notifyResume();
 			return ACTIONSUCCESS;
@@ -152,7 +152,7 @@ public class PoolOperateImpl extends BaseOperate {
 				try{
 					tx = getTransaction();
 					nGDAO.delete(pool);
-					logOperate(regUserId,Operatelog.DEL,"DelPool:"+name);
+					logOperate(regUserId,Operatelog.DEL,"DelPool:"+name,null,null,null);
 					tx.commit();
 					LOG.debug("delPool success");
 					return ACTIONSUCCESS;

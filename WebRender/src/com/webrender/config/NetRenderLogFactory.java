@@ -42,16 +42,16 @@ public class NetRenderLogFactory {
 			return null;
 		}
 	}
-	public File getExeLog(Integer nodeId,Date date){
-		StringBuffer fileName = new StringBuffer(logPath);
-		fileName.append("nodes/");
-		fileName.append(nodeId).append("/").append(date.getTime()).append(".log");
-		LOG.info("GetExeLogFolder :"+fileName.toString());
-		return new File(fileName.toString());
-	}
-	public File getExeLogFolder(Integer nodeId){
-		StringBuffer fileName = new StringBuffer(logPath);
-		fileName.append("nodes/").append(nodeId).append("/");
-		return new File(fileName.toString());
-	}
+//	public File getExeLog(Integer nodeId,Date date){
+//		StringBuffer fileName = new StringBuffer(logPath);
+//		fileName.append("nodes/");
+//		fileName.append(nodeId).append("/").append(date.getTime()).append(".log");
+//		LOG.info("GetExeLogFolder :"+fileName.toString());
+//		return new File(fileName.toString());
+//	}
+//	public File getExeLogFolder(Integer nodeId){
+//		StringBuffer fileName = new StringBuffer(logPath);
+//		fileName.append("nodes/").append(nodeId).append("/");
+//		return new File(fileName.toString());
+//	}
 }

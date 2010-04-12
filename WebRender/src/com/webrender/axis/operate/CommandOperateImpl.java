@@ -32,39 +32,42 @@ import com.webrender.server.ControlThreadServer;
 public class CommandOperateImpl extends BaseOperate {
 	private static final Log LOG = LogFactory.getLog(CommandOperateImpl.class);
 	private CommandDAO commandDAO = new CommandDAO();
-	public String getRealLogs(String commandId){
-		
-		LOG.debug("getRealLogs");
-		
-		try{
-			ExecutelogDAO exeLogDAO = new ExecutelogDAO();
-			Command command = commandDAO.findById(Integer.parseInt(commandId) );
-			Element root = new Element("Reallogs");
-			Document doc =new Document(root);
-			Executelog log  = exeLogDAO.getRealLog(command);
-			if(log!=null){
-				root.addContent( (new ExecutelogUtils()).bean2xml(log) );				
-			}
-			LOG.debug("getRealLog success");
-		//	XMLOut.outputToFile(doc,new File("d:/reallog.xml") );
-			return (new XMLOut()).outputToString(doc);
-		}catch(NullPointerException e){
-			LOG.error("getRealLog NullPointerException commandId:"+commandId);
-			return ACTIONFAILURE+e.getMessage();
-		}catch(NumberFormatException e){
-			LOG.error("getRealLog NumberFormatException commandId:"+commandId);
-			return ACTIONFAILURE+e.getMessage();
-		}
-		catch(Exception e)
-		{
-			LOG.error("getRealLog fail",e);
-			return ACTIONFAILURE+e.getMessage();
-		}
-		finally
-		{
-			this.closeSession();
-		}
-	}
+	
+	
+//	public String getRealLogs(String commandId){
+//		
+//		LOG.debug("getRealLogs");
+//		
+//		try{
+//			ExecutelogDAO exeLogDAO = new ExecutelogDAO();
+//			Command command = commandDAO.findById(Integer.parseInt(commandId) );
+//			Element root = new Element("Reallogs");
+//			Document doc =new Document(root);
+//			Executelog log  = exeLogDAO.getRealLog(command);
+//			if(log!=null){
+//				root.addContent( (new ExecutelogUtils()).bean2xml(log) );				
+//			}
+//			LOG.debug("getRealLog success");
+//		//	XMLOut.outputToFile(doc,new File("d:/reallog.xml") );
+//			return (new XMLOut()).outputToString(doc);
+//		}catch(NullPointerException e){
+//			LOG.error("getRealLog NullPointerException commandId:"+commandId);
+//			return ACTIONFAILURE+e.getMessage();
+//		}catch(NumberFormatException e){
+//			LOG.error("getRealLog NumberFormatException commandId:"+commandId);
+//			return ACTIONFAILURE+e.getMessage();
+//		}
+//		catch(Exception e)
+//		{
+//			LOG.error("getRealLog fail",e);
+//			return ACTIONFAILURE+e.getMessage();
+//		}
+//		finally
+//		{
+//			this.closeSession();
+//		}
+//	}
+	
 	public String getRealLogFile(String commandId){	
 		LOG.debug("getRealLogFile");
 		try{
@@ -125,7 +128,7 @@ public class CommandOperateImpl extends BaseOperate {
 			tx = getTransaction();
 			Command command = commandDAO.findById(Integer.parseInt(commandId));
 			commandDAO.reinitCommand(command );
-			logOperate(regUserId,Operatelog.MOD,"ReInit Command: "+commandDAO.getNoteWithID(command));				
+			logOperate(regUserId,Operatelog.MOD,"ReInit Command: "+commandDAO.getNoteWithID(command),Operatelog.COMMAND,command.getCommandId(),null);				
 			tx.commit();
 			
 //			Dispatcher.getInstance().exeCommands();
@@ -163,7 +166,7 @@ public class CommandOperateImpl extends BaseOperate {
 			tx = getTransaction();
 			Command command = commandDAO.findById(Integer.parseInt(commandId));
 			commandDAO.setFinish(command );
-			logOperate(regUserId,Operatelog.MOD,"setFinish Command: "+commandDAO.getNoteWithID(command));
+			logOperate(regUserId,Operatelog.MOD,"setFinish Command: "+commandDAO.getNoteWithID(command),Operatelog.COMMAND,command.getCommandId(),null);
 			tx.commit();
 		
 			LOG.debug("finishCommand success");

@@ -145,13 +145,13 @@ public class QuestOperateImpl extends BaseOperate {
 				quest.setTotalFrames(totalSize);
 				questDAO.save(quest);
 				switch(result){
-				case CalcCommands.SUCCESS:logOperate(regUserId,Operatelog.ADD,"Add Quest "+quest.getQuestName()+" success.");
+				case CalcCommands.SUCCESS:logOperate(regUserId,Operatelog.ADD,"Add Quest "+quest.getQuestName()+" success.",null,null,null);
 				break;
-				case CalcCommands.LACKFRAME:logOperate(regUserId,Operatelog.MOD,"Quest "+quest.getQuestName()+" lack frame conf");
+				case CalcCommands.LACKFRAME:logOperate(regUserId,Operatelog.MOD,"Quest "+quest.getQuestName()+" lack frame conf",null,null,null);
 				break;
-				case CalcCommands.NEEDARGS:logOperate(regUserId,Operatelog.ERROR,"Quest "+quest.getQuestName()+" lack user's arg. please check it.");
+				case CalcCommands.NEEDARGS:logOperate(regUserId,Operatelog.ERROR,"Quest "+quest.getQuestName()+" lack user's arg. please check it.",null,null,null);
 				break;
-				case CalcCommands.NumberFormatException:logOperate(regUserId,Operatelog.ERROR,"Quest "+quest.getQuestName()+" number format error.");
+				case CalcCommands.NumberFormatException:logOperate(regUserId,Operatelog.ERROR,"Quest "+quest.getQuestName()+" number format error.",null,null,null);
 				break;
 				}
 				tx.commit();
@@ -197,7 +197,7 @@ public class QuestOperateImpl extends BaseOperate {
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			String questName = quest.getQuestName();
 			questDAO.delete(quest);
-			logOperate(regUserId,Operatelog.DEL,"Delete questName "+questName);
+			logOperate(regUserId,Operatelog.DEL,"Delete questName "+questName,null,null,null);
 			tx.commit();
 			LOG.debug("deleteQuest success");
 			return ACTIONSUCCESS;
@@ -238,7 +238,7 @@ public class QuestOperateImpl extends BaseOperate {
 //			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			questDAO.pauseQuest(quest);
-			logOperate(regUserId,Operatelog.MOD,"Pause quest "+quest.getQuestName());
+			logOperate(regUserId,Operatelog.MOD,"Pause quest "+quest.getQuestName(),Operatelog.QUEST,quest.getQuestId(),null);
 			tx.commit();
 			LOG.debug("pauseQuest success");
 			return ACTIONSUCCESS;
@@ -283,7 +283,7 @@ public class QuestOperateImpl extends BaseOperate {
 //			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			questDAO.resumeQuest(quest);
-			logOperate(regUserId,Operatelog.MOD,"Resume quest "+quest.getQuestName());
+			logOperate(regUserId,Operatelog.MOD,"Resume quest "+quest.getQuestName(),Operatelog.QUEST,quest.getQuestId(),null);
 			tx.commit();
 			ControlThreadServer.getInstance().notifyResume();
 //			Dispatcher.getInstance().exeCommands();
@@ -331,7 +331,7 @@ public class QuestOperateImpl extends BaseOperate {
 //			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			questDAO.reinitQuest(quest);
-			logOperate(regUserId,Operatelog.MOD,"Reinit quest "+quest.getQuestName());
+			logOperate(regUserId,Operatelog.MOD,"Reinit quest "+quest.getQuestName(),Operatelog.QUEST,quest.getQuestId(),null);
 			tx.commit();
 			ControlThreadServer.getInstance().notifyResume();
 //			Dispatcher.getInstance().exeCommands();
@@ -379,7 +379,7 @@ public class QuestOperateImpl extends BaseOperate {
 //			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			questDAO.setFinish(quest);
-			logOperate(regUserId,Operatelog.MOD,"setFinish quest "+quest.getQuestName());
+			logOperate(regUserId,Operatelog.MOD,"setFinish quest "+quest.getQuestName(),Operatelog.QUEST,quest.getQuestId(),null);
 			tx.commit();
 			
 			LOG.debug("setFinish success");
@@ -425,7 +425,7 @@ public class QuestOperateImpl extends BaseOperate {
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			quest.setQuestName(name.toString());
 			questDAO.attachDirty(quest);
-			logOperate(regUserId,Operatelog.MOD,"Change "+quest.getQuestName()+" to "+name);
+			logOperate(regUserId,Operatelog.MOD,"Change "+quest.getQuestName()+" to "+name,Operatelog.QUEST,quest.getQuestId(),null);
 			tx.commit();
 			return ACTIONSUCCESS;
 		}catch(NullPointerException e){
@@ -470,7 +470,7 @@ public class QuestOperateImpl extends BaseOperate {
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			quest.setPri(priValue);
 			questDAO.attachDirty(quest);
-			logOperate(regUserId,Operatelog.MOD,"Change quest "+quest.getQuestName()+"'s priority to "+pri);
+			logOperate(regUserId,Operatelog.MOD,"Change quest "+quest.getQuestName()+"'s priority to "+pri,Operatelog.QUEST,quest.getQuestId(),null);
 			tx.commit();
 			return  ACTIONSUCCESS;
 		}
@@ -499,7 +499,7 @@ public class QuestOperateImpl extends BaseOperate {
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			quest.setMaxNodes(Integer.parseInt(maxNodes));
 			questDAO.attachDirty(quest);
-			logOperate(regUserId,Operatelog.MOD,"Change quest "+quest.getQuestName()+"'s maxNodes to "+maxNodes);
+			logOperate(regUserId,Operatelog.MOD,"Change quest "+quest.getQuestName()+"'s maxNodes to "+maxNodes,Operatelog.QUEST,quest.getQuestId(),null);
 			tx.commit();
 			ControlThreadServer.getInstance().notifyResume();
 			return  ACTIONSUCCESS;
@@ -534,7 +534,7 @@ public class QuestOperateImpl extends BaseOperate {
 			tx = getTransaction();
 			quest.setNodegroup(nG);
 			questDAO.attachDirty(quest);
-			logOperate(regUserId,Operatelog.MOD,"Change quest "+quest.getQuestName()+"'s pool to "+poolName);
+			logOperate(regUserId,Operatelog.MOD,"Change quest "+quest.getQuestName()+"'s pool to "+poolName,Operatelog.QUEST,quest.getQuestId(),null);
 			tx.commit();
 			ControlThreadServer.getInstance().notifyResume();
 			return  ACTIONSUCCESS;
@@ -573,7 +573,7 @@ public class QuestOperateImpl extends BaseOperate {
 			dealQuest.patchFrames(quest,frames,byFrame);
 			
 			tx = getTransaction();
-			logOperate(regUserId,Operatelog.MOD,"patch quest "+quest.getQuestName()+"' frames: " + frames);
+			logOperate(regUserId,Operatelog.MOD,"patch quest "+quest.getQuestName()+"' frames: " + frames,Operatelog.QUEST,quest.getQuestId(),null);
 			tx.commit();
 			
 			return ACTIONSUCCESS;

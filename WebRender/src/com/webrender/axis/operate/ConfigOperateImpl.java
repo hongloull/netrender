@@ -64,7 +64,7 @@ public class ConfigOperateImpl extends BaseOperate {
 			xmlOut.outputToFile(doc, file);
 			LOG.debug("setPathConfig success");
 			tx = getTransaction();
-			logOperate(regUserId,Operatelog.MOD,"configMapDir");
+			logOperate(regUserId,Operatelog.MOD,"configMapDir",null,null,null);
 			tx.commit();
 			return ACTIONSUCCESS;
 		}catch(NullPointerException e){
@@ -129,7 +129,7 @@ public class ConfigOperateImpl extends BaseOperate {
 			tx.commit();
 			nodeMachine.setPri(pri);
 			if( nodeMachine.execute( serverMessages.createSetConfigPkt(config)) ){
-				this.logOperate(regUserId,Operatelog.MOD,"set node "+ node.getNodeName()+" config success");
+				logOperate(regUserId,Operatelog.MOD,"set node "+ node.getNodeName()+" config success",Operatelog.NODE,node.getNodeId(),null);
 				return ACTIONSUCCESS;
 			}
 			else{

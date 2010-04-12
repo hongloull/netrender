@@ -29,7 +29,7 @@ public class ExecutelogDAO extends BaseHibernateDAO {
 	private static final Log LOG = LogFactory.getLog(ExecutelogDAO.class);
 	// property constants
 	public static final String NOTE = "note";
-
+		
 	public void save(Executelog transientInstance) {
 		LOG.debug("saving Executelog instance");
 		try {
@@ -102,6 +102,21 @@ public class ExecutelogDAO extends BaseHibernateDAO {
 
 	public List findByNote(Object note) {
 		return findByProperty(NOTE, note);
+	}
+
+	public List findByNodeIdWithPages(int nodeId, int pageIndex, int pageSize) {
+		LOG.debug("findByNodeIdWithPages with nodeId: "+nodeId);
+		try {
+			String queryString = "from Executelog as model where model.node.nodeId"+"= "+nodeId+" order by model.executeLogId desc";
+			Query queryObject = getSession().createQuery(queryString);
+			int items = (pageIndex-1) * pageSize;  
+			queryObject.setFirstResult(items);
+			queryObject.setMaxResults(pageSize);
+			return queryObject.list();
+		} catch (RuntimeException re) {
+			LOG.error("find by property name failed", re);
+			throw re;
+		}
 	}
 
 	public List findAll() {
@@ -215,5 +230,6 @@ public class ExecutelogDAO extends BaseHibernateDAO {
 			return null;
 		}
 	}
+
 
 }

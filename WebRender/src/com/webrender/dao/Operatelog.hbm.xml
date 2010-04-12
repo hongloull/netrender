@@ -7,20 +7,29 @@
 <hibernate-mapping>
     <class name="com.webrender.dao.Operatelog" table="operatelog" catalog="distributedmanagement">
         <id name="operateLogId" type="java.lang.Integer">
-            <column name="OperateLogID" />
-            <generator class="increment" />
+            <column name="OperateLogID"/>
+            <generator class="increment"/>
         </id>
         <many-to-one name="reguser" class="com.webrender.dao.Reguser" fetch="select">
-            <column name="RegUserID" not-null="true" />
+            <column name="RegUserID" not-null="true"/>
         </many-to-one>
         <property name="operateInformation" type="java.lang.String">
-            <column name="OperateInformation" length="65535" />
+            <column name="OperateInformation" length="65535"/>
         </property>
         <property name="type" type="java.lang.Short">
-            <column name="Type" not-null="true" />
+            <column name="Type" not-null="true"/>
+        </property>
+        <property name="tableName" type="java.lang.String">
+            <column name="TableName" length="50" />
+        </property>
+        <property name="tableId" type="java.lang.Integer">
+            <column name="TableID"/>
         </property>
         <property name="logTime" type="java.util.Date">
-            <column name="LogTime" length="19" not-null="true" />
+            <column name="LogTime" length="19" not-null="true"/>
+        </property>
+        <property name="comment" type="java.lang.String">
+            <column name="Comment" length="65535"/>
         </property>
     </class>
 </hibernate-mapping>

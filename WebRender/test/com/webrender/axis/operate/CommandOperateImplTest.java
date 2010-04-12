@@ -37,22 +37,7 @@ public class CommandOperateImplTest {
 	public void tearDown() throws Exception {
 	}
 
-	/**
-	 * Test method for {@link com.webrender.axis.operate.CommandOperateImpl#getRealLogs(java.lang.String)}.
-	 */
-	@Test
-	public final void testGetRealLogs() {
-		List<Command> list = dao.findAll();
-		for(Command command : list){
-			String commandId = command.getCommandId().toString();
-//			System.out.println( impl.getRealLogs(commandId));
-			assertTrue( impl.getRealLogs(commandId).startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
-		}
-		assertTrue( impl.getRealLogs(null).equals("Failure null"));
-		assertTrue( impl.getRealLogs("").equals("Failure For input string: \"\"") );
-		assertTrue( impl.getRealLogs("0").equals("Failure null"));
-		assertTrue( impl.getRealLogs("a").startsWith("Failure For input string:"));
-	}
+
 
 	/**
 	 * Test method for {@link com.webrender.axis.operate.CommandOperateImpl#getRealLogFile(java.lang.String)}.

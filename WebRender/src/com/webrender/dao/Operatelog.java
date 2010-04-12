@@ -16,11 +16,19 @@ public class Operatelog implements java.io.Serializable {
 	public static final Short ADD = 4;
 	public static final Short DEL = 5;
 	public static final Short ERROR = 7;
+	
+	public static final String QUEST = "Quest";
+	public static final String COMMAND="Command";
+	public static final String NODE = "Node";
+	public static final String NODEGROUP = "Nodegroup";
 	private Integer operateLogId;
 	private Reguser reguser;
 	private String operateInformation;
 	private Short type;
+	private String tableName;
+	private Integer tableId;
 	private Date logTime;
+	private String comment;
 
 	// Constructors
 
@@ -82,12 +90,55 @@ public class Operatelog implements java.io.Serializable {
 		this.type = type;
 	}
 	
+
+	/**
+	 * @return the tableId
+	 */
+	public Integer getTableId() {
+		return tableId;
+	}
+
+	/**
+	 * @param tableId the tableId to set
+	 */
+	public void setTableId(Integer tableId) {
+		this.tableId = tableId;
+	}
+
+	/**
+	 * @return the comment
+	 */
+	public String getComment() {
+		return comment;
+	}
+
+	/**
+	 * @param comment the comment to set
+	 */
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
 	public Date getLogTime() {
 		return this.logTime;
 	}
 
 	public void setLogTime(Date logTime) {
 		this.logTime = logTime;
+	}
+
+	/**
+	 * @return the tableName
+	 */
+	public String getTableName() {
+		return tableName;
+	}
+
+	/**
+	 * @param tableName the tableName to set
+	 */
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
 	}
 
 }

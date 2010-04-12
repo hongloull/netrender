@@ -2,6 +2,7 @@ package com.webrender.protocol.handler;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.apache.mina.common.ByteBuffer;
 
@@ -9,9 +10,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Transaction;
 
+import com.webrender.dao.Executelog;
+import com.webrender.dao.ExecutelogDAO;
 import com.webrender.dao.HibernateSessionFactory;
 import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
+import com.webrender.dao.StatusDAO;
 import com.webrender.protocol.enumn.EOPCODES;
 import com.webrender.protocol.enumn.EOPCODES.CODE;
 import com.webrender.protocol.processor.IClientProcessor;
@@ -29,7 +33,6 @@ public class MessageHandlerImpl implements MessageHandler {
         return instance;
     }
     private final Log LOG = LogFactory.getLog(MessageHandlerImpl.class);
-	
 	public ByteBuffer parseClientPacket(CODE code, ByteBuffer packet,
 			IClientProcessor processor) {
 //		LOG.info("CODEID: "+ code.getId());
@@ -184,15 +187,18 @@ public class MessageHandlerImpl implements MessageHandler {
 		Transaction tx = null;
 		try{
 			tx = HibernateSessionFactory.getSession().beginTransaction();
-			LOG.info(nodeId+"---"+strIp+"---"+strName+"---"+strPri+"---"+strThreads);
+//			LOG.info(nodeId+"---"+strIp+"---"+strName+"---"+strPri+"---"+strThreads);
 			Node node = nodeDAO.runNode(nodeId,strIp, strName,strPri,strThreads);
+			
+			StatusDAO statusDAO = new StatusDAO();
+			ExecutelogDAO exeDAO = new ExecutelogDAO();
+			Executelog log = new Executelog(null,statusDAO.findById(90),node,strIp+"---"+strName+": is connecting..",new Date());
+			exeDAO.save(log);
+			
 			tx.commit();
 			int saveNodeId = node.getNodeId();
 			nodeMachine = NodeMachineManager.getInstance().getNodeMachine(saveNodeId);
 			nodeMachine.initial(version,state,commandId);
-			
-			
-			
 			return saveNodeId;
 		}catch(Exception e){
 			LOG.error("RunSaveNode fail nodeId:"+nodeId, e);
