@@ -24,7 +24,7 @@ public class BaseOperate {
 	 * @param type Operatelog.LOGIN ADD MOD DEL ERROR
 	 * @param information message
 	 */
-	protected void logOperate(int regUserId,Short type,String information){
+	public void logOperate(Integer regUserId,Short type,String information,String table,Integer tableId,String comment){
 		ReguserDAO regUserDAO = new ReguserDAO();
 		Reguser regUser = regUserDAO.findById(regUserId);
 		LOG.info("ReguserID: "+regUserId+" Information: " + information);
@@ -35,6 +35,9 @@ public class BaseOperate {
 			OperatelogDAO operateLogDAO = new OperatelogDAO();
 			Operatelog transientInstance = new Operatelog(regUser,type,new Date());
 			transientInstance.setOperateInformation(information);
+			transientInstance.setTableName(table);
+			transientInstance.setTableId(tableId);
+			transientInstance.setComment(comment);
 			operateLogDAO.save(transientInstance);
 		}
 	}

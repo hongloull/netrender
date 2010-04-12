@@ -177,7 +177,7 @@ public class NodeDAO extends BaseHibernateDAO {
 		try{
 			
 			Node node = findById(nodeId);
-			
+
 			if(node==null){				
 				node = new Node();
 			}

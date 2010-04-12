@@ -77,16 +77,16 @@ public class NodeXMLConfig extends XMLConfig {
 			HashSet<Node> set_RetainNodes = new HashSet<Node>();
 			Iterator ite_Nodes = root.getChildren().iterator();
 			
-			
+			NodeUtils nodeUtils = new NodeUtils();
 			while(ite_Nodes.hasNext())
 			{
 				Element element = (Element)ite_Nodes.next();
-				Node node = (new NodeUtils()).xml2bean(element);
+				Node node = nodeUtils.xml2bean(element);
 				if(node==null){
 					root.getMixedContent().remove(element);
 					continue;
 				}
-				nodeDAO.save(node);
+				nodeDAO.attachClean(node);
 				
 				element.removeAttribute("nodeName");
 				element.addAttribute("nodeName",node.getNodeName());

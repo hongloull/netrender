@@ -107,7 +107,7 @@ public class UserOperateImpl extends BaseOperate {
 			UserXMLConfig loadConfig = new UserXMLConfig();
 			loadConfig.loadFromXML(file);
 			tx = getTransaction();
-			logOperate(regUserId,Operatelog.MOD,"mod UserConfig:"+userName);
+			logOperate(regUserId,Operatelog.MOD,"mod UserConfig:"+userName,null,null,null);
 			tx.commit();
 			return  ACTIONSUCCESS;
 		} catch (JDOMException e) {
@@ -149,7 +149,7 @@ public class UserOperateImpl extends BaseOperate {
 			else{
 				tx = getTransaction();
 				regUserDAO.delete(regUser);
-				logOperate(regUserId,Operatelog.DEL,"DelUser:"+regName);
+				logOperate(regUserId,Operatelog.DEL,"DelUser:"+regName,null,null,null);
 				tx.commit();
 				LOG.debug("delUser "+regName+" success.");
 				return  ACTIONSUCCESS;
@@ -188,7 +188,7 @@ public class UserOperateImpl extends BaseOperate {
 						UserXMLConfig loadConfig = new UserXMLConfig();
 						loadConfig.loadFromXML(file_User);
 						tx = getTransaction();
-						logOperate(regUserId,Operatelog.ADD,"AddUser:"+regName);
+						logOperate(regUserId,Operatelog.ADD,"AddUser:"+regName,null,null,null);
 						tx.commit();
 					}
 				}catch (IOException e) {
@@ -232,7 +232,7 @@ public class UserOperateImpl extends BaseOperate {
 			}
 			regUser.setPassWord(passWord);
 			regUserDAO.save(regUser);
-			logOperate(regUserId,Operatelog.MOD,"changePassWord: success.");
+			logOperate(regUserId,Operatelog.MOD,"changePassWord: success.",null,null,null);
 			tx.commit();
 			LOG.debug("setPassWord success Name: "+regName);
 			return  ACTIONSUCCESS;

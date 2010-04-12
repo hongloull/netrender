@@ -3,12 +3,17 @@ package com.webrender.axis.operate;
 import java.io.File;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Transaction;
+import org.jdom.Document;
+import org.jdom.Element;
 
+import com.webrender.axis.beanxml.ExecutelogUtils;
+import com.webrender.axis.beanxml.XMLOut;
 import com.webrender.config.NetRenderLogFactory;
 import com.webrender.dao.Executelog;
 import com.webrender.dao.ExecutelogDAO;
@@ -96,11 +101,12 @@ public class NodeOperateImpl extends BaseOperate {
 		LOG.debug("pauseNode nodeId:"+nodeId);
 		Transaction tx = null;
 		try{
-			NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(Integer.parseInt(nodeId));
+			int id = Integer.parseInt(nodeId);
+			NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(id);
 //			String result = this.killCommand(nodeId);
 			nodeMachine.setPause(true);
 			tx = getTransaction();
-			logOperate(regUserId,Operatelog.MOD,"Pause nodeId:"+nodeId);
+			logOperate(regUserId,Operatelog.MOD,"Pause nodeId:"+nodeId,Operatelog.NODE,id,null);
 			tx.commit();
 //			if(BaseAxis.ACTIONSUCCESS.equals(result)){
 				LOG.debug("pauseNode success");
@@ -134,11 +140,12 @@ public class NodeOperateImpl extends BaseOperate {
 
 		Transaction tx = null;
 		try{
-			NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(Integer.parseInt(nodeId));
+			int id = Integer.parseInt(nodeId);
+			NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(id);
 			nodeMachine.setPause(false);
 			LOG.debug("resumeNode success");
 			tx = getTransaction();
-			logOperate(regUserId,Operatelog.MOD,"Resume nodeId:"+nodeId);
+			logOperate(regUserId,Operatelog.MOD,"Resume nodeId:"+nodeId,Operatelog.NODE,id,null);
 			tx.commit();
 			return ACTIONSUCCESS;			
 		}catch(NumberFormatException e){
@@ -171,11 +178,12 @@ public class NodeOperateImpl extends BaseOperate {
 //		}
 		Transaction tx = null;
 		try{
-			NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(Integer.parseInt(nodeId));
+			int id = Integer.parseInt(nodeId);
+			NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(id);
 			nodeMachine.setRealTime(Integer.parseInt(isOpen)==1?true:false);
 			LOG.debug("setRealLog success");
 			tx = getTransaction();
-			logOperate(regUserId,Operatelog.MOD,"NodeId:"+nodeId+" setRealTime "+(Integer.parseInt(isOpen)==1?"open":"close") );
+			logOperate(regUserId,Operatelog.MOD,"NodeId:"+nodeId+" setRealTime "+(Integer.parseInt(isOpen)==1?"open":"close"),Operatelog.NODE,id,null );
 			tx.commit();
 			return ACTIONSUCCESS;
 		}catch(NumberFormatException e){
@@ -227,7 +235,7 @@ public class NodeOperateImpl extends BaseOperate {
 			tx = getTransaction();
 			Node node = nodeDAO.findById(id);
 			node.setPri(pri);
-			logOperate(regUserId,Operatelog.MOD,"set Node:"+node.getNodeName()+" 's priority to "+ pri );
+			logOperate(regUserId,Operatelog.MOD,"set Node:"+node.getNodeName()+" 's priority to "+ pri,Operatelog.NODE,node.getNodeId(),null );
 			tx.commit();
 			NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(id);
 			nodeMachine.setPri(pri);
@@ -318,7 +326,8 @@ public class NodeOperateImpl extends BaseOperate {
 		String message = "";
 		try{
 			tx = getTransaction();
-			NodeMachine nodeMachine  = NodeMachineManager.getInstance().getNodeMachine(Integer.parseInt(nodeId));
+			int id = Integer.parseInt(nodeId);
+			NodeMachine nodeMachine  = NodeMachineManager.getInstance().getNodeMachine(id);
 			if (Integer.parseInt(isReboot)==0)  //shutdown
 			{
 				if( nodeMachine.execute(serverMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_SHUTDOWN"))))
@@ -346,7 +355,7 @@ public class NodeOperateImpl extends BaseOperate {
 				
 				return ACTIONFAILURE+"nodeId:"+nodeId+" isReboot:"+isReboot;
 			}
-			logOperate(regUserId,exeFlag?Operatelog.MOD:Operatelog.ERROR,message);
+			logOperate(regUserId,exeFlag?Operatelog.MOD:Operatelog.ERROR,message,Operatelog.NODE,id,null);
 			tx.commit();
 			return exeFlag?ACTIONSUCCESS:ACTIONFAILURE+" shutdown node error: node note response.";
 		}catch(NumberFormatException e){
@@ -375,14 +384,15 @@ public class NodeOperateImpl extends BaseOperate {
 		String message = "";
 		try{
 			tx = getTransaction();
-			NodeMachine nodeMachine  = NodeMachineManager.getInstance().getNodeMachine(Integer.parseInt(nodeId));
+			int id = Integer.parseInt(nodeId);
+			NodeMachine nodeMachine  = NodeMachineManager.getInstance().getNodeMachine(id);
 			if( nodeMachine.execute(serverMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_SOFTRESTART")))){
 				exeFlag = true;
 				message = "soft restart "+nodeId;
 			}else{
 				message = "soft restart "+nodeId+" fail!";
 			}
-			logOperate(regUserId,exeFlag?Operatelog.MOD:Operatelog.ERROR,message);
+			logOperate(regUserId,exeFlag?Operatelog.MOD:Operatelog.ERROR,message,Operatelog.NODE,id,null);
 			tx.commit();
 			return exeFlag?ACTIONSUCCESS:ACTIONFAILURE+"soft restart error :node not response.";
 		}catch(NumberFormatException e){
@@ -422,7 +432,8 @@ public class NodeOperateImpl extends BaseOperate {
 		String message = "";
 		try{
 			tx = getTransaction();
-			NodeMachine nodeMachine  = NodeMachineManager.getInstance().getNodeMachine(Integer.parseInt(nodeId));
+			int id = Integer.parseInt(nodeId);
+			NodeMachine nodeMachine  = NodeMachineManager.getInstance().getNodeMachine(id);
 			CODE code = EOPCODES.getInstance().get("S_SYSTEM").getSubCode(FLAG);
 			if (code == null){
 				return ACTIONFAILURE+":"+FLAG+" doesn't exist in head.xml" ;
@@ -433,7 +444,7 @@ public class NodeOperateImpl extends BaseOperate {
 			}else{
 				message = FLAG + " nodeId:"+nodeId+" fail!";
 			}
-			logOperate(regUserId,exeFlag?Operatelog.MOD:Operatelog.ERROR,message);
+			logOperate(regUserId,exeFlag?Operatelog.MOD:Operatelog.ERROR,message,Operatelog.NODE,id,null);
 			tx.commit();
 			return exeFlag?ACTIONSUCCESS:ACTIONFAILURE+"exe systemcommand error: node not response nodeId:"+nodeId;
 		}catch(NumberFormatException e){
@@ -481,7 +492,7 @@ public class NodeOperateImpl extends BaseOperate {
 			Node node = nodeDAO.findById(Integer.parseInt(nodeId));
 			if(node == null) return ACTIONFAILURE+"NodeId:"+nodeId+" not exist";
 			nodeDAO.delete(node);
-			logOperate(regUserId,Operatelog.MOD,"delete nodeId:"+nodeId +" name:"+node.getNodeName()+" ip:"+node.getNodeIp());
+			logOperate(regUserId,Operatelog.MOD,"delete nodeId:"+nodeId +" name:"+node.getNodeName()+" ip:"+node.getNodeIp(),null,null,null);
 			tx.commit();
 			LOG.debug("delNode success nodeId:"+nodeId);
 			return ACTIONSUCCESS;
@@ -512,11 +523,12 @@ public class NodeOperateImpl extends BaseOperate {
 	public String exeCommand(String nodeId, String command, int loginUserId) {
 		Transaction tx = null;
 		try{
-			NodeMachine nodeMachine  = NodeMachineManager.getInstance().getNodeMachine(Integer.parseInt(nodeId));
+			int id = Integer.parseInt(nodeId);
+			NodeMachine nodeMachine  = NodeMachineManager.getInstance().getNodeMachine(id);
 			boolean flag = nodeMachine.exeShellCommand(command);
 			tx = getTransaction();
-			if(flag) logOperate(loginUserId,Operatelog.ADD,"ExeShellCommand success nodeId:"+nodeId +" command :"+command);
-			else logOperate(loginUserId,Operatelog.ERROR,"ExeShellCommand fail nodeId:"+nodeId +" command :"+command);
+			if(flag) logOperate(loginUserId,Operatelog.ADD,"ExeShellCommand success nodeId:"+nodeId +" command :"+command,Operatelog.NODE,id,null);
+			else logOperate(loginUserId,Operatelog.ERROR,"ExeShellCommand fail nodeId:"+nodeId +" command :"+command,Operatelog.NODE,id,null);
 			tx.commit();
 			LOG.debug("exeShellCommand finish nodeId:"+nodeId);
 			return ACTIONSUCCESS;
@@ -537,14 +549,20 @@ public class NodeOperateImpl extends BaseOperate {
 			this.closeSession();
 		}
 	}
-	public String getExeLogList(String nodeId){
+	public String getExeRecords(String nodeId,int pageIndex,int pageSize){
 		LOG.debug("getExeLog nodeId: "+nodeId);
 		try{
-			File logFolder = NetRenderLogFactory.getInstance().getExeLogFolder(Integer.parseInt(nodeId));
-			if(logFolder.exists()){
-				
+			ExecutelogDAO dao = new ExecutelogDAO();
+			Iterator ite_ExeRecords = dao.findByNodeIdWithPages(Integer.parseInt(nodeId),pageIndex,pageSize).iterator();
+			ExecutelogUtils util = new ExecutelogUtils();
+//			Executelog log = new Executelog();
+			Element root = new Element("Root");
+			Document doc = new Document(root);
+			while(ite_ExeRecords.hasNext()){
+				root.addContent( util.bean2xml2( (Executelog)ite_ExeRecords.next()) );
 			}
-			return null;
+			LOG.debug("getExeLog success");
+			return (new XMLOut()).outputToString(doc);
 		}catch(NullPointerException e){
 			LOG.error("getExeLogList NullPointerException nodeId:"+nodeId);
 			return ACTIONFAILURE+e.getMessage();

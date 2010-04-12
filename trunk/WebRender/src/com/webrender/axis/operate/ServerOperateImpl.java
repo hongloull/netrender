@@ -30,7 +30,7 @@ public class ServerOperateImpl extends BaseOperate {
 				
 				
 				Process process = Runtime.getRuntime().exec(tomcatHome+"bin/restart.bat");
-				logOperate(regUserId,Operatelog.MOD,"restart success");
+				logOperate(regUserId,Operatelog.MOD,"restart success",null,null,null);
 				return  ACTIONSUCCESS;				
 			}else{
 				return BaseOperate.ACTIONFAILURE+"LinuxNotSupport";
@@ -86,7 +86,7 @@ public class ServerOperateImpl extends BaseOperate {
 			if(!file.exists()) return ACTIONFAILURE+"PortFileNotExistError";
 			if(!file.canWrite()) return ACTIONFAILURE+"PortFileReadOnlyError";
 			xmlOut.outputToFile(doc, file);
-			logOperate(regUserId,Operatelog.MOD,"set config/port.xml success");
+			logOperate(regUserId,Operatelog.MOD,"set config/port.xml success",null,null,null);
 			LOG.debug("setPortsConfig success");
 			return ACTIONSUCCESS;
 		} catch (JDOMException e) {

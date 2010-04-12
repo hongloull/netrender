@@ -62,6 +62,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	private ServerMessages serverMessages = new ServerMessages();
 	private CommandUtils commandUtils = new CommandUtils();
 	private CommandDAO commandDAO = new CommandDAO();
+	private NodeDAO nodeDAO = new NodeDAO();
 //	private Date shellCommandTime = null;
 //	private String shellCommand = null;
 //	IResultStore resultStore;
@@ -765,7 +766,19 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 			setConnect(true);
 		}
 		else{
-			LOG.info("NodeMachine Id="+nodeId+" disconnect session="+session);
+//			LOG.info("NodeMachine Id="+nodeId+" disconnect session="+session);
+			Transaction tx = null;
+			try{
+				tx = HibernateSessionFactory.getSession().beginTransaction();
+				StatusDAO statusDAO = new StatusDAO();
+				ExecutelogDAO exeDAO = new ExecutelogDAO();
+				Node node = nodeDAO.findById(this.nodeId);
+				Executelog log = new Executelog(null,statusDAO.findById(91),node,node.getNodeIp()+"---"+node.getNodeName()+": disconnect..",new Date());
+				exeDAO.save(log);
+				tx.commit();
+			}catch(Exception e){
+				LOG.error("record disconnect nodeId:"+nodeId,e);
+			}
 			setConnect(false);
 		}
 		
@@ -883,8 +896,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 
 	public void initial(String version, int state, int commandId) {
 		this.version = version;
-		
-		
+				
 		if(state == EOPCODES.getInstance().get("N_RUN").getSubCode("N_PAUSE").getId()){
 			return;
 		}else if( state == EOPCODES.getInstance().get("N_RUN").getSubCode("N_IDLE").getId() ){

@@ -145,5 +145,8 @@ public class NodeOperateImplTest {
 		assertTrue(impl.delNode("0", 0).equals("Failure NodeId:0 not exist") );
 		assertTrue(impl.delNode("a", 0).startsWith("Failure For input string:") );
 	}
-
+	@Test
+	public final void testgetExeRecords(){
+		System.out.println( impl.getExeRecords("5", 1,3) );
+	}
 }
