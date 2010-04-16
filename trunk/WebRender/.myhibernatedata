@@ -1,5 +1,5 @@
 #
-#Thu Mar 12 10:52:16 CST 2009
+#Mon Apr 12 15:21:06 CST 2010
 genBasicCompId=true
 sessionFactoryName=com.webrender.dao.HibernateSessionFactory
 profile=

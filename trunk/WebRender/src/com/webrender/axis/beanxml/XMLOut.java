@@ -4,12 +4,14 @@ package com.webrender.axis.beanxml;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.output.XMLOutputter;
 
 public final class XMLOut {
 	
-	
+	private static final Log LOG = LogFactory.getLog(XMLOut.class);
 	public String outputToString(Document document)
 	{
 //	  ByteArrayOutputStream byteRep=new ByteArrayOutputStream();
@@ -23,7 +25,7 @@ public final class XMLOut {
 	  }
 	  catch(Exception e)
 	  {
-	  	e.printStackTrace();
+		LOG.error("xml to string fail",e);
 	  	return null;
 	  }
  	}
@@ -38,7 +40,7 @@ public final class XMLOut {
 		  }
 		  catch(Exception e)
 		  {
-		  	e.printStackTrace();
+			  LOG.error("xml to file fail",e);
 		  }
 	}
 }

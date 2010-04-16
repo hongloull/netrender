@@ -17,6 +17,7 @@ import org.jdom.input.SAXBuilder;
 
 import com.webrender.axis.beanxml.ChunkDetailUtils;
 import com.webrender.axis.beanxml.CommandmodelUtils;
+import com.webrender.axis.beanxml.OperatelogUtils;
 import com.webrender.axis.beanxml.QuestUtils;
 import com.webrender.axis.beanxml.QuestargUtils;
 import com.webrender.axis.beanxml.XMLOut;
@@ -26,6 +27,7 @@ import com.webrender.dao.Commandmodel;
 import com.webrender.dao.Nodegroup;
 import com.webrender.dao.NodegroupDAO;
 import com.webrender.dao.Operatelog;
+import com.webrender.dao.OperatelogDAO;
 import com.webrender.dao.Quest;
 import com.webrender.dao.QuestDAO;
 import com.webrender.dao.Questarg;
@@ -228,7 +230,7 @@ public class QuestOperateImpl extends BaseOperate {
 			this.closeSession();
 		}
 	}
-	public String pauseQuest(String questId,int regUserId)
+	public String pauseQuest(String questId,String comments,int regUserId)
 	{
 		LOG.debug("pauseQuest");
 		Transaction tx = null;
@@ -238,7 +240,7 @@ public class QuestOperateImpl extends BaseOperate {
 //			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			questDAO.pauseQuest(quest);
-			logOperate(regUserId,Operatelog.MOD,"Pause quest "+quest.getQuestName(),Operatelog.QUEST,quest.getQuestId(),null);
+			logOperate(regUserId,Operatelog.MOD,"Pause quest "+quest.getQuestName(),Operatelog.QUEST,quest.getQuestId(),comments);
 			tx.commit();
 			LOG.debug("pauseQuest success");
 			return ACTIONSUCCESS;
@@ -270,7 +272,7 @@ public class QuestOperateImpl extends BaseOperate {
 			this.closeSession();
 		}
 	}
-	public String resumeQuest(String questId,int regUserId)
+	public String resumeQuest(String questId,String comments,int regUserId)
 	{
 	
 		
@@ -283,7 +285,7 @@ public class QuestOperateImpl extends BaseOperate {
 //			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			questDAO.resumeQuest(quest);
-			logOperate(regUserId,Operatelog.MOD,"Resume quest "+quest.getQuestName(),Operatelog.QUEST,quest.getQuestId(),null);
+			logOperate(regUserId,Operatelog.MOD,"Resume quest "+quest.getQuestName(),Operatelog.QUEST,quest.getQuestId(),comments);
 			tx.commit();
 			ControlThreadServer.getInstance().notifyResume();
 //			Dispatcher.getInstance().exeCommands();
@@ -320,7 +322,7 @@ public class QuestOperateImpl extends BaseOperate {
 		}
 	}
 	
-	public String reinitQuest(String questId , int regUserId)
+	public String reinitQuest(String questId ,String comments, int regUserId)
 	{
 		LOG.debug("reinitQuest");
 
@@ -331,7 +333,7 @@ public class QuestOperateImpl extends BaseOperate {
 //			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			questDAO.reinitQuest(quest);
-			logOperate(regUserId,Operatelog.MOD,"Reinit quest "+quest.getQuestName(),Operatelog.QUEST,quest.getQuestId(),null);
+			logOperate(regUserId,Operatelog.MOD,"Reinit quest "+quest.getQuestName(),Operatelog.QUEST,quest.getQuestId(),comments);
 			tx.commit();
 			ControlThreadServer.getInstance().notifyResume();
 //			Dispatcher.getInstance().exeCommands();
@@ -368,7 +370,7 @@ public class QuestOperateImpl extends BaseOperate {
 		}
 	}
 	
-	public String setFinish(String questId ,int regUserId)
+	public String setFinish(String questId,String comments, int regUserId)
 	{
 		LOG.debug("setFinish");
 
@@ -379,7 +381,7 @@ public class QuestOperateImpl extends BaseOperate {
 //			QuestDAO questDAO = new QuestDAO();
 			Quest quest = questDAO.findById(Integer.parseInt(questId));
 			questDAO.setFinish(quest);
-			logOperate(regUserId,Operatelog.MOD,"setFinish quest "+quest.getQuestName(),Operatelog.QUEST,quest.getQuestId(),null);
+			logOperate(regUserId,Operatelog.MOD,"setFinish quest "+quest.getQuestName(),Operatelog.QUEST,quest.getQuestId(),comments);
 			tx.commit();
 			
 			LOG.debug("setFinish success");
@@ -553,7 +555,7 @@ public class QuestOperateImpl extends BaseOperate {
 		}
 		
 	}
-	public String patchFrames(String questId,String frames,int regUserId){
+	public String patchFrames(String questId,String frames,String comments ,int regUserId){
 		LOG.debug("patch frames questId:"+questId+" frames:"+frames);
 		if(frames==null && questId==null){
 			return  ACTIONFAILURE+"Lack Args";
@@ -573,7 +575,7 @@ public class QuestOperateImpl extends BaseOperate {
 			dealQuest.patchFrames(quest,frames,byFrame);
 			
 			tx = getTransaction();
-			logOperate(regUserId,Operatelog.MOD,"patch quest "+quest.getQuestName()+"' frames: " + frames,Operatelog.QUEST,quest.getQuestId(),null);
+			logOperate(regUserId,Operatelog.MOD,"patch quest "+quest.getQuestName()+"' frames: " + frames,Operatelog.QUEST,quest.getQuestId(),comments);
 			tx.commit();
 			
 			return ACTIONSUCCESS;
@@ -626,7 +628,7 @@ public class QuestOperateImpl extends BaseOperate {
 	{
 		LOG.debug("getChunkDetail questId:"+questId);
 		try{
-			this.closeSession();
+//			this.closeSession();
 			Element root = new Element("Details");
 			Document doc = new Document(root);
 //			QuestDAO questDAO = new QuestDAO();
@@ -661,7 +663,29 @@ public class QuestOperateImpl extends BaseOperate {
 			this.closeSession();
 		}
 	}
-
+	public String getOperateLogs(String questId){
+		LOG.debug("get operate log QuestId:"+questId);
+		try{
+			OperatelogDAO dao = new OperatelogDAO();
+			Iterator ite_OperateLogs = dao.findByTableID("Quest", Integer.parseInt(questId) ).iterator();
+			Element root = new Element("Root");
+			Document doc = new Document(root);
+			Operatelog log = null;
+			OperatelogUtils utils = new OperatelogUtils();
+			while(ite_OperateLogs.hasNext()){
+				log = (Operatelog) ite_OperateLogs.next();
+				root.addContent( utils.bean2xml(log) );
+			}
+			LOG.debug("get operate log success");
+			return (new XMLOut()).outputToString(doc);
+			
+		}catch(Exception e){
+			LOG.error("get operate logs error questId:"+questId);
+			return  ACTIONFAILURE+e.getMessage();
+		}finally{
+			this.closeSession();
+		}
+	}
 	public String getPreLight(String questId) {
 		LOG.debug("getPreLight questId:" + questId);
 		try {

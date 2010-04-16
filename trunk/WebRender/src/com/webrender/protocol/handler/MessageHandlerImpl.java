@@ -100,8 +100,8 @@ public class MessageHandlerImpl implements MessageHandler {
 	}
 	
 	/**
-	 * N_RUN  HeadLength   i    s    i        s     i     s       i       s         i     s       i     N_STATE   i
-                int       ID   IP  length   Name  len   Prority  len   ThreadNum   len   Version  len             CommandId
+	 * N_RUN  HeadLength   i    s    i        s     i     s       i       s         i     s       i     N_STATE     i
+                int       ID   IP  length   Name  len   Prority  len   ThreadNum   len   Version  len   Subcode   CommandId
 	 */
 	public int initialClient(ByteBuffer packet) {
 		// i:nodeId s:name s:ip s:priority s:threads

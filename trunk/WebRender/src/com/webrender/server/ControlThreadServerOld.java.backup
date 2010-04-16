@@ -17,8 +17,6 @@ import com.webrender.dao.HibernateSessionFactory;
 import com.webrender.dao.Node;
 import com.webrender.dao.NodeDAO;
 import com.webrender.dao.StatusDAO;
-import com.webrender.dao.view.Commandnode;
-import com.webrender.dao.view.CommandnodeDAO;
 import com.webrender.remote.NodeMachine;
 import com.webrender.remote.NodeMachineManager;
 import com.webrender.tool.NameMap;
@@ -42,14 +40,14 @@ public final class ControlThreadServer extends Thread {
 	private ControlThreadServer()
 	{
 		super();
-		super.setName("ControlThreadServer");
+		super.setName("ControlThread");
 		setDaemon(true);
 	}
 	
 	public static synchronized ControlThreadServer getInstance()
 	{
 		if (instance == null){
-			LOG.warn("A New ControlThreadServer Server");
+			LOG.warn("A new controlthread server");
 			instance = new ControlThreadServer();
 		}
 		return instance;
@@ -63,7 +61,6 @@ public final class ControlThreadServer extends Thread {
 	public void run()
 	{
 		NodeDAO nodeDAO = new NodeDAO();
-		CommandnodeDAO commandNodeDAO = new CommandnodeDAO();
 		CommandDAO commandDAO = new CommandDAO();
 		StatusDAO statusDAO = new StatusDAO();
 		Command command = null;
@@ -78,22 +75,25 @@ public final class ControlThreadServer extends Thread {
 			{
 //				根据优先级获取未完成的Quest
 //				将其子命令中待执行的命令取出来
-//				LOG.info("ControlThreadServer run..");
+//				LOG.info("ControlThread run..");
 				try
 				{
-					Iterator ite_Nodes = NodeMachineManager.getInstance().getIdleMachines();
-					if(!ite_Nodes.hasNext()) 
+					Iterator ite_Commands  = commandDAO.getWaitingCommands().iterator();
+					
+					if(!ite_Commands.hasNext()) 
 					{
-//						LOG.info("NoIdleNodes...");
+//						LOG.info("NoWaitingCommands...");
 						if( NewNotify >= 5){
+							noUsableNode = false;
 							synchronized(this){
 								try {
-									LOG.info("Dispather server waiting: no idles");
+									LOG.info("Dispather server waiting: no commands");
 									wait();
 								} catch (InterruptedException e) {
 									throw new RuntimeException(e);
 								}							
 							}
+//						sleepUpdateVersion("NoWaitingCommand",30000);
 							continue;
 						}
 						else{
@@ -102,82 +102,73 @@ public final class ControlThreadServer extends Thread {
 						}
 					}
 					
-					while(ite_Nodes.hasNext())
+					
+					while(ite_Commands.hasNext())
 					{
 						if (threadStop){
 							break;
 						}
-						nodeMachine = (NodeMachine)ite_Nodes.next();
-						int nodeId = nodeMachine.getId();
-						LOG.debug("Waiting nodeId: "+nodeId);
-						Iterator ite_CommandsForNode = commandNodeDAO.findByNodeId(nodeId).iterator();
-						if(ite_CommandsForNode.hasNext()){
-							int commandId = ((Commandnode) ite_CommandsForNode.next() ).getId().getCommandId();
-							command = commandDAO.findById(commandId);
-							node = nodeDAO.findById(nodeId);
-							noUsableNode = false;
-						}else{
+						command = (Command)ite_Commands.next();
+						LOG.debug("Waiting commandId: "+command.getCommandId());
+						if(NodeMachineManager.getInstance().isIdleEmpty())
+						{
+							if (threadStop){
+								break;
+							}
 							noUsableNode = true;
-							continue;
+							break;
 						}
-//						if(NodeMachineManager.getInstance().isIdleEmpty())
-//						{
-//							if (threadStop){
-//								break;
-//							}
-//
-//							break;
-//						}
-//						try{
-//							nodeMachine = null;
-//							node = null;
-//							commandDAO.attachClean(command);
-//							Object[] nodeMachines = NodeMachineManager.getInstance().getIdleArray();
-//							int length = nodeMachines.length;
-//							if(NameMap.ONETOMANY.equalsIgnoreCase( command.getType() ) ){
-//								nodeMachine = NodeMachineManager.getInstance().getNodeMachine( command.getNode().getNodeId() );
-//								if(NodeMachineManager.getInstance().containIdles(nodeMachine))
-//								{
-//									node = command.getNode();
-//									noUsableNode = false;
-//								}
-//								else{
-//									nodeMachine = null;
-//									node = null;
-//									noUsableNode = true;
-//								}
-//							}
-//							else{
-//
-//								List list_NodeGroupIds = nodeDAO.getNodeGroupIds(commandDAO.getNodegroup(command));
-//								if(list_NodeGroupIds == null){
-//									noUsableNode = true;
-//								}else{
-//									for(int i = 0 ; i<length ; i++){
-//										tempNodeMachine = (NodeMachine) nodeMachines[i];
-//										if(list_NodeGroupIds.contains(tempNodeMachine.getId()) ){
-//											// 该节点保包含在任务执行池中，可以渲染
-//											LOG.debug("command:"+command.getCommandId()+" 's nodegroup contains nodeId:"+tempNodeMachine.getId());
-//											nodeMachine = tempNodeMachine;
-//											node = nodeDAO.findById(tempNodeMachine.getId());
-//											noUsableNode = false;
-//											break;
-//										}
-//										LOG.debug("NoUsableNode for commandId:"+command.getCommandId());
-//										noUsableNode = true;
-//									}									
-//								}
-//							}
-//						}
-//						catch(Exception e){
-//							LOG.error("getIdleMaichine fail",e);
-//							try {
-//								Thread.sleep(60000);
-//							} catch (InterruptedException e1) {
-//								LOG.error("",e);
-//							}
-//						}
-						if(nodeMachine!=null && node!=null){ ///   node-command
+						
+						try{
+							nodeMachine = null;
+							node = null;
+							commandDAO.attachClean(command);
+							Object[] nodeMachines = NodeMachineManager.getInstance().getIdleArray();
+							int length = nodeMachines.length;
+							if(NameMap.ONETOMANY.equalsIgnoreCase( command.getType() ) ){
+								nodeMachine = NodeMachineManager.getInstance().getNodeMachine( command.getNode().getNodeId() );
+								if(NodeMachineManager.getInstance().containIdles(nodeMachine))
+								{
+									node = command.getNode();
+									noUsableNode = false;
+								}
+								else{
+									nodeMachine = null;
+									node = null;
+									noUsableNode = true;
+								}
+							}
+							else{
+
+								List list_NodeGroupIds = nodeDAO.getNodeGroupIds(commandDAO.getNodegroup(command));
+								if(list_NodeGroupIds == null){
+									noUsableNode = true;
+								}else{
+									for(int i = 0 ; i<length ; i++){
+										tempNodeMachine = (NodeMachine) nodeMachines[i];
+										if(list_NodeGroupIds.contains(tempNodeMachine.getId()) ){
+											// 该节点保包含在任务执行池中，可以渲染
+											LOG.debug("command:"+command.getCommandId()+" 's nodegroup contains nodeId:"+tempNodeMachine.getId());
+											nodeMachine = tempNodeMachine;
+											node = nodeDAO.findById(tempNodeMachine.getId());
+											noUsableNode = false;
+											break;
+										}
+										LOG.debug("NoUsableNode for commandId:"+command.getCommandId());
+										noUsableNode = true;
+									}									
+								}
+							}
+						}
+						catch(Exception e){
+							LOG.error("getIdleMaichine fail",e);
+							try {
+								Thread.sleep(60000);
+							} catch (InterruptedException e1) {
+								LOG.error("",e);
+							}
+						}
+						if(nodeMachine!=null && node!=null){ ///   has node
 //							commandDAO.attachClean(command);
 							boolean result = nodeMachine.execute(command);
 							if (result || NameMap.ONETOMANY.equalsIgnoreCase(command.getType()) ){// ONETOMANY 无论执行结果对错都算完成
@@ -231,18 +222,13 @@ public final class ControlThreadServer extends Thread {
 								}
 								continue; //
 							}
-						} // end If has node-command
-						
-						
-						
-						
-					} // end while nodes
-					
+						} // end If has node
+					} // end while commands
 					if(noUsableNode){
 						if(NewNotify >=5){
 							synchronized(this){
 								try {
-									LOG.info("Dispather server waiting:  No Can Execute Command..");
+									LOG.info("Dispather server waiting: no idle nodes");
 									wait();
 								} catch (InterruptedException e) {
 									throw new RuntimeException(e);
@@ -252,6 +238,7 @@ public final class ControlThreadServer extends Thread {
 						}
 						else{
 							NewNotify ++;
+							
 						}
 					}
 //				
@@ -331,11 +318,7 @@ public final class ControlThreadServer extends Thread {
 		if (this.getState() == Thread.State.WAITING){
 			synchronized(this){
 				HibernateSessionFactory.closeSession();	
-//				try {
-//					this.sleep(1000);
-//				} catch (InterruptedException e) {
-//					LOG.error("notify dispather server error");
-//				}
+				
 				notify();
 			}
 //			LOG.info("Dispather server notify..");

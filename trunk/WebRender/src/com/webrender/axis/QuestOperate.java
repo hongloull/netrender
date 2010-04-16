@@ -90,7 +90,7 @@ public class QuestOperate extends BaseAxis {
 				result.append(questId).append(":").append(BaseAxis.RIGHTERROR).append("\n\r");
 				continue;
 			}
-			subResult = questOperateImpl.pauseQuest(questId,this.getLoginUserId());
+			subResult = questOperateImpl.pauseQuest(questId,null,this.getLoginUserId());
 			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
 				result.append(questId).append(":").append(subResult).append("\n\r");
 			}
@@ -112,7 +112,7 @@ public class QuestOperate extends BaseAxis {
 				result.append(questId).append(":").append(BaseAxis.RIGHTERROR).append("\n\r");
 				continue;
 			}
-			subResult = questOperateImpl.resumeQuest(questId,this.getLoginUserId());
+			subResult = questOperateImpl.resumeQuest(questId,null,this.getLoginUserId());
 			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
 				result.append(questId).append(":").append(subResult).append("\n\r");
 			}
@@ -135,7 +135,7 @@ public class QuestOperate extends BaseAxis {
 				result.append(questId).append(":").append(BaseAxis.RIGHTERROR).append("\n\r");
 				continue;
 			}
-			subResult = questOperateImpl.reinitQuest(questId,this.getLoginUserId());
+			subResult = questOperateImpl.reinitQuest(questId,null,this.getLoginUserId());
 			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
 				result.append(questId).append(":").append(subResult).append("\n\r");
 			}
@@ -158,7 +158,7 @@ public class QuestOperate extends BaseAxis {
 				result.append(questId).append(":").append(BaseAxis.RIGHTERROR).append("\n\r");
 				continue;
 			}
-			subResult = questOperateImpl.setFinish(questId,this.getLoginUserId());
+			subResult = questOperateImpl.setFinish(questId,null,this.getLoginUserId());
 			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
 				result.append(questId).append(":").append(subResult).append("\n\r");
 			}
@@ -270,7 +270,7 @@ public class QuestOperate extends BaseAxis {
 				result.append(questId).append(":").append(BaseAxis.RIGHTERROR).append("\n\r");
 				continue;
 			}
-			subResult = questOperateImpl.patchFrames(questId,frames,this.getLoginUserId());
+			subResult = questOperateImpl.patchFrames(questId,frames,null,this.getLoginUserId());
 			if(subResult.startsWith(BaseOperate.ACTIONFAILURE)){
 				result.append(questId).append(":").append(subResult).append("\n\r");
 			}
@@ -293,7 +293,11 @@ public class QuestOperate extends BaseAxis {
 
 		return (new QuestOperateImpl()).getChunkDetail(questId);
 	}
-	
+	public String getOperateLogs(String questId){
+		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
+
+		return (new QuestOperateImpl()).getOperateLogs(questId);
+	}
 	public String getPreLight(String questId){
 		if ( this.getLoginUserId()==0 )	return BaseAxis.NOTLOGIN;
 		return (new QuestOperateImpl()).getPreLight(questId); 

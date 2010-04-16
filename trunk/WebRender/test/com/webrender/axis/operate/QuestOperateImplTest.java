@@ -63,9 +63,9 @@ public class QuestOperateImplTest {
 	 */
 	@Test
 	public final void testPauseQuest() {
-		System.out.println( impl.pauseQuest(null, 0).equals("Failure null"));
-		System.out.println( impl.pauseQuest("0", 0).equals("Failure null") );
-		System.out.println( impl.pauseQuest("A", 0).equals("Failure For input string: \"A\"") );
+		System.out.println( impl.pauseQuest(null,null, 0).equals("Failure null"));
+		System.out.println( impl.pauseQuest("0",null, 0).equals("Failure null") );
+		System.out.println( impl.pauseQuest("A",null, 0).equals("Failure For input string: \"A\"") );
 	}
 
 	/**
@@ -73,9 +73,9 @@ public class QuestOperateImplTest {
 	 */
 	@Test
 	public final void testResumeQuest() {
-		System.out.println( impl.resumeQuest(null, 0).equals("Failure null"));
-		System.out.println( impl.resumeQuest("0", 0).equals("Failure null") );
-		System.out.println( impl.resumeQuest("A", 0).equals("Failure For input string: \"A\"") );
+		System.out.println( impl.resumeQuest(null,null, 0).equals("Failure null"));
+		System.out.println( impl.resumeQuest("0",null, 0).equals("Failure null") );
+		System.out.println( impl.resumeQuest("A",null, 0).equals("Failure For input string: \"A\"") );
 	}
 
 	/**
@@ -83,9 +83,9 @@ public class QuestOperateImplTest {
 	 */
 	@Test
 	public final void testReinitQuest() {
-		System.out.println( impl.reinitQuest(null, 0).equals("Failure null"));
-		System.out.println( impl.reinitQuest("0", 0).equals("Failure null") );
-		System.out.println( impl.reinitQuest("A", 0).equals("Failure For input string: \"A\"") );
+		System.out.println( impl.reinitQuest(null,null, 0).equals("Failure null"));
+		System.out.println( impl.reinitQuest("0",null, 0).equals("Failure null") );
+		System.out.println( impl.reinitQuest("A",null, 0).equals("Failure For input string: \"A\"") );
 	}
 
 	/**
@@ -93,9 +93,9 @@ public class QuestOperateImplTest {
 	 */
 	@Test
 	public final void testSetFinish() {
-		System.out.println( impl.setFinish(null, 0).equals("Failure null"));
-		System.out.println( impl.setFinish("0", 0).equals("Failure null") );
-		System.out.println( impl.setFinish("A", 0).equals("Failure For input string: \"A\"") );
+		System.out.println( impl.setFinish(null,null, 0).equals("Failure null"));
+		System.out.println( impl.setFinish("0",null, 0).equals("Failure null") );
+		System.out.println( impl.setFinish("A",null, 0).equals("Failure For input string: \"A\"") );
 	}
 
 	/**

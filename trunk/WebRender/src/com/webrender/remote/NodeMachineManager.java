@@ -4,6 +4,7 @@ import java.util.Collections;
 
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -57,11 +58,13 @@ public final  class  NodeMachineManager {
 		Set<Integer> set = new HashSet<Integer>(machines.keySet());
 		return set;
 	}
-	
+	public Iterator getIdleMachines(){
+		return idleMachines.iterator();
+	}
 	public void addNodeMachines(NodeMachine nodeMachine){
 		if(!idleMachines.contains(nodeMachine)){
 			idleMachines.add(nodeMachine);
-			LOG.debug("Add Node "+nodeMachine.getId()+ " To Idles");
+			LOG.info("Add Node "+nodeMachine.getId()+ " To Idles");
 		}
 		ControlThreadServer.getInstance().notifyResume();
 	}

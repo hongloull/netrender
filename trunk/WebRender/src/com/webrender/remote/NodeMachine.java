@@ -51,6 +51,10 @@ import com.webrender.tool.NameMap;
  *  NodeMachine 控制节点机操作的类；不与数据库交互信息
  */
 public class NodeMachine implements TimeoutOperate,IClientProcessor {
+// Node waiting on off restart state
+	public static final int NORMAL  = 0;
+	public static final int RESTART = 1;
+	public static final int POWEROFF= 2;
 //	String command ;
 	private int nodeId ;
 	private Short pri;
@@ -68,9 +72,8 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 //	IResultStore resultStore;
 	private static final int ERRORMAX = 5;
 	private int errorNum = 0;
-
+	private int afterFinishState = NORMAL;
 	private IoSession session = null;
-
 	private boolean isReady = false;
 	private boolean isConnect = false;
 	private boolean isBusy = false;
@@ -248,6 +251,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
     	}
 		return false;
 	}
+	
 	public void updateStatus(String message)
 	{
 		LOG.debug("updateStatus");
@@ -432,7 +436,21 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 		this.isBusy = isBusy;
 		selfCheck();
 	}
-
+	/**
+	 * 
+	 * @return @param flag NodeMachine.NORMAL  NodeMachine.RESTART NodeMachine.POWEROFF
+	 */
+	public int getRestartState(){
+		return afterFinishState;
+	}
+	/**
+	 * 
+	 * @param flag NodeMachine.NORMAL  NodeMachine.RESTART NodeMachine.POWEROFF 
+	 */
+	public void setAfterFinishState(int flag){
+		this.afterFinishState = flag;
+	}
+	
 	public boolean isRealTime() {
 		return isRealTime;
 	}
@@ -487,7 +505,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 	 */
 	private boolean cleanRunCommand(int commandId,String message,int state)
 	{
-		LOG.debug("cleanRunCommand commandId:"+ commandId);
+//		LOG.info("cleanRunCommand commandId:"+ commandId);
 		if ( this.currentCommands.contains(commandId)){
 			
 			
@@ -520,7 +538,7 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 				LOG.info("CommandID: "+command.getCommandId()+" clean from nodeId="+nodeId +" message:"+message);
 
 				tx.commit();
-				
+				LOG.info("clean from database success");
 				ControlThreadServer.getInstance().notifyResume();
 //				Dispatcher.getInstance().exeCommands();
 				
@@ -867,8 +885,10 @@ public class NodeMachine implements TimeoutOperate,IClientProcessor {
 //				LOG.info("setFinish from nodeId: "+ nodeId);
 			}else if(code.getId() == EOPCODES.getInstance().get("N_ERROR").getId() ){
 				int commandId =Integer.parseInt(datas.get(0));
+				LOG.info("Get Execute ERROR commandId:"+commandId);
 				String message = datas.get(1);
 				this.addFeedBack(commandId, message);
+				LOG.info("addFeedBack "+message);
 				this.cleanRunCommand(commandId, message, 2);
 			}else{
 				// send not type 
