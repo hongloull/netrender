@@ -36,7 +36,7 @@ public final class ExecutelogUtils {
 		root.addAttribute("status",status);
 		return root;
 	}
-	public Element bean2xml2 (Executelog exeLog){
+	public Element bean2xml2(Executelog exeLog){
 		LOG.debug("bean2xml For event exeLogId: "+exeLog.getExecuteLogId() );
 		Element root = new Element("Event");
 		SimpleDateFormat dateFormat =new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

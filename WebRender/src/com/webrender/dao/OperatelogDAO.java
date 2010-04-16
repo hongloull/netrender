@@ -101,7 +101,19 @@ public class OperatelogDAO extends BaseHibernateDAO {
 	public List findByType(Object type) {
 		return findByProperty(TYPE, type);
 	}
-
+	public List findByTableID(String table,Integer id){
+		LOG.debug("find operateLog TABLE:"+table+" ID:"+id);
+		try{
+			String queryString = "from Operatelog as model where model.tableName = ? and model.tableId = ?";
+			Query queryObject = getSession().createQuery(queryString);
+			queryObject.setParameter(0, table);
+			queryObject.setParameter(1,id);
+			return queryObject.list();
+		}catch (RuntimeException re) {
+			LOG.error("find by table name failed", re);
+			throw re;
+		}
+	}
 	public List findAll() {
 		LOG.debug("finding all Operatelog instances");
 		try {

@@ -116,7 +116,7 @@ public final class Dispatcher extends Thread {
 					return;
 				}
 			}catch(Exception e){
-				LOG.error("exeCommands total fail",e);
+				LOG.error("Dispatcher run fail",e);
 				HibernateSessionFactory.closeSession();
 //				isRunning = false;
 				LOG.info("Dispatcher ends..");
@@ -125,22 +125,4 @@ public final class Dispatcher extends Thread {
 		}//end while(true)
 	}// end exeCommands()
 	
-	
-	private void UpdateVersion(String message) 
-	{
-		StatusDAO statusDAO = new StatusDAO();
-		Transaction tx = null;
-		try {
-			tx = HibernateSessionFactory.getSession().beginTransaction();
-			statusDAO.updateSystemVersion();
-			tx.commit();							
-		}catch (Exception e){					
-			LOG.error(message+" UpdateVersion Error", e);
-			if(tx!=null){
-				tx.rollback();
-			}
-		}finally{
-			HibernateSessionFactory.closeSession();			
-		}
-	}
 }

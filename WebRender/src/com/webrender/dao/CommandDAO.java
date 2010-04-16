@@ -214,16 +214,6 @@ public class CommandDAO extends BaseHibernateDAO {
 		LOG.debug("setError commandId:"+instance.getCommandId());
 		try
 		{
-			if( instance.getStatus().getStatusId()==71 && instance.getNode()!=null){
-				ServerMessages serverMessages = new ServerMessages();
-				NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(instance.getNode().getNodeId());
-				try {
-					nodeMachine.execute(serverMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_KILL")));
-				} catch (Exception e) {
-					LOG.error("",e);
-				}			
-				
-			}
 			StatusDAO statusDAO = new StatusDAO();
 			instance.setStatus(statusDAO.findById(73));
 			this.attachDirty(instance);
@@ -254,16 +244,16 @@ public class CommandDAO extends BaseHibernateDAO {
 		LOG.debug("setFinish commandId:"+instance.getCommandId());
 		try
 		{
-			if( instance.getStatus().getStatusId()==71 && instance.getNode()!=null){
-				ServerMessages serverMessages = new ServerMessages();
-				NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(instance.getNode().getNodeId());
-				try {
-					nodeMachine.execute(serverMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_KILL")));
-				} catch (Exception e) {
-					LOG.error("",e);
-				}			
-				
-			}
+//			if( instance.getStatus().getStatusId()==71 && instance.getNode()!=null){
+//				ServerMessages serverMessages = new ServerMessages();
+//				NodeMachine nodeMachine = NodeMachineManager.getInstance().getNodeMachine(instance.getNode().getNodeId());
+//				try {
+//					nodeMachine.execute(serverMessages.createSystemPkt(EOPCODES.getInstance().get("S_SYSTEM").getSubCode("S_KILL")));
+//				} catch (Exception e) {
+//					LOG.error("",e);
+//				}			
+//				
+//			}
 			StatusDAO statusDAO = new StatusDAO();
 			instance.setStatus(statusDAO.findById(72));
 //			instance.setSendTime(new Date());
