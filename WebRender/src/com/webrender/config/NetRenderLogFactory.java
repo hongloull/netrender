@@ -13,6 +13,7 @@ public class NetRenderLogFactory {
 	private static String logPath = null;;
 	private static final Log LOG = LogFactory.getLog(NetRenderLogFactory.class);
 	private static NetRenderLogFactory instance = null;
+	CommandDAO commandDAO = new CommandDAO();
 	public static synchronized NetRenderLogFactory getInstance() {
 		if (instance==null){
 			instance = new NetRenderLogFactory();
@@ -30,7 +31,6 @@ public class NetRenderLogFactory {
 	}
 	public File getFile(Integer commandId) {
 		try{
-			CommandDAO commandDAO = new CommandDAO();
 			Command command = commandDAO.findById(commandId);
 			StringBuffer fileName = new StringBuffer(logPath);
 			fileName.append("jobs/");
@@ -38,7 +38,7 @@ public class NetRenderLogFactory {
 			LOG.info("GetRealLogFile :"+fileName.toString());
 			return new File(fileName.toString());
 		}catch(NullPointerException e){
-			LOG.warn("GetRealLogFile NullPointerException commandId:"+commandId);
+			LOG.warn("GetRealLogFile NullPointerException commandId:"+commandId,e);
 			return null;
 		}
 	}
