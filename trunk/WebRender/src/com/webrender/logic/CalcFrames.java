@@ -103,119 +103,250 @@ public class CalcFrames implements CalcCommands {
 			return CalcCommands.SUCCESS;
 		}
 		
-		double prePreFrame=-1,preFrame=-1;
+		double preFrame=-1;
 		
-		int pktNum = 1;
+		int pktNum = 0;
 		String commandFrameValue = null;
-		double commandCurrentEndFrame=-1;
 		
+//		double commandCurrentEndFrame=-1;
 		BigDecimal commandByFrame = null;
-		BigDecimal preDelta=new BigDecimal(0,mc),delta=new BigDecimal(0,mc);
-		double lastFrame = frames.last();
-		frames.add(lastFrame+0.00000001);
-		frames.add(lastFrame+0.00000002);
-		for (double currentFrame : frames){
-			if(preDelta.doubleValue()==0){
-				if(preFrame == -1){
-					preFrame=currentFrame;
-					commandFrameValue=preFrame+"-";
-					commandByFrame= new BigDecimal(1,mc);
-					commandCurrentEndFrame=preFrame;
-					continue;
-				}
-				else if(prePreFrame == -1){
-					prePreFrame = preFrame;
+		BigDecimal oneDelta=new BigDecimal(1,mc);
+		BigDecimal delta= null;
+//		double lastFrame = frames.last();
+//		frames.add(lastFrame+0.00000001);
+//		frames.add(lastFrame+0.00000002);
+		Iterator ite_frames = frames.iterator();
+		Double currentFrame = null;
+		while(ite_frames.hasNext()){
+			currentFrame = (Double) ite_frames.next();
+			if(commandFrameValue == null){// New Command
+				if(ite_frames.hasNext()==false){//New Command Finish
+					commandFrameValue = currentFrame+"-"+currentFrame;
+					commandByFrame = byFrame;
+					//循环外保存
+					break;
+					
+				}else{// New Command can continue
+					commandFrameValue = currentFrame+"-";
 					preFrame = currentFrame;
-					delta = new BigDecimal(preFrame-prePreFrame,mc);
-					commandByFrame = delta;
-//					commandCurrentEndFrame=preFrame;
-					continue;
-				}
-				else{
-					preDelta = new BigDecimal(preFrame-prePreFrame,mc);
-					delta = new BigDecimal(currentFrame - preFrame,mc);
-					commandFrameValue = prePreFrame+"-";
-					commandCurrentEndFrame = prePreFrame;
-					commandByFrame =  preDelta;
-					pktNum=1;
+					pktNum++;
 				}
 			}
-			else{ // 非初始化
+			else{// Command already has Head "XX-"
 				delta = new BigDecimal(currentFrame - preFrame,mc);
-				// 考虑packetSize的分包计算生产command
-				if(pktNum<packetSize){
-					commandCurrentEndFrame = prePreFrame;
-					if(commandByFrame.doubleValue() == preDelta.doubleValue()){
-						pktNum++;
+				if(commandByFrame==null){//Just get second frame for this command 
+					if(pktNum!=1){// command's frame number must be 1
+						LOG.error("Error: byFrame null pktNum "+pktNum);
 					}
-					else{
-						commandFrameValue = commandFrameValue+commandCurrentEndFrame;
-//						LOG.info("CommandFrames:"+commandFrameValue+" byFrame:"+commandByFrame);
-						command = new Command(quest);
-						command.setType(isPatch?NameMap.PATCH:null);
-						command.setStatus(status);
-						commandDAO.save(command);
-						
-						commandArg = new Commandarg();
-						commandArg.setCommand(command);
-						commandArg.setCommandmodelarg(frameTag);
-						commandArg.setValue(commandFrameValue);
-						commandargDAO.save(commandArg);
-						
-						commandArg = new Commandarg();
-						commandArg.setCommand(command);
-						commandArg.setCommandmodelarg(byTag);
-						commandArg.setValue(commandByFrame.doubleValue()+"");
-						commandargDAO.save(commandArg);
-						
-						commandFrameValue = preFrame+"-";
-						commandCurrentEndFrame = preFrame;
-						commandByFrame = preDelta;
-						pktNum=1;
-					}
-				}else{
-					commandFrameValue = commandFrameValue+commandCurrentEndFrame;
+					commandByFrame = delta;
+				}
+				
+				if(packetSize==1){// One frame one command
+					commandFrameValue=commandFrameValue+preFrame;
+					commandByFrame = oneDelta;
 					
-//					LOG.info("CommandFrames:"+commandFrameValue+" byFrame:"+commandByFrame);
 					command = new Command(quest);
 					command.setType(isPatch?NameMap.PATCH:null);
 					command.setStatus(status);
-					commandDAO.save(command);
-					
+					commandDAO.save(command);					
 					commandArg = new Commandarg();
 					commandArg.setCommand(command);
 					commandArg.setCommandmodelarg(frameTag);
 					commandArg.setValue(commandFrameValue);
-					commandargDAO.save(commandArg);
-					
+					commandargDAO.save(commandArg);					
 					commandArg = new Commandarg();
 					commandArg.setCommand(command);
 					commandArg.setCommandmodelarg(byTag);
-					commandArg.setValue(commandByFrame.toString());
+					commandArg.setValue(commandByFrame.doubleValue()+"");
 					commandargDAO.save(commandArg);
 					
-					commandFrameValue = prePreFrame+"-";
-					commandCurrentEndFrame = prePreFrame;
-					commandByFrame = preDelta;
+					pktNum=0;
+					commandFrameValue=null;
+					commandByFrame=null;
+					delta=null;
+				}else if(delta.doubleValue() == commandByFrame.doubleValue() ){
+					if(ite_frames.hasNext()==false){// end frame finish this command
+						commandFrameValue = commandFrameValue+currentFrame;
+						//循环外保存
+						break;
+					}else if(pktNum <(packetSize-1) ){
+						preFrame = currentFrame;
+						pktNum++;
+						continue;						
+					}
+					else{
+						commandFrameValue = commandFrameValue+currentFrame;
+					}
+					// 保存命令，初始化属性
+					command = new Command(quest);
+					command.setType(isPatch?NameMap.PATCH:null);
+					command.setStatus(status);
+					commandDAO.save(command);					
+					commandArg = new Commandarg();
+					commandArg.setCommand(command);
+					commandArg.setCommandmodelarg(frameTag);
+					commandArg.setValue(commandFrameValue);
+					commandargDAO.save(commandArg);					
+					commandArg = new Commandarg();
+					commandArg.setCommand(command);
+					commandArg.setCommandmodelarg(byTag);
+					commandArg.setValue(commandByFrame.doubleValue()+"");
+					commandargDAO.save(commandArg);
+					
+					pktNum=0;
+					commandFrameValue=null;
+					commandByFrame=null;
+					delta=null;
+					
+				}else{
+					commandFrameValue = commandFrameValue+preFrame;
+					
+					command = new Command(quest);
+					command.setType(isPatch?NameMap.PATCH:null);
+					command.setStatus(status);
+					commandDAO.save(command);					
+					commandArg = new Commandarg();
+					commandArg.setCommand(command);
+					commandArg.setCommandmodelarg(frameTag);
+					commandArg.setValue(commandFrameValue);
+					commandargDAO.save(commandArg);					
+					commandArg = new Commandarg();
+					commandArg.setCommand(command);
+					commandArg.setCommandmodelarg(byTag);
+					commandArg.setValue(commandByFrame.doubleValue()+"");
+					commandargDAO.save(commandArg);
+					commandFrameValue=currentFrame+"-";
+					preFrame = currentFrame;
+					commandByFrame=null;
 					pktNum=1;
+					if(ite_frames.hasNext()==false){// end frame finish this command
+						commandFrameValue = commandFrameValue+currentFrame;
+						commandByFrame = oneDelta;
+						//循环外保存
+						break;
+					}
+					
 				}
-				
-				
 			}
-			//数据前进
-			prePreFrame = preFrame;
-			preFrame = currentFrame;
-			preDelta = delta;
+//			if(preDelta.doubleValue()==0){
+//				if(preFrame == -1){
+//					preFrame=currentFrame;
+//					commandFrameValue=preFrame+"-";
+//					commandByFrame= new BigDecimal(1,mc);
+//					commandCurrentEndFrame=preFrame;
+//					continue;
+//				}
+//				else if(prePreFrame == -1){
+//					prePreFrame = preFrame;
+//					preFrame = currentFrame;
+//					delta = new BigDecimal(preFrame-prePreFrame,mc);
+//					commandByFrame = delta;
+////					commandCurrentEndFrame=preFrame;
+//					continue;
+//				}
+//				else{
+//					preDelta = new BigDecimal(preFrame-prePreFrame,mc);
+//					delta = new BigDecimal(currentFrame - preFrame,mc);
+////					commandFrameValue = prePreFrame+"-";
+//					commandCurrentEndFrame = prePreFrame;
+//					commandByFrame =  preDelta;
+//					pktNum=1;
+//				}
+//			}
+//			else{ // 非初始化
+//				delta = new BigDecimal(currentFrame - preFrame,mc);
+//				// 考虑packetSize的分包计算生产command
+//				if(pktNum<packetSize){
+//					commandCurrentEndFrame = prePreFrame;
+//					if(commandByFrame.doubleValue() == preDelta.doubleValue()){
+//						pktNum++;
+//					}
+//					else{
+//						commandFrameValue = commandFrameValue+commandCurrentEndFrame;
+////						LOG.info("CommandFrames:"+commandFrameValue+" byFrame:"+commandByFrame);
+//						command = new Command(quest);
+//						command.setType(isPatch?NameMap.PATCH:null);
+//						command.setStatus(status);
+//						commandDAO.save(command);
+//						
+//						commandArg = new Commandarg();
+//						commandArg.setCommand(command);
+//						commandArg.setCommandmodelarg(frameTag);
+//						commandArg.setValue(commandFrameValue);
+//						commandargDAO.save(commandArg);
+//						
+//						commandArg = new Commandarg();
+//						commandArg.setCommand(command);
+//						commandArg.setCommandmodelarg(byTag);
+//						commandArg.setValue(commandByFrame.doubleValue()+"");
+//						commandargDAO.save(commandArg);
+//						
+//						commandFrameValue = preFrame+"-";
+//						commandCurrentEndFrame = preFrame;
+//						commandByFrame = preDelta;
+//						pktNum=1;
+//					}
+//				}else{
+//					commandFrameValue = commandFrameValue+commandCurrentEndFrame;
+//					
+////					LOG.info("CommandFrames:"+commandFrameValue+" byFrame:"+commandByFrame);
+//					command = new Command(quest);
+//					command.setType(isPatch?NameMap.PATCH:null);
+//					command.setStatus(status);
+//					commandDAO.save(command);
+//					
+//					commandArg = new Commandarg();
+//					commandArg.setCommand(command);
+//					commandArg.setCommandmodelarg(frameTag);
+//					commandArg.setValue(commandFrameValue);
+//					commandargDAO.save(commandArg);
+//					
+//					commandArg = new Commandarg();
+//					commandArg.setCommand(command);
+//					commandArg.setCommandmodelarg(byTag);
+//					commandArg.setValue(commandByFrame.toString());
+//					commandargDAO.save(commandArg);
+//					
+//					commandFrameValue = prePreFrame+"-";
+//					commandCurrentEndFrame = prePreFrame;
+//					commandByFrame = preDelta;
+//					pktNum=1;
+//				}
+//				
+//				
+//			}
+//			//数据前进
+//			prePreFrame = preFrame;
+//			preFrame = currentFrame;
+//			preDelta = delta;
+//		}
+//		if(commandCurrentEndFrame>lastFrame){
+//			return CalcCommands.SUCCESS;
+//		}
+//		commandFrameValue = commandFrameValue+commandCurrentEndFrame;
+//		
+//		if( commandByFrame.doubleValue()==0.00000001){
+//			commandByFrame= new BigDecimal(1,mc);
+//		}
+//			LOG.info("CommandFrames:"+commandFrameValue+" byFrame:"+commandByFrame);
+//			command = new Command(quest);
+//			command.setType(isPatch?NameMap.PATCH:null);
+//			command.setStatus(status);
+//			commandDAO.save(command);
+//			
+//			commandArg = new Commandarg();
+//			commandArg.setCommand(command);
+//			commandArg.setCommandmodelarg(frameTag);
+//			commandArg.setValue(commandFrameValue);
+//			commandargDAO.save(commandArg);
+//			
+//			commandArg = new Commandarg();
+//			commandArg.setCommand(command);
+//			commandArg.setCommandmodelarg(byTag);
+//			commandArg.setValue(commandByFrame.toString());
+//			commandargDAO.save(commandArg);
 		}
-		if(commandCurrentEndFrame>lastFrame){
-			return CalcCommands.SUCCESS;
-		}
-		commandFrameValue = commandFrameValue+commandCurrentEndFrame;
-		
-		if( commandByFrame.doubleValue()==0.00000001){
-			commandByFrame= new BigDecimal(1,mc);
-		}
-			LOG.info("CommandFrames:"+commandFrameValue+" byFrame:"+commandByFrame);
+		if(commandFrameValue!=null && commandByFrame!=null ){
 			command = new Command(quest);
 			command.setType(isPatch?NameMap.PATCH:null);
 			command.setStatus(status);
@@ -230,9 +361,9 @@ public class CalcFrames implements CalcCommands {
 			commandArg = new Commandarg();
 			commandArg.setCommand(command);
 			commandArg.setCommandmodelarg(byTag);
-			commandArg.setValue(commandByFrame.toString());
+			commandArg.setValue(commandByFrame.doubleValue()+"");
 			commandargDAO.save(commandArg);
-		
+		}
 		return CalcCommands.SUCCESS;
 	}
 
