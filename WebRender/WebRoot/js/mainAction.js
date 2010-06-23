@@ -4,8 +4,6 @@ function UserLogin(){
 		methodName: "LoginValidate",
 		data: {regName:$("#user_id").val(),passWord:$("#pw_id").val()},
 		success:function(data){
-   			refreshAllNodes();
-   			refreshAllJobs();
 		}
 	});
 } 
