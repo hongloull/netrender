@@ -23,7 +23,7 @@ public final class OperatelogUtils {
 		root.addAttribute("ip","");
 		root.addAttribute("machine","");
 		String type = "";
-		switch (opeLog.getType()){
+		switch ((int)opeLog.getType()){
 		case 1: type="LOGIN"; break;
 		case 3: type="MODIFY";break;
 		case 4: type="ADD";   break;
